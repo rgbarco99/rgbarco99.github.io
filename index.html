@@ -1,12 +1,317 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página en Desarrollo</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Portfolio profesional de Rubén García — Desarrollador Full Stack apasionado por crear soluciones digitales." />
+  <title>Rubén García — Portfolio</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <!-- Favicon inline SVG -->
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%237c6fff'/><text y='22' x='7' font-size='18' font-family='sans-serif' fill='white'>R</text></svg>" />
 </head>
+
 <body>
-    <h1>En desarrollo</h1>
-    <p>Esta página está actualmente en desarrollo. ¡Vuelve pronto para ver las actualizaciones!</p>
+
+  <!-- ============================================================
+       NAVIGATION
+  ============================================================ -->
+  <nav class="nav" id="nav" role="navigation" aria-label="Menú principal">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo" aria-label="Inicio">RG</a>
+      <ul class="nav-links" role="list">
+        <li><a href="index.html" class="nav-link" id="nav-home">Inicio</a></li>
+        <li><a href="#skills" class="nav-link">Skills</a></li>
+        <li><a href="projects.html" class="nav-link" id="nav-projects">Proyectos</a></li>
+        <li><a href="#cv" class="nav-link">Currículum</a></li>
+        <li><a href="#contact" class="nav-link nav-cta">Contacto</a></li>
+      </ul>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Abrir menú" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile drawer -->
+  <nav class="nav-mobile" id="nav-mobile" aria-label="Menú móvil">
+    <a href="index.html" class="nav-link">Inicio</a>
+    <a href="#skills" class="nav-link">Skills</a>
+    <a href="projects.html" class="nav-link">Proyectos</a>
+    <a href="#cv" class="nav-link">Currículum</a>
+    <a href="#contact" class="nav-link">Contacto</a>
+  </nav>
+
+  <main>
+
+    <!-- ============================================================
+         HERO SECTION
+    ============================================================ -->
+    <section class="hero" id="home" aria-label="Presentación">
+      <canvas id="particles-canvas" aria-hidden="true"></canvas>
+
+      <div class="hero-content">
+        <!-- Text column -->
+        <div class="hero-text">
+          <p class="hero-greeting">👋 Hola, soy</p>
+          <h1 class="hero-name">
+            Rubén<br />
+            <span class="gradient-text">García</span>
+          </h1>
+          <div class="hero-title-wrap" aria-live="polite">
+            <span id="typewriter"></span><span class="cursor" aria-hidden="true"></span>
+          </div>
+          <p class="hero-bio">
+            Apasionado por construir productos digitales con código limpio y diseño cuidado.
+            Me encanta convertir ideas complejas en experiencias simples y elegantes.
+          </p>
+
+          <div class="hero-actions">
+            <a href="projects.html" class="btn btn-primary" id="btn-ver-proyectos">
+              Ver proyectos
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </a>
+            <a href="#cv" class="btn btn-outline" id="btn-descargar-cv">
+              Descargar CV
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
+              </svg>
+            </a>
+          </div>
+
+          <!-- Social icons -->
+          <div class="hero-social" role="list" aria-label="Redes sociales">
+            <!-- GitHub -->
+            <a href="https://github.com/rubgarcia" target="_blank" rel="noopener" class="social-icon"
+              aria-label="GitHub" role="listitem">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+              </svg>
+            </a>
+            <!-- LinkedIn -->
+            <a href="https://linkedin.com/in/rubgarcia" target="_blank" rel="noopener" class="social-icon"
+              aria-label="LinkedIn" role="listitem">
+              <svg viewBox="0 0 24 24">
+                <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z" />
+                <circle cx="4" cy="4" r="2" />
+              </svg>
+            </a>
+            <!-- Twitter/X -->
+            <a href="https://twitter.com/rubgarcia" target="_blank" rel="noopener" class="social-icon"
+              aria-label="Twitter / X" role="listitem">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+              </svg>
+            </a>
+            <!-- Email -->
+            <a href="mailto:rubgarcia@email.com" class="social-icon" aria-label="Email" role="listitem">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                <polyline points="22,6 12,13 2,6" />
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Image column -->
+        <div class="hero-image-wrapper">
+          <div class="hero-avatar-ring">
+            <img src="assets/img/profile.jpg" alt="Foto de perfil de Rubén García" class="hero-avatar"
+              id="profile-photo" />
+          </div>
+          <!-- Floating badge -->
+          <div class="hero-badge" aria-label="Estado actual">
+            <span class="badge-dot"></span>
+            <span class="badge-text">Disponible para proyectos</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         STATS SECTION
+    ============================================================ -->
+    <section class="section" id="about" aria-label="Estadísticas">
+      <div class="section-inner">
+        <div class="section-header reveal">
+          <span class="section-label">En números</span>
+          <h2 class="section-title">Un poco sobre mí</h2>
+          <p class="section-subtitle">Estos son algunos de los hitos que definen mi trayectoria profesional hasta la
+            fecha.</p>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card reveal reveal-delay-1">
+            <div class="stat-value counter" data-target="5" data-suffix="+">0+</div>
+            <div class="stat-label">Años de experiencia</div>
+          </div>
+          <div class="stat-card reveal reveal-delay-2">
+            <div class="stat-value counter" data-target="20" data-suffix="+">0+</div>
+            <div class="stat-label">Proyectos completados</div>
+          </div>
+          <div class="stat-card reveal reveal-delay-3">
+            <div class="stat-value counter" data-target="3" data-suffix="">0</div>
+            <div class="stat-label">Idiomas</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SKILLS SECTION
+    ============================================================ -->
+    <section class="section skills-section" id="skills" aria-label="Habilidades técnicas">
+      <div class="section-inner">
+        <div class="section-header reveal">
+          <span class="section-label">Tecnologías</span>
+          <h2 class="section-title">Mi stack de trabajo</h2>
+          <p class="section-subtitle">Herramientas y lenguajes con los que trabajo en el día a día.</p>
+        </div>
+        <div class="skills-grid">
+          <span class="skill-chip reveal"><span class="skill-icon">⚡</span> JavaScript</span>
+          <span class="skill-chip reveal reveal-delay-1"><span class="skill-icon">🐍</span> Python</span>
+          <span class="skill-chip reveal reveal-delay-2"><span class="skill-icon">⚛️</span> React</span>
+          <span class="skill-chip reveal reveal-delay-3"><span class="skill-icon">🟩</span> Node.js</span>
+          <span class="skill-chip reveal"><span class="skill-icon">🎨</span> CSS / Sass</span>
+          <span class="skill-chip reveal reveal-delay-1"><span class="skill-icon">🛠️</span> TypeScript</span>
+          <span class="skill-chip reveal reveal-delay-2"><span class="skill-icon">🐋</span> Docker</span>
+          <span class="skill-chip reveal reveal-delay-3"><span class="skill-icon">☁️</span> AWS</span>
+          <span class="skill-chip reveal"><span class="skill-icon">🗄️</span> PostgreSQL</span>
+          <span class="skill-chip reveal reveal-delay-1"><span class="skill-icon">🔥</span> Firebase</span>
+          <span class="skill-chip reveal reveal-delay-2"><span class="skill-icon">🐙</span> Git / GitHub</span>
+          <span class="skill-chip reveal reveal-delay-3"><span class="skill-icon">🤖</span> Machine Learning</span>
+          <span class="skill-chip reveal"><span class="skill-icon">📊</span> Data Analysis</span>
+          <span class="skill-chip reveal reveal-delay-1"><span class="skill-icon">🔧</span> REST APIs</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         CV DOWNLOAD SECTION
+    ============================================================ -->
+    <section class="section cv-section" id="cv" aria-label="Descargar currículum">
+      <div class="section-inner">
+        <div class="section-header reveal">
+          <span class="section-label">Currículum</span>
+          <h2 class="section-title">Descarga mi CV</h2>
+          <p class="section-subtitle">Disponible en tres idiomas. Elige el que prefieras y descárgalo directamente.</p>
+        </div>
+        <div class="cv-grid">
+          <a href="assets/cv/cv-es.pdf" download="CV_Ruben_Garcia_ES.pdf" class="cv-card reveal reveal-delay-1"
+            id="cv-es" aria-label="Descargar CV en español">
+            <div class="cv-flag" aria-hidden="true">🇪🇸</div>
+            <div class="cv-lang">Español</div>
+            <div class="cv-sublabel">Versión en castellano</div>
+            <div class="cv-dl-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
+              </svg>
+              Descargar
+            </div>
+          </a>
+          <a href="assets/cv/cv-en.pdf" download="CV_Ruben_Garcia_EN.pdf" class="cv-card reveal reveal-delay-2"
+            id="cv-en" aria-label="Download CV in English">
+            <div class="cv-flag" aria-hidden="true">🇬🇧</div>
+            <div class="cv-lang">English</div>
+            <div class="cv-sublabel">English version</div>
+            <div class="cv-dl-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
+              </svg>
+              Download
+            </div>
+          </a>
+          <a href="assets/cv/cv-fr.pdf" download="CV_Ruben_Garcia_FR.pdf" class="cv-card reveal reveal-delay-3"
+            id="cv-fr" aria-label="Télécharger le CV en français">
+            <div class="cv-flag" aria-hidden="true">🇫🇷</div>
+            <div class="cv-lang">Français</div>
+            <div class="cv-sublabel">Version française</div>
+            <div class="cv-dl-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
+              </svg>
+              Télécharger
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer class="footer" id="contact" role="contentinfo">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="footer-brand-name gradient-text">Rubén García</div>
+          <p class="footer-brand-desc">
+            Desarrollador apasionado por la tecnología, el diseño y las soluciones que marcan la diferencia.
+            Siempre abierto a nuevos retos y colaboraciones.
+          </p>
+          <div class="footer-social" role="list" aria-label="Redes sociales">
+            <a href="https://github.com/rubgarcia" target="_blank" rel="noopener" class="social-icon"
+              aria-label="GitHub" role="listitem">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+              </svg>
+            </a>
+            <a href="https://linkedin.com/in/rubgarcia" target="_blank" rel="noopener" class="social-icon"
+              aria-label="LinkedIn" role="listitem">
+              <svg viewBox="0 0 24 24">
+                <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z" />
+                <circle cx="4" cy="4" r="2" />
+              </svg>
+            </a>
+            <a href="mailto:rubgarcia@email.com" class="social-icon" aria-label="Email" role="listitem">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                <polyline points="22,6 12,13 2,6" />
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="footer-col-title">Navegación</h3>
+          <ul class="footer-links">
+            <li><a href="index.html" class="footer-link">Inicio</a></li>
+            <li><a href="#skills" class="footer-link">Skills</a></li>
+            <li><a href="projects.html" class="footer-link">Proyectos</a></li>
+            <li><a href="#cv" class="footer-link">Currículum</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="footer-col-title">Contacto</h3>
+          <ul class="footer-links">
+            <li><a href="mailto:rubgarcia@email.com" class="footer-link">rubgarcia@email.com</a></li>
+            <li><a href="https://linkedin.com/in/rubgarcia" target="_blank" rel="noopener"
+                class="footer-link">LinkedIn</a></li>
+            <li><a href="https://github.com/rubgarcia" target="_blank" rel="noopener" class="footer-link">GitHub</a>
+            </li>
+            <li><a href="assets/cv/cv-es.pdf" download class="footer-link">Descargar CV</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2025 Rubén García. Todos los derechos reservados.</p>
+        <p class="footer-bottom-right">
+          Hecho con <span class="footer-heart" aria-label="amor">♥</span> y mucho café
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
 </body>
+
 </html>

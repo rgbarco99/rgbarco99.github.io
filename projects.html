@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Proyectos e ideas de Rubén García — Desarrollador Full Stack. Explora mi trabajo en web, data science, apps y más." />
+  <title>Proyectos — Rubén García</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%237c6fff'/><text y='22' x='7' font-size='18' font-family='sans-serif' fill='white'>R</text></svg>" />
+</head>
+<body>
+
+  <!-- ============================================================
+       NAVIGATION
+  ============================================================ -->
+  <nav class="nav" id="nav" role="navigation" aria-label="Menú principal">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo" aria-label="Inicio">RG</a>
+      <ul class="nav-links" role="list">
+        <li><a href="index.html"    class="nav-link" id="nav-home">Inicio</a></li>
+        <li><a href="index.html#skills" class="nav-link">Skills</a></li>
+        <li><a href="projects.html" class="nav-link" id="nav-projects">Proyectos</a></li>
+        <li><a href="index.html#cv" class="nav-link">Currículum</a></li>
+        <li><a href="index.html#contact" class="nav-link nav-cta">Contacto</a></li>
+      </ul>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Abrir menú" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile drawer -->
+  <nav class="nav-mobile" id="nav-mobile" aria-label="Menú móvil">
+    <a href="index.html"        class="nav-link">Inicio</a>
+    <a href="index.html#skills" class="nav-link">Skills</a>
+    <a href="projects.html"     class="nav-link">Proyectos</a>
+    <a href="index.html#cv"     class="nav-link">Currículum</a>
+    <a href="index.html#contact" class="nav-link">Contacto</a>
+  </nav>
+
+  <main>
+
+    <!-- ============================================================
+         PAGE HERO
+    ============================================================ -->
+    <section class="page-hero" aria-label="Encabezado de proyectos">
+      <div>
+        <span class="section-label reveal">Portafolio</span>
+        <h1 class="page-hero-title reveal">
+          Mis <span class="gradient-text">Proyectos</span>
+        </h1>
+        <p class="page-hero-subtitle reveal">
+          Ideas convertidas en realidad. Aquí encontrarás todo lo que he construido, explorado o experimentado.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SEARCH + FILTERS
+    ============================================================ -->
+    <div class="search-container" role="search">
+      <div class="search-wrapper reveal">
+        <div class="search-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+        <input
+          type="search"
+          id="project-search"
+          class="search-input"
+          placeholder="Buscar por nombre, tecnología o descripción…"
+          aria-label="Buscar proyectos"
+          autocomplete="off"
+        />
+      </div>
+
+      <div class="filter-pills reveal" role="group" aria-label="Filtros por categoría">
+        <button class="filter-pill active" data-filter="all"         aria-pressed="true">Todos</button>
+        <button class="filter-pill"        data-filter="web"         aria-pressed="false">🌐 Web</button>
+        <button class="filter-pill"        data-filter="data"        aria-pressed="false">📊 Data</button>
+        <button class="filter-pill"        data-filter="mobile"      aria-pressed="false">📱 Mobile</button>
+        <button class="filter-pill"        data-filter="ia"          aria-pressed="false">🤖 IA / ML</button>
+        <button class="filter-pill"        data-filter="herramienta" aria-pressed="false">🔧 Herramienta</button>
+      </div>
+
+      <p class="results-info reveal" id="results-count" aria-live="polite"></p>
+    </div>
+
+    <!-- ============================================================
+         PROJECTS GRID
+    ============================================================ -->
+    <section class="projects-section" aria-label="Lista de proyectos">
+      <div class="projects-grid" id="projects-grid">
+
+        <!-- ——— PROJECT 1 ——— -->
+        <article class="project-card reveal"
+          data-title="Dashboard Analytics"
+          data-desc="Panel de control interactivo para visualizar métricas de negocio en tiempo real con gráficos dinámicos"
+          data-tags="react d3 nodejs dashboard"
+          data-category="web">
+          <div class="project-img-wrap">
+            <img src="assets/img/project-dashboard.png" alt="Preview del proyecto Dashboard Analytics" loading="lazy" />
+            <div class="project-overlay" aria-hidden="true">
+              <span class="project-overlay-btn">Ver proyecto →</span>
+            </div>
+          </div>
+          <div class="project-body">
+            <div class="project-tags">
+              <span class="project-tag">Web</span>
+              <span class="project-tag">React</span>
+              <span class="project-tag">D3.js</span>
+            </div>
+            <h2 class="project-title">Dashboard Analytics</h2>
+            <p class="project-desc">
+              Panel de control interactivo para visualizar métricas de negocio en tiempo real. Incluye gráficos dinámicos, filtros por fecha y exportación de datos.
+            </p>
+            <div class="project-footer">
+              <a href="#" class="project-link" aria-label="Ver Dashboard Analytics">
+                Ver proyecto
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+              <a href="https://github.com/rubgarcia" target="_blank" rel="noopener" class="project-link" aria-label="Código fuente en GitHub">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+                GitHub
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- ——— PROJECT 2 ——— -->
+        <article class="project-card reveal reveal-delay-1"
+          data-title="Predictor de Precios ML"
+          data-desc="Modelo de machine learning para predecir precios de viviendas con análisis exploratorio y visualización"
+          data-tags="python sklearn pandas machine learning ia"
+          data-category="ia">
+          <div class="project-img-wrap">
+            <img src="assets/img/project-data.png" alt="Preview del proyecto Predictor de Precios ML" loading="lazy" />
+            <div class="project-overlay" aria-hidden="true">
+              <span class="project-overlay-btn">Ver proyecto →</span>
+            </div>
+          </div>
+          <div class="project-body">
+            <div class="project-tags">
+              <span class="project-tag">IA / ML</span>
+              <span class="project-tag">Python</span>
+              <span class="project-tag">Sklearn</span>
+            </div>
+            <h2 class="project-title">Predictor de Precios con ML</h2>
+            <p class="project-desc">
+              Modelo de machine learning para predecir precios de vivienda. Incluye análisis exploratorio, feature engineering y comparación de algoritmos.
+            </p>
+            <div class="project-footer">
+              <a href="#" class="project-link" aria-label="Ver Predictor de Precios ML">
+                Ver proyecto
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+              <a href="https://github.com/rubgarcia" target="_blank" rel="noopener" class="project-link" aria-label="Código fuente en GitHub">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+                GitHub
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- ——— PROJECT 3 ——— -->
+        <article class="project-card reveal reveal-delay-2"
+          data-title="App de Productividad"
+          data-desc="Aplicación móvil para gestión de tareas con categorías etiquetas y recordatorios inteligentes"
+          data-tags="react native mobile app productividad"
+          data-category="mobile">
+          <div class="project-img-wrap">
+            <img src="assets/img/project-mobile.png" alt="Preview del proyecto App de Productividad" loading="lazy" />
+            <div class="project-overlay" aria-hidden="true">
+              <span class="project-overlay-btn">Ver proyecto →</span>
+            </div>
+          </div>
+          <div class="project-body">
+            <div class="project-tags">
+              <span class="project-tag">Mobile</span>
+              <span class="project-tag">React Native</span>
+              <span class="project-tag">Firebase</span>
+            </div>
+            <h2 class="project-title">App de Productividad</h2>
+            <p class="project-desc">
+              Aplicación móvil para gestión de tareas con categorías, etiquetas y recordatorios inteligentes. Sincronización en la nube en tiempo real.
+            </p>
+            <div class="project-footer">
+              <a href="#" class="project-link" aria-label="Ver App de Productividad">
+                Ver proyecto
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+              <a href="https://github.com/rubgarcia" target="_blank" rel="noopener" class="project-link" aria-label="Código fuente en GitHub">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+                GitHub
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- ——— PROJECT 4 ——— -->
+        <article class="project-card reveal"
+          data-title="API REST con Node.js"
+          data-desc="API RESTful escalable con autenticación JWT rate limiting y documentación automática con Swagger"
+          data-tags="nodejs express rest api backend herramienta"
+          data-category="herramienta">
+          <div class="project-img-wrap" style="background: linear-gradient(135deg, #1a1040 0%, #0a2040 100%); display:flex; align-items:center; justify-content:center;">
+            <div style="text-align:center; padding:2rem;">
+              <div style="font-size:4rem; margin-bottom:1rem;">🔧</div>
+              <div style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.1rem; color:#7c6fff;">Node.js + Express</div>
+            </div>
+            <div class="project-overlay" aria-hidden="true">
+              <span class="project-overlay-btn">Ver proyecto →</span>
+            </div>
+          </div>
+          <div class="project-body">
+            <div class="project-tags">
+              <span class="project-tag">Herramienta</span>
+              <span class="project-tag">Node.js</span>
+              <span class="project-tag">JWT</span>
+            </div>
+            <h2 class="project-title">API REST con Node.js</h2>
+            <p class="project-desc">
+              API RESTful escalable con autenticación JWT, rate limiting y documentación automática con Swagger. Lista para producción.
+            </p>
+            <div class="project-footer">
+              <a href="#" class="project-link" aria-label="Ver API REST con Node.js">
+                Ver proyecto
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+              <a href="https://github.com/rubgarcia" target="_blank" rel="noopener" class="project-link" aria-label="Código fuente en GitHub">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+                GitHub
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- ——— PROJECT 5 ——— -->
+        <article class="project-card reveal reveal-delay-1"
+          data-title="Análisis de Datos Spotify"
+          data-desc="Exploración y visualización de mis hábitos musicales en Spotify usando Python pandas y matplotlib"
+          data-tags="python pandas matplotlib spotify data análisis"
+          data-category="data">
+          <div class="project-img-wrap" style="background: linear-gradient(135deg, #0d2137 0%, #1b0d2e 100%); display:flex; align-items:center; justify-content:center;">
+            <div style="text-align:center; padding:2rem;">
+              <div style="font-size:4rem; margin-bottom:1rem;">📊</div>
+              <div style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.1rem; color:#00e5ff;">Pandas + Matplotlib</div>
+            </div>
+            <div class="project-overlay" aria-hidden="true">
+              <span class="project-overlay-btn">Ver proyecto →</span>
+            </div>
+          </div>
+          <div class="project-body">
+            <div class="project-tags">
+              <span class="project-tag">Data</span>
+              <span class="project-tag">Python</span>
+              <span class="project-tag">Pandas</span>
+            </div>
+            <h2 class="project-title">Análisis de Datos — Spotify</h2>
+            <p class="project-desc">
+              Exploración de hábitos musicales con la API de Spotify. Incluye visualizaciones interactivas, análisis de tendencias y clustering de géneros.
+            </p>
+            <div class="project-footer">
+              <a href="#" class="project-link" aria-label="Ver Análisis de Datos Spotify">
+                Ver proyecto
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+              <a href="https://github.com/rubgarcia" target="_blank" rel="noopener" class="project-link" aria-label="Código fuente en GitHub">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+                GitHub
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- ——— PROJECT 6 ——— -->
+        <article class="project-card reveal reveal-delay-2"
+          data-title="Portfolio Web Personal"
+          data-desc="Este mismo portfolio diseñado y desarrollado desde cero con HTML CSS y JavaScript vanilla"
+          data-tags="html css javascript portfolio web diseño"
+          data-category="web">
+          <div class="project-img-wrap" style="background: linear-gradient(135deg, #1a0a35 0%, #0a1535 100%); display:flex; align-items:center; justify-content:center;">
+            <div style="text-align:center; padding:2rem;">
+              <div style="font-size:4rem; margin-bottom:1rem;">🎨</div>
+              <div style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.1rem; background:linear-gradient(135deg,#7c6fff,#00e5ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">HTML · CSS · JS</div>
+            </div>
+            <div class="project-overlay" aria-hidden="true">
+              <span class="project-overlay-btn">Ver proyecto →</span>
+            </div>
+          </div>
+          <div class="project-body">
+            <div class="project-tags">
+              <span class="project-tag">Web</span>
+              <span class="project-tag">CSS</span>
+              <span class="project-tag">Vanilla JS</span>
+            </div>
+            <h2 class="project-title">Portfolio Web Personal</h2>
+            <p class="project-desc">
+              Este mismo portfolio, diseñado y desarrollado desde cero. Incluye animaciones, sistema de partículas, buscador de proyectos y soporte multiidioma.
+            </p>
+            <div class="project-footer">
+              <a href="index.html" class="project-link" aria-label="Ver Portfolio Web Personal">
+                Ver proyecto
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+              <a href="https://github.com/rubgarcia" target="_blank" rel="noopener" class="project-link" aria-label="Código fuente en GitHub">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+                GitHub
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- No results message -->
+        <div id="no-results" class="no-results" style="display:none;" role="status" aria-live="polite">
+          <div class="no-results-emoji" aria-hidden="true">🔍</div>
+          <p>No se encontraron proyectos con ese criterio.</p>
+          <p style="margin-top:0.5rem; font-size:0.85rem;">Prueba con otro término o selecciona "Todos".</p>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="footer-brand-name gradient-text">Rubén García</div>
+          <p class="footer-brand-desc">
+            Desarrollador apasionado por la tecnología, el diseño y las soluciones que marcan la diferencia. Siempre abierto a nuevos retos.
+          </p>
+          <div class="footer-social" role="list" aria-label="Redes sociales">
+            <a href="https://github.com/rubgarcia"      target="_blank" rel="noopener" class="social-icon" aria-label="GitHub" role="listitem">
+              <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+            </a>
+            <a href="https://linkedin.com/in/rubgarcia" target="_blank" rel="noopener" class="social-icon" aria-label="LinkedIn" role="listitem">
+              <svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+            </a>
+            <a href="mailto:rubgarcia@email.com" class="social-icon" aria-label="Email" role="listitem">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="footer-col-title">Navegación</h3>
+          <ul class="footer-links">
+            <li><a href="index.html"        class="footer-link">Inicio</a></li>
+            <li><a href="index.html#skills" class="footer-link">Skills</a></li>
+            <li><a href="projects.html"     class="footer-link">Proyectos</a></li>
+            <li><a href="index.html#cv"     class="footer-link">Currículum</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="footer-col-title">Contacto</h3>
+          <ul class="footer-links">
+            <li><a href="mailto:rubgarcia@email.com"             class="footer-link">rubgarcia@email.com</a></li>
+            <li><a href="https://linkedin.com/in/rubgarcia"      target="_blank" rel="noopener" class="footer-link">LinkedIn</a></li>
+            <li><a href="https://github.com/rubgarcia"           target="_blank" rel="noopener" class="footer-link">GitHub</a></li>
+            <li><a href="index.html#cv"                          class="footer-link">Descargar CV</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2025 Rubén García. Todos los derechos reservados.</p>
+        <p class="footer-bottom-right">
+          Hecho con <span class="footer-heart" aria-label="amor">♥</span> y mucho café
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
