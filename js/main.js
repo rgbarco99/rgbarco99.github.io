@@ -3,7 +3,29 @@
    ============================================= */
 
 /* --------------------------------------------------
-   1. NAV — scroll effect + hamburger
+   1. THEME TOGGLE (dark / light)
+   -------------------------------------------------- */
+const THEME_KEY = 'portfolio-theme';
+const themeToggleBtn = document.getElementById('theme-toggle');
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem(THEME_KEY, theme);
+}
+
+/* Load saved theme */
+const savedTheme = localStorage.getItem(THEME_KEY) || 'dark';
+applyTheme(savedTheme);
+
+if (themeToggleBtn) {
+  themeToggleBtn.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme');
+    applyTheme(current === 'dark' ? 'light' : 'dark');
+  });
+}
+
+/* --------------------------------------------------
+   2. NAV — scroll effect + hamburger
    -------------------------------------------------- */
 const nav = document.querySelector('.nav');
 const hamburger = document.getElementById('nav-hamburger');
@@ -18,7 +40,6 @@ if (hamburger && mobileMenu) {
     hamburger.classList.toggle('active');
     mobileMenu.classList.toggle('open');
   });
-  // Close on link click
   mobileMenu.querySelectorAll('.nav-link').forEach(link => {
     link.addEventListener('click', () => {
       hamburger.classList.remove('active');
@@ -28,7 +49,7 @@ if (hamburger && mobileMenu) {
 }
 
 /* --------------------------------------------------
-   2. ACTIVE NAV LINK — highlight current page
+   3. ACTIVE NAV LINK
    -------------------------------------------------- */
 const currentPage = window.location.pathname.split('/').pop() || 'index.html';
 document.querySelectorAll('.nav-link').forEach(link => {
@@ -39,20 +60,24 @@ document.querySelectorAll('.nav-link').forEach(link => {
 });
 
 /* --------------------------------------------------
-   3. TYPEWRITER EFFECT
+   4. TYPEWRITER (i18n-aware)
    -------------------------------------------------- */
 const typewriterEl = document.getElementById('typewriter');
 if (typewriterEl) {
-  const phrases = [
-    'Desarrollador Full Stack',
-    'Ingeniero de Software',
-    'Amante del código limpio',
-    'Siempre aprendiendo'
-  ];
+  let phrases = [];
   let phraseIdx = 0, charIdx = 0, isDeleting = false;
+  let typeTimer = null;
+
+  function getPhrasesFromI18n() {
+    if (window.i18n) {
+      const arr = window.i18n.t('hero.typewriter');
+      if (Array.isArray(arr)) return arr;
+    }
+    return ['SAP Fiori Developer', 'ABAP Programmer', 'SAP Consultant'];
+  }
 
   function type() {
-    const current = phrases[phraseIdx];
+    const current = phrases[phraseIdx] || '';
     typewriterEl.textContent = isDeleting
       ? current.slice(0, charIdx - 1)
       : current.slice(0, charIdx + 1);
@@ -63,13 +88,24 @@ if (typewriterEl) {
     if (!isDeleting && charIdx === current.length) { delay = 2000; isDeleting = true; }
     else if (isDeleting && charIdx === 0) { isDeleting = false; phraseIdx = (phraseIdx + 1) % phrases.length; delay = 350; }
 
-    setTimeout(type, delay);
+    typeTimer = setTimeout(type, delay);
   }
-  setTimeout(type, 800);
+
+  function startTypewriter() {
+    clearTimeout(typeTimer);
+    phrases = getPhrasesFromI18n();
+    phraseIdx = 0; charIdx = 0; isDeleting = false;
+    typewriterEl.textContent = '';
+    typeTimer = setTimeout(type, 600);
+  }
+
+  /* Start after i18n is ready */
+  document.addEventListener('DOMContentLoaded', startTypewriter);
+  document.addEventListener('langchange', startTypewriter);
 }
 
 /* --------------------------------------------------
-   4. SCROLL REVEAL (IntersectionObserver)
+   5. SCROLL REVEAL (IntersectionObserver)
    -------------------------------------------------- */
 const revealObserver = new IntersectionObserver((entries) => {
   entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
@@ -78,12 +114,12 @@ const revealObserver = new IntersectionObserver((entries) => {
 document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
 /* --------------------------------------------------
-   5. PARTICLE SYSTEM (canvas hero background)
+   6. PARTICLE SYSTEM (canvas hero background)
    -------------------------------------------------- */
 const canvas = document.getElementById('particles-canvas');
 if (canvas) {
   const ctx = canvas.getContext('2d');
-  let particles = [], animId;
+  let particles = [];
   const PARTICLE_COUNT = 80;
   const MAX_DIST = 140;
 
@@ -143,13 +179,13 @@ if (canvas) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     particles.forEach(p => { p.update(); p.draw(); });
     drawConnections();
-    animId = requestAnimationFrame(animate);
+    requestAnimationFrame(animate);
   }
   animate();
 }
 
 /* --------------------------------------------------
-   6. ANIMATED STAT COUNTERS
+   7. ANIMATED STAT COUNTERS
    -------------------------------------------------- */
 const counterEls = document.querySelectorAll('.counter');
 if (counterEls.length) {
@@ -159,15 +195,13 @@ if (counterEls.length) {
       e.target.dataset.counted = 'true';
       const target = +e.target.dataset.target;
       const suffix = e.target.dataset.suffix || '';
-      const prefix = e.target.dataset.prefix || '';
       const duration = 1800;
       const start = performance.now();
       function tick(now) {
         const elapsed = now - start;
         const progress = Math.min(elapsed / duration, 1);
         const ease = 1 - Math.pow(1 - progress, 3);
-        const value = Math.round(ease * target);
-        e.target.textContent = prefix + value + suffix;
+        e.target.textContent = Math.round(ease * target) + suffix;
         if (progress < 1) requestAnimationFrame(tick);
       }
       requestAnimationFrame(tick);
@@ -177,7 +211,46 @@ if (counterEls.length) {
 }
 
 /* --------------------------------------------------
-   7. PROJECTS — search + filter
+   8. RENDER SKILLS from SKILLS constant
+   -------------------------------------------------- */
+function renderSkills() {
+  const grid = document.getElementById('skills-grid');
+  if (!grid || typeof SKILLS === 'undefined') return;
+  const delays = ['', 'reveal-delay-1', 'reveal-delay-2', 'reveal-delay-3'];
+  grid.innerHTML = SKILLS.map((s, i) =>
+    `<span class="skill-chip reveal ${delays[i % 4]}">
+       <span class="skill-icon">${s.icon}</span> ${s.label}
+     </span>`
+  ).join('');
+  grid.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+}
+
+/* --------------------------------------------------
+   9. RENDER CLIENTS from CLIENTS constant
+   -------------------------------------------------- */
+function renderClients() {
+  const grid = document.getElementById('clients-grid');
+  if (!grid || typeof CLIENTS === 'undefined') return;
+  const delays = ['', 'reveal-delay-1', 'reveal-delay-2', 'reveal-delay-3'];
+  grid.innerHTML = CLIENTS.map((c, i) =>
+    `<div class="client-chip reveal ${delays[i % 4]}">
+       <span class="client-logo">${c.logo}</span>
+       <div>
+         <div class="client-name">${c.name}</div>
+         <div class="client-sector">${c.sector}</div>
+       </div>
+     </div>`
+  ).join('');
+  grid.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderSkills();
+  renderClients();
+});
+
+/* --------------------------------------------------
+   10. PROJECTS — search + filter
    -------------------------------------------------- */
 const searchInput = document.getElementById('project-search');
 const filterPills = document.querySelectorAll('.filter-pill');
@@ -191,33 +264,28 @@ if (searchInput && projectCards.length) {
   function filterProjects() {
     const query = searchInput.value.toLowerCase().trim();
     let visible = 0;
-
     projectCards.forEach(card => {
       const title = card.dataset.title.toLowerCase();
       const desc = card.dataset.desc.toLowerCase();
       const tags = card.dataset.tags.toLowerCase();
       const category = card.dataset.category;
-
       const matchesSearch = !query || title.includes(query) || desc.includes(query) || tags.includes(query);
       const matchesFilter = activeFilter === 'all' || category === activeFilter;
-
       if (matchesSearch && matchesFilter) {
         card.style.display = '';
         card.style.animation = 'none';
-        card.offsetHeight; // reflow
+        card.offsetHeight;
         card.style.animation = 'fadeIn 0.35s ease forwards';
         visible++;
       } else {
         card.style.display = 'none';
       }
     });
-
     if (noResults) noResults.style.display = visible === 0 ? 'block' : 'none';
     if (resultsCount) resultsCount.innerHTML = `Mostrando <span>${visible}</span> proyecto${visible !== 1 ? 's' : ''}`;
   }
 
   searchInput.addEventListener('input', filterProjects);
-
   filterPills.forEach(pill => {
     pill.addEventListener('click', () => {
       filterPills.forEach(p => p.classList.remove('active'));
@@ -227,16 +295,14 @@ if (searchInput && projectCards.length) {
     });
   });
 
-  // Inject fadeIn keyframe dynamically
   const styleEl = document.createElement('style');
   styleEl.textContent = '@keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }';
   document.head.appendChild(styleEl);
-
-  filterProjects(); // initial
+  filterProjects();
 }
 
 /* --------------------------------------------------
-   8. SMOOTH SCROLL for anchor links
+   11. SMOOTH SCROLL
    -------------------------------------------------- */
 document.querySelectorAll('a[href^="#"]').forEach(a => {
   a.addEventListener('click', e => {

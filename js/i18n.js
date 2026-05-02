@@ -15,6 +15,7 @@ const TRANSLATIONS = {
     'nav.projects': 'Proyectos',
     'nav.cv':       'Currículum',
     'nav.contact':  'Contacto',
+    'nav.blog':     'Blog',
 
     // Hero
     'hero.greeting':     '👋 Hola, soy',
@@ -84,6 +85,22 @@ const TRANSLATIONS = {
     'projects.noresults2':  'Prueba con otro término o selecciona "Todos".',
     'projects.view':        'Ver proyecto',
     'projects.source':      'GitHub',
+
+    // Blog
+    'blog.label':            'Blog',
+    'blog.title':            'Mis reflexiones',
+    'blog.subtitle':         'Un espacio privado donde escribo sobre tecnología, proyectos y todo lo que me inspira.',
+    'blog.lock.desc':        'Este contenido está protegido. Introduce la contraseña para acceder.',
+    'blog.lock.placeholder': 'Contraseña…',
+    'blog.lock.btn':         'Acceder',
+    'blog.lock.error':       '❌ Contraseña incorrecta. Inténtalo de nuevo.',
+    'blog.logout':           'Cerrar sesión',
+    'blog.post1.title':      'Optimizando OData V4 en SAP Fiori',
+    'blog.post1.body':       'Después de meses trabajando con OData V4 en proyectos reales, he recopilado los patrones que más me han ayudado a mejorar el rendimiento y la mantenibilidad de las aplicaciones Fiori. Desde el uso correcto de $batch hasta los filtros del lado servidor con CDS annotations.',
+    'blog.post2.title':      'RAP vs ABAP clásico: ¿cuándo usar cada uno?',
+    'blog.post2.body':       'El framework RESTful Application Programming (RAP) ha cambiado la forma en que desarrollamos en ABAP. En este post analizo los escenarios donde RAP brilla y aquellos donde el ABAP clásico sigue siendo la opción más pragmática.',
+    'blog.post3.title':      'Lo que nadie te dice sobre ser consultor SAP',
+    'blog.post3.body':       'Reflexiones honestas tras 5 años en el mundo SAP: la curva de aprendizaje real, la importancia del networking, cómo gestionar proyectos con cliente final, y por qué la documentación es más importante de lo que parece.',
   },
 
   /* ──────────────────────────────────────────
@@ -95,6 +112,7 @@ const TRANSLATIONS = {
     'nav.projects': 'Projects',
     'nav.cv':       'Resume',
     'nav.contact':  'Contact',
+    'nav.blog':     'Blog',
 
     'hero.greeting':     '👋 Hi, I\'m',
     'hero.bio':          'SAP specialist with experience in Fiori and ABAP development. Passionate about building elegant, robust and high-performance enterprise solutions.',
@@ -156,6 +174,22 @@ const TRANSLATIONS = {
     'projects.noresults2':  'Try a different term or select "All".',
     'projects.view':        'View project',
     'projects.source':      'GitHub',
+
+    // Blog
+    'blog.label':            'Blog',
+    'blog.title':            'My thoughts',
+    'blog.subtitle':         'A private space where I write about technology, projects and everything that inspires me.',
+    'blog.lock.desc':        'This content is protected. Enter the password to access.',
+    'blog.lock.placeholder': 'Password…',
+    'blog.lock.btn':         'Access',
+    'blog.lock.error':       '❌ Wrong password. Please try again.',
+    'blog.logout':           'Sign out',
+    'blog.post1.title':      'Optimizing OData V4 in SAP Fiori',
+    'blog.post1.body':       'After months working with OData V4 in real projects, I have compiled the patterns that have helped me most to improve the performance and maintainability of Fiori applications. From correct $batch usage to server-side filters with CDS annotations.',
+    'blog.post2.title':      'RAP vs Classic ABAP: when to use each?',
+    'blog.post2.body':       'The RESTful Application Programming (RAP) framework has changed the way we develop in ABAP. In this post I analyze the scenarios where RAP shines and those where classic ABAP is still the most pragmatic option.',
+    'blog.post3.title':      'What nobody tells you about being an SAP consultant',
+    'blog.post3.body':       'Honest reflections after 5 years in the SAP world: the real learning curve, the importance of networking, how to manage projects with end clients, and why documentation is more important than it seems.',
   },
 
   /* ──────────────────────────────────────────
@@ -167,6 +201,7 @@ const TRANSLATIONS = {
     'nav.projects': 'Projets',
     'nav.cv':       'CV',
     'nav.contact':  'Contact',
+    'nav.blog':     'Blog',
 
     'hero.greeting':     '👋 Bonjour, je suis',
     'hero.bio':          'Spécialiste SAP avec une expérience en développement Fiori et ABAP. Passionné par la création de solutions d\'entreprise élégantes, robustes et performantes.',
@@ -228,6 +263,22 @@ const TRANSLATIONS = {
     'projects.noresults2':  'Essayez un autre terme ou sélectionnez "Tous".',
     'projects.view':        'Voir le projet',
     'projects.source':      'GitHub',
+
+    // Blog
+    'blog.label':            'Blog',
+    'blog.title':            'Mes réflexions',
+    'blog.subtitle':         'Un espace privé où j\'écris sur la technologie, les projets et tout ce qui m\'inspire.',
+    'blog.lock.desc':        'Ce contenu est protégé. Entrez le mot de passe pour y accéder.',
+    'blog.lock.placeholder': 'Mot de passe…',
+    'blog.lock.btn':         'Accéder',
+    'blog.lock.error':       '❌ Mot de passe incorrect. Veuillez réessayer.',
+    'blog.logout':           'Se déconnecter',
+    'blog.post1.title':      'Optimiser OData V4 dans SAP Fiori',
+    'blog.post1.body':       'Après des mois de travail avec OData V4 dans des projets réels, j\'ai compilé les modèles qui m\'ont le plus aidé à améliorer les performances et la maintenabilité des applications Fiori.',
+    'blog.post2.title':      'RAP vs ABAP classique : quand utiliser chacun ?',
+    'blog.post2.body':       'Le framework RESTful Application Programming (RAP) a changé la façon dont nous développons en ABAP. Dans ce post, j\'analyse les scénarios où RAP brille et ceux où l\'ABAP classique reste l\'option la plus pragmatique.',
+    'blog.post3.title':      'Ce que personne ne vous dit sur le métier de consultant SAP',
+    'blog.post3.body':       'Réflexions honnêtes après 5 ans dans le monde SAP : la vraie courbe d\'apprentissage, l\'importance du réseau, comment gérer des projets avec des clients finaux, et pourquoi la documentation est plus importante qu\'il n\'y paraît.',
   }
 };
 

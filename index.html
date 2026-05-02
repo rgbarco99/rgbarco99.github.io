@@ -1,14 +1,13 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description"
-    content="Portfolio profesional de Rubén García — Desarrollador Full Stack apasionado por crear soluciones digitales." />
+    content="Portfolio profesional de Rubén García — Especialista SAP Fiori y ABAP." />
   <title>Rubén García — Portfolio</title>
   <link rel="stylesheet" href="css/styles.css" />
-  <!-- Favicon inline SVG -->
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%237c6fff'/><text y='22' x='7' font-size='18' font-family='sans-serif' fill='white'>R</text></svg>" />
 </head>
@@ -22,12 +21,26 @@
     <div class="nav-container">
       <a href="index.html" class="nav-logo" aria-label="Inicio">RG</a>
       <ul class="nav-links" role="list">
-        <li><a href="index.html" class="nav-link" id="nav-home">Inicio</a></li>
-        <li><a href="#skills" class="nav-link">Skills</a></li>
-        <li><a href="projects.html" class="nav-link" id="nav-projects">Proyectos</a></li>
-        <li><a href="#cv" class="nav-link">Currículum</a></li>
-        <li><a href="#contact" class="nav-link nav-cta">Contacto</a></li>
+        <li><a href="index.html" class="nav-link" data-i18n="nav.home">Inicio</a></li>
+        <li><a href="#skills" class="nav-link" data-i18n="nav.skills">Skills</a></li>
+        <li><a href="projects.html" class="nav-link" data-i18n="nav.projects">Proyectos</a></li>
+        <li><a href="#cv" class="nav-link" data-i18n="nav.cv">Currículum</a></li>
+        <li><a href="#contact" class="nav-link nav-cta" data-i18n="nav.contact">Contacto</a></li>
+        <li><a href="#blog" class="nav-link" data-i18n="nav.blog">Blog</a></li>
       </ul>
+      <div class="nav-controls">
+        <!-- Language switcher -->
+        <div class="lang-switcher" role="group" aria-label="Idioma">
+          <button class="lang-btn" data-lang="es" aria-pressed="true" title="Español">ES</button>
+          <button class="lang-btn" data-lang="en" aria-pressed="false" title="English">EN</button>
+          <button class="lang-btn" data-lang="fr" aria-pressed="false" title="Français">FR</button>
+        </div>
+        <!-- Theme toggle -->
+        <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema">
+          <span class="theme-icon-sun">☀️</span>
+          <span class="theme-icon-moon">🌙</span>
+        </button>
+      </div>
       <button class="nav-hamburger" id="nav-hamburger" aria-label="Abrir menú" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
@@ -36,11 +49,12 @@
 
   <!-- Mobile drawer -->
   <nav class="nav-mobile" id="nav-mobile" aria-label="Menú móvil">
-    <a href="index.html" class="nav-link">Inicio</a>
-    <a href="#skills" class="nav-link">Skills</a>
-    <a href="projects.html" class="nav-link">Proyectos</a>
-    <a href="#cv" class="nav-link">Currículum</a>
-    <a href="#contact" class="nav-link">Contacto</a>
+    <a href="index.html" class="nav-link" data-i18n="nav.home">Inicio</a>
+    <a href="#skills" class="nav-link" data-i18n="nav.skills">Skills</a>
+    <a href="projects.html" class="nav-link" data-i18n="nav.projects">Proyectos</a>
+    <a href="#cv" class="nav-link" data-i18n="nav.cv">Currículum</a>
+    <a href="#contact" class="nav-link" data-i18n="nav.contact">Contacto</a>
+    <a href="#blog" class="nav-link" data-i18n="nav.blog">Blog</a>
   </nav>
 
   <main>
@@ -54,7 +68,7 @@
       <div class="hero-content">
         <!-- Text column -->
         <div class="hero-text">
-          <p class="hero-greeting">👋 Hola, soy</p>
+          <p class="hero-greeting" data-i18n="hero.greeting">👋 Hola, soy</p>
           <h1 class="hero-name">
             Rubén<br />
             <span class="gradient-text">García</span>
@@ -62,20 +76,19 @@
           <div class="hero-title-wrap" aria-live="polite">
             <span id="typewriter"></span><span class="cursor" aria-hidden="true"></span>
           </div>
-          <p class="hero-bio">
-            Apasionado por construir productos digitales con código limpio y diseño cuidado.
-            Me encanta convertir ideas complejas en experiencias simples y elegantes.
+          <p class="hero-bio" data-i18n="hero.bio">
+            Especialista SAP con experiencia en desarrollo Fiori y ABAP.
           </p>
 
           <div class="hero-actions">
             <a href="projects.html" class="btn btn-primary" id="btn-ver-proyectos">
-              Ver proyectos
+              <span data-i18n="hero.btn.projects">Ver proyectos</span>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
             </a>
             <a href="#cv" class="btn btn-outline" id="btn-descargar-cv">
-              Descargar CV
+              <span data-i18n="hero.btn.cv">Descargar CV</span>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
               </svg>
@@ -84,31 +97,14 @@
 
           <!-- Social icons -->
           <div class="hero-social" role="list" aria-label="Redes sociales">
-            <!-- GitHub -->
             <a href="https://github.com/rubgarcia" target="_blank" rel="noopener" class="social-icon"
               aria-label="GitHub" role="listitem">
-              <svg viewBox="0 0 24 24">
-                <path
-                  d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
-              </svg>
+              <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" /></svg>
             </a>
-            <!-- LinkedIn -->
             <a href="https://linkedin.com/in/rubgarcia" target="_blank" rel="noopener" class="social-icon"
               aria-label="LinkedIn" role="listitem">
-              <svg viewBox="0 0 24 24">
-                <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z" />
-                <circle cx="4" cy="4" r="2" />
-              </svg>
+              <svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z" /><circle cx="4" cy="4" r="2" /></svg>
             </a>
-            <!-- Twitter/X -->
-            <a href="https://twitter.com/rubgarcia" target="_blank" rel="noopener" class="social-icon"
-              aria-label="Twitter / X" role="listitem">
-              <svg viewBox="0 0 24 24">
-                <path
-                  d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-              </svg>
-            </a>
-            <!-- Email -->
             <a href="mailto:rubgarcia@email.com" class="social-icon" aria-label="Email" role="listitem">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
@@ -124,39 +120,69 @@
             <img src="assets/img/profile.jpg" alt="Foto de perfil de Rubén García" class="hero-avatar"
               id="profile-photo" />
           </div>
-          <!-- Floating badge -->
           <div class="hero-badge" aria-label="Estado actual">
             <span class="badge-dot"></span>
-            <span class="badge-text">Disponible para proyectos</span>
+            <span class="badge-text" data-i18n="hero.badge">Disponible para proyectos</span>
           </div>
         </div>
       </div>
     </section>
 
     <!-- ============================================================
-         STATS SECTION
+         ABOUT / SAP EXPERTISE
     ============================================================ -->
-    <section class="section" id="about" aria-label="Estadísticas">
+    <section class="section" id="about" aria-label="Sobre mí">
       <div class="section-inner">
         <div class="section-header reveal">
-          <span class="section-label">En números</span>
-          <h2 class="section-title">Un poco sobre mí</h2>
-          <p class="section-subtitle">Estos son algunos de los hitos que definen mi trayectoria profesional hasta la
-            fecha.</p>
+          <span class="section-label" data-i18n="about.label">Mi especialidad</span>
+          <h2 class="section-title" data-i18n="about.title">SAP Fiori &amp; ABAP</h2>
+          <p class="section-subtitle" data-i18n="about.subtitle">Con más de 5 años de experiencia en el ecosistema SAP.</p>
         </div>
+
+        <!-- Stats -->
         <div class="stats-grid">
           <div class="stat-card reveal reveal-delay-1">
             <div class="stat-value counter" data-target="5" data-suffix="+">0+</div>
-            <div class="stat-label">Años de experiencia</div>
+            <div class="stat-label" data-i18n="stat1.label">Años en SAP</div>
           </div>
           <div class="stat-card reveal reveal-delay-2">
             <div class="stat-value counter" data-target="20" data-suffix="+">0+</div>
-            <div class="stat-label">Proyectos completados</div>
+            <div class="stat-label" data-i18n="stat2.label">Proyectos SAP</div>
           </div>
           <div class="stat-card reveal reveal-delay-3">
-            <div class="stat-value counter" data-target="3" data-suffix="">0</div>
-            <div class="stat-label">Idiomas</div>
+            <div class="stat-value counter" data-target="8" data-suffix="">0</div>
+            <div class="stat-label" data-i18n="stat3.label">Clientes</div>
           </div>
+        </div>
+
+        <!-- Expertise cards -->
+        <div class="expertise-grid reveal">
+          <div class="expertise-card">
+            <div class="expertise-icon">🎨</div>
+            <h3 class="expertise-title" data-i18n="exp.fiori.title">SAP Fiori</h3>
+            <p class="expertise-desc" data-i18n="exp.fiori.desc">Desarrollo de aplicaciones Fiori con SAPUI5, Freestyle y SAP Build.</p>
+          </div>
+          <div class="expertise-card">
+            <div class="expertise-icon">⚙️</div>
+            <h3 class="expertise-title" data-i18n="exp.abap.title">ABAP</h3>
+            <p class="expertise-desc" data-i18n="exp.abap.desc">Programación ABAP clásico y RESTful (RAP). Reports, BADIs, OData, CDS Views.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         CLIENTS SECTION
+    ============================================================ -->
+    <section class="section clients-section" id="clients" aria-label="Clientes">
+      <div class="section-inner">
+        <div class="section-header reveal">
+          <span class="section-label" data-i18n="clients.label">Trayectoria</span>
+          <h2 class="section-title" data-i18n="clients.title">Clientes con los que he trabajado</h2>
+          <p class="section-subtitle" data-i18n="clients.subtitle">He tenido la oportunidad de participar en proyectos SAP para empresas de distintos sectores industriales.</p>
+        </div>
+        <div class="clients-grid" id="clients-grid">
+          <!-- JS will render clients from CLIENTS constant -->
         </div>
       </div>
     </section>
@@ -167,25 +193,12 @@
     <section class="section skills-section" id="skills" aria-label="Habilidades técnicas">
       <div class="section-inner">
         <div class="section-header reveal">
-          <span class="section-label">Tecnologías</span>
-          <h2 class="section-title">Mi stack de trabajo</h2>
-          <p class="section-subtitle">Herramientas y lenguajes con los que trabajo en el día a día.</p>
+          <span class="section-label" data-i18n="skills.label">Tecnologías</span>
+          <h2 class="section-title" data-i18n="skills.title">Mi stack técnico</h2>
+          <p class="section-subtitle" data-i18n="skills.subtitle">Plataformas, lenguajes y herramientas con los que desarrollo en el día a día.</p>
         </div>
-        <div class="skills-grid">
-          <span class="skill-chip reveal"><span class="skill-icon">⚡</span> JavaScript</span>
-          <span class="skill-chip reveal reveal-delay-1"><span class="skill-icon">🐍</span> Python</span>
-          <span class="skill-chip reveal reveal-delay-2"><span class="skill-icon">⚛️</span> React</span>
-          <span class="skill-chip reveal reveal-delay-3"><span class="skill-icon">🟩</span> Node.js</span>
-          <span class="skill-chip reveal"><span class="skill-icon">🎨</span> CSS / Sass</span>
-          <span class="skill-chip reveal reveal-delay-1"><span class="skill-icon">🛠️</span> TypeScript</span>
-          <span class="skill-chip reveal reveal-delay-2"><span class="skill-icon">🐋</span> Docker</span>
-          <span class="skill-chip reveal reveal-delay-3"><span class="skill-icon">☁️</span> AWS</span>
-          <span class="skill-chip reveal"><span class="skill-icon">🗄️</span> PostgreSQL</span>
-          <span class="skill-chip reveal reveal-delay-1"><span class="skill-icon">🔥</span> Firebase</span>
-          <span class="skill-chip reveal reveal-delay-2"><span class="skill-icon">🐙</span> Git / GitHub</span>
-          <span class="skill-chip reveal reveal-delay-3"><span class="skill-icon">🤖</span> Machine Learning</span>
-          <span class="skill-chip reveal"><span class="skill-icon">📊</span> Data Analysis</span>
-          <span class="skill-chip reveal reveal-delay-1"><span class="skill-icon">🔧</span> REST APIs</span>
+        <div class="skills-grid" id="skills-grid">
+          <!-- JS will render skills from SKILLS constant -->
         </div>
       </div>
     </section>
@@ -196,48 +209,105 @@
     <section class="section cv-section" id="cv" aria-label="Descargar currículum">
       <div class="section-inner">
         <div class="section-header reveal">
-          <span class="section-label">Currículum</span>
-          <h2 class="section-title">Descarga mi CV</h2>
-          <p class="section-subtitle">Disponible en tres idiomas. Elige el que prefieras y descárgalo directamente.</p>
+          <span class="section-label" data-i18n="cv.label">Currículum</span>
+          <h2 class="section-title" data-i18n="cv.title">Descarga mi CV</h2>
+          <p class="section-subtitle" data-i18n="cv.subtitle">Disponible en tres idiomas. Elige el que prefieras y descárgalo directamente.</p>
         </div>
         <div class="cv-grid">
           <a href="assets/cv/cv-es.pdf" download="CV_Ruben_Garcia_ES.pdf" class="cv-card reveal reveal-delay-1"
             id="cv-es" aria-label="Descargar CV en español">
             <div class="cv-flag" aria-hidden="true">🇪🇸</div>
-            <div class="cv-lang">Español</div>
-            <div class="cv-sublabel">Versión en castellano</div>
+            <div class="cv-lang" data-i18n="cv.es.lang">Español</div>
+            <div class="cv-sublabel" data-i18n="cv.es.sub">Versión en castellano</div>
             <div class="cv-dl-btn">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
               </svg>
-              Descargar
+              <span data-i18n="cv.es.btn">Descargar</span>
             </div>
           </a>
           <a href="assets/cv/cv-en.pdf" download="CV_Ruben_Garcia_EN.pdf" class="cv-card reveal reveal-delay-2"
             id="cv-en" aria-label="Download CV in English">
             <div class="cv-flag" aria-hidden="true">🇬🇧</div>
-            <div class="cv-lang">English</div>
-            <div class="cv-sublabel">English version</div>
+            <div class="cv-lang" data-i18n="cv.en.lang">English</div>
+            <div class="cv-sublabel" data-i18n="cv.en.sub">English version</div>
             <div class="cv-dl-btn">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
               </svg>
-              Download
+              <span data-i18n="cv.en.btn">Download</span>
             </div>
           </a>
           <a href="assets/cv/cv-fr.pdf" download="CV_Ruben_Garcia_FR.pdf" class="cv-card reveal reveal-delay-3"
             id="cv-fr" aria-label="Télécharger le CV en français">
             <div class="cv-flag" aria-hidden="true">🇫🇷</div>
-            <div class="cv-lang">Français</div>
-            <div class="cv-sublabel">Version française</div>
+            <div class="cv-lang" data-i18n="cv.fr.lang">Français</div>
+            <div class="cv-sublabel" data-i18n="cv.fr.sub">Version française</div>
             <div class="cv-dl-btn">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
               </svg>
-              Télécharger
+              <span data-i18n="cv.fr.btn">Télécharger</span>
             </div>
           </a>
         </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         BLOG SECTION (protected)
+    ============================================================ -->
+    <section class="section blog-section" id="blog" aria-label="Blog privado">
+      <div class="section-inner">
+        <div class="section-header reveal">
+          <span class="section-label" data-i18n="blog.label">Blog</span>
+          <h2 class="section-title" data-i18n="blog.title">Mis reflexiones</h2>
+          <p class="section-subtitle" data-i18n="blog.subtitle">Un espacio privado donde escribo sobre tecnología, proyectos y todo lo que me inspira.</p>
+        </div>
+
+        <!-- Lock screen -->
+        <div class="blog-lock" id="blog-lock">
+          <div class="blog-lock-card reveal">
+            <div class="blog-lock-icon">🔐</div>
+            <p class="blog-lock-desc" data-i18n="blog.lock.desc">Este contenido está protegido. Introduce la contraseña para acceder.</p>
+            <form class="blog-lock-form" id="blog-lock-form" autocomplete="off">
+              <div class="blog-password-wrap">
+                <input
+                  type="password"
+                  id="blog-password"
+                  class="blog-password-input"
+                  data-i18n-ph="blog.lock.placeholder"
+                  placeholder="Contraseña…"
+                  aria-label="Contraseña del blog"
+                  autocomplete="new-password"
+                />
+                <button type="button" class="blog-eye-btn" id="blog-eye-btn" aria-label="Mostrar contraseña">
+                  <svg id="eye-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg id="eye-closed" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </button>
+              </div>
+              <p class="blog-error" id="blog-error" aria-live="polite"></p>
+              <button type="submit" class="btn btn-primary blog-submit" id="blog-submit">
+                <span data-i18n="blog.lock.btn">Acceder</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Blog content (hidden until unlocked) -->
+        <div class="blog-content" id="blog-content" style="display:none">
+          <div class="blog-toolbar">
+            <button class="btn btn-outline blog-logout-btn" id="blog-logout">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+              <span data-i18n="blog.logout">Cerrar sesión</span>
+            </button>
+          </div>
+          <div class="blog-posts" id="blog-posts">
+            <!-- Posts rendered by JS from BLOG_POSTS constant -->
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -251,66 +321,58 @@
       <div class="footer-top">
         <div class="footer-brand">
           <div class="footer-brand-name gradient-text">Rubén García</div>
-          <p class="footer-brand-desc">
-            Desarrollador apasionado por la tecnología, el diseño y las soluciones que marcan la diferencia.
-            Siempre abierto a nuevos retos y colaboraciones.
+          <p class="footer-brand-desc" data-i18n="footer.brand.desc">
+            Especialista SAP Fiori &amp; ABAP apasionado por construir soluciones empresariales robustas.
           </p>
           <div class="footer-social" role="list" aria-label="Redes sociales">
-            <a href="https://github.com/rubgarcia" target="_blank" rel="noopener" class="social-icon"
-              aria-label="GitHub" role="listitem">
-              <svg viewBox="0 0 24 24">
-                <path
-                  d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
-              </svg>
+            <a href="https://github.com/rubgarcia" target="_blank" rel="noopener" class="social-icon" aria-label="GitHub" role="listitem">
+              <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
             </a>
-            <a href="https://linkedin.com/in/rubgarcia" target="_blank" rel="noopener" class="social-icon"
-              aria-label="LinkedIn" role="listitem">
-              <svg viewBox="0 0 24 24">
-                <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z" />
-                <circle cx="4" cy="4" r="2" />
-              </svg>
+            <a href="https://linkedin.com/in/rubgarcia" target="_blank" rel="noopener" class="social-icon" aria-label="LinkedIn" role="listitem">
+              <svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
             </a>
             <a href="mailto:rubgarcia@email.com" class="social-icon" aria-label="Email" role="listitem">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                <polyline points="22,6 12,13 2,6" />
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
               </svg>
             </a>
           </div>
         </div>
 
         <div>
-          <h3 class="footer-col-title">Navegación</h3>
+          <h3 class="footer-col-title" data-i18n="footer.nav.title">Navegación</h3>
           <ul class="footer-links">
-            <li><a href="index.html" class="footer-link">Inicio</a></li>
-            <li><a href="#skills" class="footer-link">Skills</a></li>
-            <li><a href="projects.html" class="footer-link">Proyectos</a></li>
-            <li><a href="#cv" class="footer-link">Currículum</a></li>
+            <li><a href="index.html" class="footer-link" data-i18n="nav.home">Inicio</a></li>
+            <li><a href="#skills" class="footer-link" data-i18n="nav.skills">Skills</a></li>
+            <li><a href="projects.html" class="footer-link" data-i18n="nav.projects">Proyectos</a></li>
+            <li><a href="#cv" class="footer-link" data-i18n="nav.cv">Currículum</a></li>
           </ul>
         </div>
 
         <div>
-          <h3 class="footer-col-title">Contacto</h3>
+          <h3 class="footer-col-title" data-i18n="footer.contact.title">Contacto</h3>
           <ul class="footer-links">
             <li><a href="mailto:rubgarcia@email.com" class="footer-link">rubgarcia@email.com</a></li>
-            <li><a href="https://linkedin.com/in/rubgarcia" target="_blank" rel="noopener"
-                class="footer-link">LinkedIn</a></li>
-            <li><a href="https://github.com/rubgarcia" target="_blank" rel="noopener" class="footer-link">GitHub</a>
-            </li>
-            <li><a href="assets/cv/cv-es.pdf" download class="footer-link">Descargar CV</a></li>
+            <li><a href="https://linkedin.com/in/rubgarcia" target="_blank" rel="noopener" class="footer-link">LinkedIn</a></li>
+            <li><a href="https://github.com/rubgarcia" target="_blank" rel="noopener" class="footer-link">GitHub</a></li>
+            <li><a href="assets/cv/cv-es.pdf" download class="footer-link" data-i18n="hero.btn.cv">Descargar CV</a></li>
           </ul>
         </div>
       </div>
 
       <div class="footer-bottom">
-        <p>© 2025 Rubén García. Todos los derechos reservados.</p>
+        <p data-i18n="footer.copyright">© 2025 Rubén García. Todos los derechos reservados.</p>
         <p class="footer-bottom-right">
-          Hecho con <span class="footer-heart" aria-label="amor">♥</span> y mucho café
+          <span data-i18n="footer.made">Hecho con mucho café</span> <span class="footer-heart" aria-label="amor">♥</span>
         </p>
       </div>
     </div>
   </footer>
 
+  <script src="js/i18n.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/blog.js"></script>
   <script src="js/main.js"></script>
 </body>
 
