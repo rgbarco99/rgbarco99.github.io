@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Panel de administración del blog — Rubén García." />
+  <title>Admin Blog — Rubén García</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%237c6fff'/><text y='22' x='7' font-size='18' font-family='sans-serif' fill='white'>R</text></svg>" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav" id="nav" role="navigation" aria-label="Menú principal">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo" aria-label="Inicio">RG</a>
+      <ul class="nav-links" role="list">
+        <li><a href="index.html"         class="nav-link">Inicio</a></li>
+        <li><a href="index.html#skills"  class="nav-link">Skills</a></li>
+        <li><a href="projects.html"      class="nav-link">Proyectos</a></li>
+        <li><a href="index.html#cv"      class="nav-link">Currículum</a></li>
+        <li><a href="index.html#contact" class="nav-link nav-cta">Contacto</a></li>
+        <li><a href="blog.html"          class="nav-link active">Blog</a></li>
+      </ul>
+      <div class="nav-controls">
+        <div class="lang-switcher" role="group" aria-label="Idioma">
+          <button class="lang-btn" data-lang="es" aria-pressed="true"  title="Español">ES</button>
+          <button class="lang-btn" data-lang="en" aria-pressed="false" title="English">EN</button>
+          <button class="lang-btn" data-lang="fr" aria-pressed="false" title="Français">FR</button>
+        </div>
+        <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema">
+          <span class="theme-icon-sun">☀️</span>
+          <span class="theme-icon-moon">🌙</span>
+        </button>
+      </div>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Abrir menú" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile drawer -->
+  <nav class="nav-mobile" id="nav-mobile" aria-label="Menú móvil">
+    <a href="index.html"         class="nav-link">Inicio</a>
+    <a href="index.html#skills"  class="nav-link">Skills</a>
+    <a href="projects.html"      class="nav-link">Proyectos</a>
+    <a href="index.html#cv"      class="nav-link">Currículum</a>
+    <a href="index.html#contact" class="nav-link">Contacto</a>
+    <a href="blog.html"          class="nav-link">Blog</a>
+  </nav>
+
+  <main class="admin-page">
+
+    <!-- LOCK SCREEN -->
+    <div id="admin-lock" style="min-height:100vh; display:flex; align-items:center; justify-content:center; padding:2rem;">
+      <div class="blog-lock-card reveal" style="max-width:440px; width:100%;">
+        <div class="blog-lock-icon">🛠️</div>
+        <span class="section-label" style="display:block; margin-bottom:0.5rem;">Admin</span>
+        <h1 class="blog-lock-title">Panel de Blog</h1>
+        <p class="blog-lock-desc">Introduce la contraseña del blog para acceder al panel de administración.</p>
+        <form id="admin-lock-form" class="blog-lock-form" autocomplete="off">
+          <div class="blog-password-wrap">
+            <input type="password" id="admin-password" class="blog-password-input"
+              placeholder="Contraseña…" aria-label="Contraseña" autocomplete="new-password" />
+            <button type="button" class="blog-eye-btn" id="admin-eye-btn" aria-label="Mostrar contraseña">
+              <svg id="eye-open"   width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg id="eye-closed" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
+          <p class="blog-error" id="admin-error" aria-live="polite"></p>
+          <button type="submit" id="admin-submit" class="btn btn-primary blog-submit">
+            <span>Acceder</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ADMIN CONTENT -->
+    <div id="admin-content" style="display:none;">
+
+      <!-- Hero -->
+      <div class="admin-hero">
+        <span class="section-label">Admin</span>
+        <h1 class="page-hero-title" style="margin-bottom:0.5rem;">
+          Panel de <span class="gradient-text">Blog</span>
+        </h1>
+        <p class="page-hero-subtitle">Crea, gestiona y exporta posts cifrados.</p>
+        <div style="display:flex; gap:0.75rem; justify-content:center; margin-top:1.5rem; flex-wrap:wrap;">
+          <a href="blog.html" class="btn btn-outline" style="font-size:0.85rem;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+            Volver al blog
+          </a>
+          <button id="admin-logout" class="btn btn-outline" style="font-size:0.85rem;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+            Cerrar sesión
+          </button>
+        </div>
+      </div>
+
+      <div class="admin-section">
+
+        <!-- ALERT -->
+        <div id="admin-alert" style="display:none;"></div>
+
+        <!-- ═══════════════════════════════════
+             NUEVO POST
+        ════════════════════════════════════ -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h2 class="admin-card-title">✍️ Nuevo post</h2>
+            <button id="btn-toggle-form" class="btn btn-primary" style="font-size:0.82rem; padding:0.5rem 1.2rem;">
+              + Crear post
+            </button>
+          </div>
+
+          <div class="admin-form-wrap" id="new-post-form-wrap">
+            <form class="admin-form" id="new-post-form" autocomplete="off">
+
+              <div class="admin-row">
+                <div class="admin-field">
+                  <label class="admin-label" for="f-emoji">Emoji</label>
+                  <input type="text" id="f-emoji" class="admin-input" placeholder="📝" maxlength="4" />
+                </div>
+                <div class="admin-field">
+                  <label class="admin-label" for="f-date">Fecha</label>
+                  <input type="date" id="f-date" class="admin-input" />
+                </div>
+              </div>
+
+              <div class="admin-field">
+                <label class="admin-label" for="f-title">Título</label>
+                <input type="text" id="f-title" class="admin-input" placeholder="Título del post…" required />
+              </div>
+
+              <div class="admin-field">
+                <label class="admin-label">Etiquetas <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted)">(Enter o coma para añadir)</span></label>
+                <div class="admin-tag-box" id="tag-box" onclick="document.getElementById('tag-input').focus()">
+                  <input type="text" id="tag-input" class="admin-tag-input" placeholder="Añadir etiqueta…" autocomplete="off" />
+                </div>
+              </div>
+
+              <div class="admin-field">
+                <label class="admin-label" for="f-body">Contenido <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted)">(Markdown)</span></label>
+                <textarea id="f-body" class="admin-textarea" placeholder="# Título principal&#10;&#10;Empieza a escribir en Markdown…&#10;&#10;## Sección&#10;&#10;**Negrita**, *cursiva*, `código`" required></textarea>
+              </div>
+
+              <!-- IMAGES -->
+              <div class="admin-field">
+                <label class="admin-label">Imágenes <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted)">(URL o subir archivo)</span></label>
+                <div class="admin-image-list" id="image-list"></div>
+                <div style="display:flex; gap:0.6rem; margin-top:0.5rem; flex-wrap:wrap;">
+                  <button type="button" id="btn-add-url" class="btn btn-outline" style="font-size:0.8rem; padding:0.45rem 1rem;">
+                    + Añadir URL
+                  </button>
+                  <label class="btn btn-outline" style="font-size:0.8rem; padding:0.45rem 1rem; cursor:pointer; margin:0;">
+                    📁 Subir imagen
+                    <input type="file" id="file-upload" accept="image/*" style="display:none;" multiple />
+                  </label>
+                </div>
+                <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.4rem;">
+                  Las imágenes subidas se codifican en Base64 (no se guardan en el servidor).
+                </p>
+              </div>
+
+              <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-top:0.5rem;">
+                <button type="submit" id="btn-save-post" class="btn btn-primary">
+                  🔐 Cifrar y guardar
+                </button>
+                <button type="button" id="btn-cancel-form" class="btn btn-outline">
+                  Cancelar
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════
+             LISTA DE POSTS
+        ════════════════════════════════════ -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h2 class="admin-card-title">📋 Posts publicados</h2>
+            <span id="posts-count" style="font-size:0.82rem; color:var(--text-muted);"></span>
+          </div>
+          <div class="admin-post-list" id="admin-post-list">
+            <!-- JS render -->
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════
+             EXPORTAR
+        ════════════════════════════════════ -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h2 class="admin-card-title">📤 Exportar a data.js</h2>
+            <button id="btn-export" class="btn btn-outline" style="font-size:0.82rem; padding:0.5rem 1.1rem;">
+              Generar snippet
+            </button>
+          </div>
+          <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:1rem; line-height:1.7;">
+            Genera el bloque <code style="background:rgba(124,111,255,0.12);color:var(--accent-cyan);padding:0.1em 0.4em;border-radius:4px;font-size:0.85em;">BLOG_POSTS</code>
+            con los posts guardados en localStorage para reemplazarlo en <code style="background:rgba(124,111,255,0.12);color:var(--accent-cyan);padding:0.1em 0.4em;border-radius:4px;font-size:0.85em;">js/data.js</code>.
+            Incluye los posts estáticos más los posts locales.
+          </p>
+          <textarea id="export-area" class="admin-export-area" readonly placeholder="Pulsa «Generar snippet» para ver el código…"></textarea>
+          <button id="btn-copy-export" class="btn btn-outline" style="margin-top:0.75rem; font-size:0.82rem; padding:0.5rem 1.1rem; display:none;">
+            📋 Copiar al portapapeles
+          </button>
+        </div>
+
+      </div><!-- /admin-section -->
+    </div><!-- /admin-content -->
+
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="footer-inner">
+      <div class="footer-bottom" style="border-top:none; padding-top:0;">
+        <p>© 2025 Rubén García. Todos los derechos reservados.</p>
+        <p class="footer-bottom-right">Hecho con mucho café <span class="footer-heart">♥</span></p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/blog-crypto.js"></script>
+  <script>
+  /* ═══════════════════════════════════════════════════════════════════
+     blog-admin.html — Panel de administración
+  ═══════════════════════════════════════════════════════════════════ */
+
+  const BLOG_PASSWORD_HASH = '7367c98b14b9b37fcf0dd9bd6eb45e8671bed22fe70f085013ecae052eea27a4';
+  const SESSION_KEY  = '_blog_auth';
+  const SESSION_PW   = '_blog_pw';
+  const LOCAL_KEY    = '_blog_local_posts';
+
+  /* ── Theme ──────────────────────────────────────────────────────── */
+  const savedTheme = localStorage.getItem('portfolio-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  document.getElementById('theme-toggle')?.addEventListener('click', () => {
+    const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('portfolio-theme', next);
+  });
+
+  /* ── Nav ────────────────────────────────────────────────────────── */
+  const navEl = document.querySelector('.nav');
+  window.addEventListener('scroll', () => navEl.classList.toggle('scrolled', window.scrollY > 20), { passive:true });
+  const hamburger = document.getElementById('nav-hamburger');
+  const mobileMenu = document.getElementById('nav-mobile');
+  if (hamburger && mobileMenu) hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('active'); mobileMenu.classList.toggle('open');
+  });
+
+  /* ── Scroll reveal ──────────────────────────────────────────────── */
+  const revealObs = new IntersectionObserver(entries =>
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+    { threshold: 0.1 }
+  );
+  document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+  /* ── Eye toggle (lock screen) ───────────────────────────────────── */
+  const eyeBtn    = document.getElementById('admin-eye-btn');
+  const pwInput   = document.getElementById('admin-password');
+  const eyeOpen   = document.getElementById('eye-open');
+  const eyeClosed = document.getElementById('eye-closed');
+  if (eyeBtn) eyeBtn.addEventListener('click', () => {
+    const t = pwInput.type === 'text';
+    pwInput.type = t ? 'password' : 'text';
+    eyeOpen.style.display   = t ? 'block' : 'none';
+    eyeClosed.style.display = t ? 'none'  : 'block';
+  });
+
+  /* ── localStorage helpers ───────────────────────────────────────── */
+  function getLocalPosts() {
+    try { return JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]'); }
+    catch { return []; }
+  }
+  function saveLocalPosts(posts) {
+    localStorage.setItem(LOCAL_KEY, JSON.stringify(posts));
+  }
+  function getAllPosts() {
+    const staticPosts = (typeof BLOG_POSTS !== 'undefined' ? BLOG_POSTS : [])
+      .map(p => ({ ...p, _source: 'static' }));
+    const localPosts  = getLocalPosts().map(p => ({ ...p, _source: 'local' }));
+    return [...staticPosts, ...localPosts].sort((a,b) => new Date(b.date) - new Date(a.date));
+  }
+
+  /* ── Alert ──────────────────────────────────────────────────────── */
+  function showAlert(msg, type = 'success') {
+    const el = document.getElementById('admin-alert');
+    el.innerHTML = `<div class="admin-alert admin-alert-${type}">${type === 'success' ? '✅' : '❌'} ${msg}</div>`;
+    el.style.display = 'block';
+    setTimeout(() => { el.style.display = 'none'; }, 4000);
+  }
+
+  /* ── Format date ────────────────────────────────────────────────── */
+  function fmtDate(d) {
+    return new Date(d + 'T12:00:00').toLocaleDateString('es', { year:'numeric', month:'short', day:'numeric' });
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     RENDER POSTS LIST
+  ═══════════════════════════════════════════════════════════════════ */
+  function renderPostList() {
+    const posts = getAllPosts();
+    const list  = document.getElementById('admin-post-list');
+    const count = document.getElementById('posts-count');
+    count.textContent = `${posts.length} post${posts.length !== 1 ? 's' : ''}`;
+
+    if (!posts.length) {
+      list.innerHTML = '<p style="color:var(--text-muted);font-size:0.9rem;text-align:center;padding:1.5rem 0;">No hay posts todavía.</p>';
+      return;
+    }
+
+    list.innerHTML = posts.map(p => `
+      <div class="admin-post-item">
+        <div class="admin-post-item-info">
+          <span class="admin-post-item-emoji">${p.emoji || '📝'}</span>
+          <div style="min-width:0;">
+            <div class="admin-post-item-title" title="${p.title}">${p.title}</div>
+            <div class="admin-post-item-meta">${fmtDate(p.date)} · ${(p.tags||[]).join(', ') || '—'}</div>
+          </div>
+        </div>
+        <div class="admin-post-item-actions">
+          <span class="admin-badge ${p._source === 'local' ? 'admin-badge-local' : 'admin-badge-static'}">
+            ${p._source === 'local' ? 'Local' : 'data.js'}
+          </span>
+          ${p._source === 'local' ? `
+            <button class="btn btn-outline" onclick="deletePost('${p.id}')"
+              style="font-size:0.75rem;padding:0.3rem 0.65rem;border-color:#ff6b6b50;color:#ff6b6b;"
+              title="Eliminar">
+              🗑
+            </button>` : ''}
+        </div>
+      </div>`).join('');
+  }
+
+  /* ── Delete local post ──────────────────────────────────────────── */
+  function deletePost(id) {
+    if (!confirm('¿Eliminar este post? Esta acción no se puede deshacer.')) return;
+    const posts = getLocalPosts().filter(p => p.id !== id);
+    saveLocalPosts(posts);
+    renderPostList();
+    showAlert('Post eliminado.');
+  }
+  window.deletePost = deletePost;
+
+  /* ═══════════════════════════════════════════════════════════════════
+     TAG INPUT
+  ═══════════════════════════════════════════════════════════════════ */
+  let tags = [];
+
+  function renderTags() {
+    const box = document.getElementById('tag-box');
+    const input = document.getElementById('tag-input');
+    box.querySelectorAll('.admin-tag-pill').forEach(el => el.remove());
+    tags.forEach(tag => {
+      const pill = document.createElement('span');
+      pill.className = 'admin-tag-pill';
+      pill.innerHTML = `${tag}<button type="button" onclick="removeTag('${tag}')" aria-label="Eliminar ${tag}">×</button>`;
+      box.insertBefore(pill, input);
+    });
+  }
+
+  function addTag(val) {
+    const t = val.trim().replace(/,+$/, '');
+    if (t && !tags.includes(t)) { tags.push(t); renderTags(); }
+  }
+  function removeTag(t) { tags = tags.filter(x => x !== t); renderTags(); }
+  window.removeTag = removeTag;
+
+  document.getElementById('tag-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      addTag(e.target.value);
+      e.target.value = '';
+    } else if (e.key === 'Backspace' && !e.target.value && tags.length) {
+      tags.pop(); renderTags();
+    }
+  });
+  document.getElementById('tag-input').addEventListener('blur', e => {
+    if (e.target.value) { addTag(e.target.value); e.target.value = ''; }
+  });
+
+  /* ═══════════════════════════════════════════════════════════════════
+     IMAGE LIST
+  ═══════════════════════════════════════════════════════════════════ */
+  let images = [];
+
+  function renderImageList() {
+    const list = document.getElementById('image-list');
+    list.innerHTML = images.map((src, i) => `
+      <div class="admin-image-row">
+        <input type="text" class="admin-input" value="${src.length > 80 ? src.substring(0,40)+'…'+src.slice(-20) : src}"
+          readonly title="${src}"
+          style="font-size:0.82rem; color:var(--text-secondary);" />
+        <button type="button" class="admin-image-remove" onclick="removeImage(${i})" title="Eliminar">×</button>
+      </div>`).join('');
+  }
+
+  function removeImage(i) { images.splice(i, 1); renderImageList(); }
+  window.removeImage = removeImage;
+
+  document.getElementById('btn-add-url').addEventListener('click', () => {
+    const url = prompt('Introduce la URL de la imagen:');
+    if (url && url.trim()) { images.push(url.trim()); renderImageList(); }
+  });
+
+  document.getElementById('file-upload').addEventListener('change', e => {
+    const files = Array.from(e.target.files);
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = ev => { images.push(ev.target.result); renderImageList(); };
+      reader.readAsDataURL(file);
+    });
+    e.target.value = '';
+  });
+
+  /* ═══════════════════════════════════════════════════════════════════
+     FORM TOGGLE
+  ═══════════════════════════════════════════════════════════════════ */
+  const formWrap = document.getElementById('new-post-form-wrap');
+
+  document.getElementById('btn-toggle-form').addEventListener('click', () => {
+    const isOpen = formWrap.classList.contains('open');
+    formWrap.classList.toggle('open', !isOpen);
+    document.getElementById('btn-toggle-form').textContent = isOpen ? '+ Crear post' : '− Cancelar';
+    if (!isOpen) {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('f-date').value = today;
+      document.getElementById('f-emoji').value = '📝';
+    }
+  });
+
+  document.getElementById('btn-cancel-form').addEventListener('click', () => {
+    formWrap.classList.remove('open');
+    document.getElementById('btn-toggle-form').textContent = '+ Crear post';
+    document.getElementById('new-post-form').reset();
+    tags = []; renderTags(); images = []; renderImageList();
+  });
+
+  /* ═══════════════════════════════════════════════════════════════════
+     SAVE POST
+  ═══════════════════════════════════════════════════════════════════ */
+  document.getElementById('new-post-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = document.getElementById('btn-save-post');
+    btn.disabled = true;
+    btn.textContent = 'Cifrando…';
+
+    try {
+      const pw    = sessionStorage.getItem(SESSION_PW);
+      const title = document.getElementById('f-title').value.trim();
+      const date  = document.getElementById('f-date').value;
+      const emoji = document.getElementById('f-emoji').value.trim() || '📝';
+      const body  = document.getElementById('f-body').value.trim();
+
+      if (!title || !date || !body) { showAlert('Completa título, fecha y contenido.', 'error'); return; }
+      if (!tags.length) { showAlert('Añade al menos una etiqueta.', 'error'); return; }
+
+      const enc = await blogCrypto.encrypt(body, pw);
+      const id  = 'post-' + Date.now();
+
+      const post = { id, title, date, tags: [...tags], emoji, images: [...images], ...enc };
+      const local = getLocalPosts();
+      local.push(post);
+      saveLocalPosts(local);
+
+      showAlert(`Post "${title}" guardado y cifrado correctamente.`);
+      document.getElementById('new-post-form').reset();
+      tags = []; renderTags(); images = []; renderImageList();
+      formWrap.classList.remove('open');
+      document.getElementById('btn-toggle-form').textContent = '+ Crear post';
+      renderPostList();
+    } catch(err) {
+      console.error(err);
+      showAlert('Error al cifrar el post.', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '🔐 Cifrar y guardar';
+    }
+  });
+
+  /* ═══════════════════════════════════════════════════════════════════
+     EXPORT
+  ═══════════════════════════════════════════════════════════════════ */
+  document.getElementById('btn-export').addEventListener('click', () => {
+    const all = getAllPosts().map(({ _source, ...p }) => p);
+    const lines = all.map(p => `  {
+    id: '${p.id}',
+    title: ${JSON.stringify(p.title)},
+    date: '${p.date}',
+    tags: ${JSON.stringify(p.tags)},
+    emoji: '${p.emoji}',
+    images: ${JSON.stringify(p.images)},
+    encryptedBody: '${p.encryptedBody}',
+    iv:   '${p.iv}',
+    salt: '${p.salt}'
+  }`).join(',\n');
+
+    const snippet = `const BLOG_POSTS = [\n${lines}\n];`;
+    const area = document.getElementById('export-area');
+    area.value = snippet;
+
+    const copyBtn = document.getElementById('btn-copy-export');
+    copyBtn.style.display = 'inline-flex';
+    showAlert('Snippet generado. Cópialo y reemplaza BLOG_POSTS en js/data.js');
+  });
+
+  document.getElementById('btn-copy-export').addEventListener('click', () => {
+    navigator.clipboard.writeText(document.getElementById('export-area').value)
+      .then(() => showAlert('Copiado al portapapeles.'))
+      .catch(() => { document.getElementById('export-area').select(); document.execCommand('copy'); showAlert('Copiado.'); });
+  });
+
+  /* ═══════════════════════════════════════════════════════════════════
+     AUTH
+  ═══════════════════════════════════════════════════════════════════ */
+  function unlockAdmin() {
+    document.getElementById('admin-lock').style.display    = 'none';
+    document.getElementById('admin-content').style.display = 'block';
+    renderPostList();
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('f-date').value  = today;
+    document.getElementById('f-emoji').value = '📝';
+  }
+
+  function lockAdmin() {
+    sessionStorage.removeItem(SESSION_KEY);
+    sessionStorage.removeItem(SESSION_PW);
+    location.reload();
+  }
+
+  document.getElementById('admin-lock-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const pw  = pwInput.value.trim();
+    if (!pw) return;
+    const btn = document.getElementById('admin-submit');
+    btn.disabled = true;
+    try {
+      const hash = await blogCrypto.sha256(pw);
+      if (hash === BLOG_PASSWORD_HASH) {
+        sessionStorage.setItem(SESSION_KEY, 'ok');
+        sessionStorage.setItem(SESSION_PW, pw);
+        document.getElementById('admin-error').textContent = '';
+        unlockAdmin();
+      } else {
+        const card = document.querySelector('.blog-lock-card');
+        if (card) { card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake'); }
+        document.getElementById('admin-error').textContent = '❌ Contraseña incorrecta.';
+        pwInput.value = ''; pwInput.focus();
+      }
+    } finally { btn.disabled = false; }
+  });
+
+  document.getElementById('admin-logout').addEventListener('click', lockAdmin);
+
+  document.addEventListener('DOMContentLoaded', () => {
+    if (sessionStorage.getItem(SESSION_KEY) === 'ok') unlockAdmin();
+  });
+  </script>
+  <script src="js/main.js"></script>
+</body>
+</html>

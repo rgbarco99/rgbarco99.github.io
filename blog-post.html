@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Post del blog de Rubén García." />
+  <title>Post — Rubén García</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%237c6fff'/><text y='22' x='7' font-size='18' font-family='sans-serif' fill='white'>R</text></svg>" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav" id="nav" role="navigation" aria-label="Menú principal">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo" aria-label="Inicio">RG</a>
+      <ul class="nav-links" role="list">
+        <li><a href="index.html"         class="nav-link" data-i18n="nav.home">Inicio</a></li>
+        <li><a href="index.html#skills"  class="nav-link" data-i18n="nav.skills">Skills</a></li>
+        <li><a href="projects.html"      class="nav-link" data-i18n="nav.projects">Proyectos</a></li>
+        <li><a href="index.html#cv"      class="nav-link" data-i18n="nav.cv">Currículum</a></li>
+        <li><a href="index.html#contact" class="nav-link nav-cta" data-i18n="nav.contact">Contacto</a></li>
+        <li><a href="blog.html"          class="nav-link active" data-i18n="nav.blog">Blog</a></li>
+      </ul>
+      <div class="nav-controls">
+        <div class="lang-switcher" role="group" aria-label="Idioma">
+          <button class="lang-btn" data-lang="es" aria-pressed="true"  title="Español">ES</button>
+          <button class="lang-btn" data-lang="en" aria-pressed="false" title="English">EN</button>
+          <button class="lang-btn" data-lang="fr" aria-pressed="false" title="Français">FR</button>
+        </div>
+        <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema">
+          <span class="theme-icon-sun">☀️</span>
+          <span class="theme-icon-moon">🌙</span>
+        </button>
+      </div>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Abrir menú" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile drawer -->
+  <nav class="nav-mobile" id="nav-mobile" aria-label="Menú móvil">
+    <a href="index.html"         class="nav-link" data-i18n="nav.home">Inicio</a>
+    <a href="index.html#skills"  class="nav-link" data-i18n="nav.skills">Skills</a>
+    <a href="projects.html"      class="nav-link" data-i18n="nav.projects">Proyectos</a>
+    <a href="index.html#cv"      class="nav-link" data-i18n="nav.cv">Currículum</a>
+    <a href="index.html#contact" class="nav-link" data-i18n="nav.contact">Contacto</a>
+    <a href="blog.html"          class="nav-link" data-i18n="nav.blog">Blog</a>
+  </nav>
+
+  <main>
+    <!-- Loading -->
+    <div id="blog-reader-loading" class="blog-reader-loading">
+      <div class="blog-reader-spinner"></div>
+      <p>Descifrando contenido…</p>
+    </div>
+
+    <!-- Post content -->
+    <article id="blog-reader" class="blog-reader" style="display:none;" aria-label="Entrada del blog">
+
+      <!-- Back button -->
+      <div class="blog-reader-back">
+        <a href="blog.html" class="btn btn-outline" style="font-size:0.82rem; padding:0.45rem 1rem; display:inline-flex; align-items:center; gap:0.4rem;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          Volver al blog
+        </a>
+        <button class="btn btn-outline" id="post-logout-btn" style="font-size:0.82rem; padding:0.45rem 1rem; display:inline-flex; align-items:center; gap:0.4rem;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+          <span data-i18n="blog.logout">Cerrar sesión</span>
+        </button>
+      </div>
+
+      <!-- Post header -->
+      <header class="blog-reader-header">
+        <div class="blog-reader-emoji" id="post-emoji">📝</div>
+        <div class="blog-reader-meta">
+          <time class="blog-post-date" id="post-date"></time>
+          <div class="blog-post-tags" id="post-tags"></div>
+        </div>
+        <h1 class="blog-reader-title" id="post-title">Cargando…</h1>
+      </header>
+
+      <!-- Image gallery -->
+      <div class="blog-reader-gallery" id="post-gallery" style="display:none;"></div>
+
+      <!-- Body -->
+      <div class="blog-reader-body blog-md" id="post-body" aria-live="polite"></div>
+
+    </article>
+
+    <!-- Lightbox -->
+    <div class="blog-lightbox" id="blog-lightbox" style="display:none;" role="dialog" aria-modal="true" aria-label="Imagen ampliada">
+      <button class="blog-lightbox-close" id="lightbox-close" aria-label="Cerrar">✕</button>
+      <img id="lightbox-img" src="" alt="Imagen ampliada" />
+    </div>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="footer-inner">
+      <div class="footer-bottom" style="border-top:none; padding-top:0;">
+        <p data-i18n="footer.copyright">© 2025 Rubén García. Todos los derechos reservados.</p>
+        <p class="footer-bottom-right">
+          <span data-i18n="footer.made">Hecho con mucho café</span>
+          <span class="footer-heart" aria-label="amor">♥</span>
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/blog-crypto.js"></script>
+  <script>
+  /* ── Constantes ─────────────────────────────────────────────────── */
+  const BLOG_PASSWORD_HASH = '7367c98b14b9b37fcf0dd9bd6eb45e8671bed22fe70f085013ecae052eea27a4';
+  const SESSION_KEY = '_blog_auth';
+  const SESSION_PW  = '_blog_pw';
+  const LOCAL_KEY   = '_blog_local_posts';
+
+  /* ── Merge data.js posts + localStorage posts ───────────────────── */
+  function getAllPosts() {
+    const staticPosts = (typeof BLOG_POSTS !== 'undefined' ? BLOG_POSTS : []);
+    let localPosts = [];
+    try { localPosts = JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]'); } catch {}
+    return [...staticPosts, ...localPosts];
+  }
+
+  /* ── Theme ──────────────────────────────────────────────────────── */
+  const savedTheme = localStorage.getItem('portfolio-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  document.getElementById('theme-toggle')?.addEventListener('click', () => {
+    const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('portfolio-theme', next);
+  });
+
+  /* ── Nav ────────────────────────────────────────────────────────── */
+  const nav = document.querySelector('.nav');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 20), { passive:true });
+  const hamburger = document.getElementById('nav-hamburger');
+  const mobileMenu = document.getElementById('nav-mobile');
+  if (hamburger && mobileMenu) hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('active'); mobileMenu.classList.toggle('open');
+  });
+
+  /* ── Markdown renderer ──────────────────────────────────────────── */
+  function renderMarkdown(md) {
+    let html = md
+      // Escape HTML
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      // Fenced code blocks
+      .replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) =>
+        `<pre><code class="lang-${lang}">${code.trimEnd()}</code></pre>`)
+      // Headings
+      .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+      .replace(/^## (.+)$/gm,  '<h2>$1</h2>')
+      // Bold / italic
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g,     '<em>$1</em>')
+      // Inline code
+      .replace(/`([^`]+)`/g, '<code>$1</code>')
+      // Links
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+      // Horizontal rule
+      .replace(/^---$/gm, '<hr>')
+      // List items
+      .replace(/^- (.+)$/gm, '<li>$1</li>')
+      // Paragraphs (double newline → <p>)
+      .split(/\n{2,}/)
+      .map(block => {
+        block = block.trim();
+        if (!block) return '';
+        if (/^<(h[123]|pre|ul|li|hr)/.test(block)) return block;
+        // Wrap consecutive <li> in <ul>
+        if (block.includes('<li>')) return `<ul>${block}</ul>`;
+        return `<p>${block.replace(/\n/g, '<br>')}</p>`;
+      })
+      .join('\n');
+    return html;
+  }
+
+  /* ── Format date ────────────────────────────────────────────────── */
+  function fmtDate(dateStr) {
+    return new Date(dateStr + 'T12:00:00').toLocaleDateString(
+      document.documentElement.lang || 'es',
+      { year: 'numeric', month: 'long', day: 'numeric' }
+    );
+  }
+
+  /* ── Load and render post ───────────────────────────────────────── */
+  async function loadPost() {
+    const params = new URLSearchParams(location.search);
+    const id = params.get('id');
+    if (!id) { location.href = 'blog.html'; return; }
+
+    const post = getAllPosts().find(p => p.id === id);
+    if (!post) { location.href = 'blog.html'; return; }
+
+    // Update page title and meta
+    document.title = `${post.title} — Rubén García`;
+
+    const pw = sessionStorage.getItem(SESSION_PW);
+    if (!pw) { location.href = 'blog.html'; return; }
+
+    try {
+      const plainBody = await blogCrypto.decrypt(post.encryptedBody, post.iv, post.salt, pw);
+
+      // Render header
+      document.getElementById('post-emoji').textContent = post.emoji;
+      document.getElementById('post-date').textContent  = fmtDate(post.date);
+      document.getElementById('post-date').setAttribute('datetime', post.date);
+      document.getElementById('post-title').textContent = post.title;
+      document.getElementById('post-tags').innerHTML = post.tags
+        .map(t => `<span class="blog-tag">${t}</span>`).join('');
+
+      // Render gallery
+      const gallery = document.getElementById('post-gallery');
+      if (post.images && post.images.length > 0) {
+        gallery.style.display = 'flex';
+        gallery.innerHTML = post.images.map((src, i) =>
+          `<img class="blog-gallery-img" src="${src}" alt="Imagen ${i+1}" loading="lazy"
+            onclick="openLightbox('${src}')" role="button" tabindex="0"
+            onkeydown="if(event.key==='Enter')openLightbox('${src}')" />`
+        ).join('');
+      }
+
+      // Render body
+      document.getElementById('post-body').innerHTML = renderMarkdown(plainBody);
+
+      // Show
+      document.getElementById('blog-reader-loading').style.display = 'none';
+      document.getElementById('blog-reader').style.display = 'block';
+    } catch (err) {
+      console.error('Decrypt error:', err);
+      sessionStorage.removeItem(SESSION_KEY);
+      sessionStorage.removeItem(SESSION_PW);
+      location.href = 'blog.html';
+    }
+  }
+
+  /* ── Lightbox ───────────────────────────────────────────────────── */
+  function openLightbox(src) {
+    document.getElementById('lightbox-img').src = src;
+    document.getElementById('blog-lightbox').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+  document.getElementById('lightbox-close').addEventListener('click', () => {
+    document.getElementById('blog-lightbox').style.display = 'none';
+    document.body.style.overflow = '';
+  });
+  document.getElementById('blog-lightbox').addEventListener('click', e => {
+    if (e.target === document.getElementById('blog-lightbox')) {
+      document.getElementById('blog-lightbox').style.display = 'none';
+      document.body.style.overflow = '';
+    }
+  });
+
+  /* ── Logout ─────────────────────────────────────────────────────── */
+  document.getElementById('post-logout-btn').addEventListener('click', () => {
+    sessionStorage.removeItem(SESSION_KEY);
+    sessionStorage.removeItem(SESSION_PW);
+    location.href = 'blog.html';
+  });
+
+  /* ── Init ───────────────────────────────────────────────────────── */
+  document.addEventListener('DOMContentLoaded', () => {
+    if (sessionStorage.getItem(SESSION_KEY) !== 'ok') {
+      location.href = 'blog.html';
+      return;
+    }
+    loadPost();
+  });
+  </script>
+  <script src="js/main.js"></script>
+</body>
+</html>
