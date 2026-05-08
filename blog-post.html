@@ -50,6 +50,35 @@
   </nav>
 
   <main>
+
+    <!-- LOCK SCREEN (for private posts without session pw) -->
+    <div id="post-lock-screen" style="display:none; min-height:100vh; align-items:center; justify-content:center; padding:2rem;">
+      <div class="blog-lock-card reveal" style="max-width:440px; width:100%;">
+        <div class="blog-lock-icon">🔐</div>
+        <span class="section-label" style="display:block; margin-bottom:0.5rem;">Post privado</span>
+        <h1 class="blog-lock-title">Contenido protegido</h1>
+        <p class="blog-lock-desc">Introduce la contraseña para leer este post.</p>
+        <form id="post-lock-form" autocomplete="off">
+          <div class="blog-password-wrap">
+            <input type="password" id="post-lock-pw" class="blog-password-input"
+              placeholder="Contraseña del post…" aria-label="Contraseña" autocomplete="new-password" />
+            <button type="button" class="blog-eye-btn" id="post-lock-eye" aria-label="Mostrar contraseña">
+              <svg id="lock-eye-open"   width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg id="lock-eye-closed" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
+          <p class="blog-error" id="post-lock-error" aria-live="polite"></p>
+          <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-top:0.5rem;">
+            <button type="submit" id="post-lock-submit" class="btn btn-primary blog-submit" style="flex:1; justify-content:center;">
+              <span>Acceder</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+            <a href="blog.html" class="btn btn-outline" style="flex:1; justify-content:center; text-align:center;">Volver</a>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <!-- Loading -->
     <div id="blog-reader-loading" class="blog-reader-loading">
       <div class="blog-reader-spinner"></div>
@@ -65,10 +94,6 @@
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
           Volver al blog
         </a>
-        <button class="btn btn-outline" id="post-logout-btn" style="font-size:0.82rem; padding:0.45rem 1rem; display:inline-flex; align-items:center; gap:0.4rem;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-          <span data-i18n="blog.logout">Cerrar sesión</span>
-        </button>
       </div>
 
       <!-- Post header -->
@@ -94,6 +119,7 @@
       <button class="blog-lightbox-close" id="lightbox-close" aria-label="Cerrar">✕</button>
       <img id="lightbox-img" src="" alt="Imagen ampliada" />
     </div>
+
   </main>
 
   <footer class="footer" role="contentinfo">
@@ -108,25 +134,38 @@
     </div>
   </footer>
 
-  <script src="js/i18n.js"></script>
-  <script src="js/data.js"></script>
-  <script src="js/blog-crypto.js"></script>
+  <script src="js/i18n.js?v=2"></script>
+  <script src="js/data.js?v=3"></script>
+  <script src="js/blog-crypto.js?v=2"></script>
   <script>
-  /* ── Constantes ─────────────────────────────────────────────────── */
-  const BLOG_PASSWORD_HASH = '7367c98b14b9b37fcf0dd9bd6eb45e8671bed22fe70f085013ecae052eea27a4';
-  const SESSION_KEY = '_blog_auth';
-  const SESSION_PW  = '_blog_pw';
-  const LOCAL_KEY   = '_blog_local_posts';
+  /* ════════════════════════════════════════════════════════════════════
+     blog-post.html — Lector de posts (público / privado / legado)
+  ════════════════════════════════════════════════════════════════════ */
 
-  /* ── Merge data.js posts + localStorage posts ───────────────────── */
+  const ADMIN_PW_HASH = '7367c98b14b9b37fcf0dd9bd6eb45e8671bed22fe70f085013ecae052eea27a4';
+  const LOCAL_KEY  = '_blog_local_posts';
+  const ADMIN_AUTH = '_admin_auth';
+  const ADMIN_PW   = '_admin_pw';
+
+  /* ── Helpers ─────────────────────────────────────────────────────── */
   function getAllPosts() {
     const staticPosts = (typeof BLOG_POSTS !== 'undefined' ? BLOG_POSTS : []);
     let localPosts = [];
     try { localPosts = JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]'); } catch {}
-    return [...staticPosts, ...localPosts];
+    const ids = new Set();
+    const merged = [];
+    for (const p of [...localPosts, ...staticPosts]) {
+      const key = String(p.id);
+      if (!ids.has(key)) { ids.add(key); merged.push(p); }
+    }
+    return merged;
   }
 
-  /* ── Theme ──────────────────────────────────────────────────────── */
+  function isPublicPost(p) { return p.public === true; }
+  function isNewPrivate(p) { return p.public === false && p.postPasswordHash; }
+  function isLegacyPost(p) { return p.public === undefined && p.encryptedBody; }
+
+  /* ── Theme ───────────────────────────────────────────────────────── */
   const savedTheme = localStorage.getItem('portfolio-theme') || 'dark';
   document.documentElement.setAttribute('data-theme', savedTheme);
   document.getElementById('theme-toggle')?.addEventListener('click', () => {
@@ -135,44 +174,43 @@
     localStorage.setItem('portfolio-theme', next);
   });
 
-  /* ── Nav ────────────────────────────────────────────────────────── */
+  /* ── Nav ─────────────────────────────────────────────────────────── */
   const nav = document.querySelector('.nav');
-  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 20), { passive:true });
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 20), { passive: true });
   const hamburger = document.getElementById('nav-hamburger');
   const mobileMenu = document.getElementById('nav-mobile');
   if (hamburger && mobileMenu) hamburger.addEventListener('click', () => {
     hamburger.classList.toggle('active'); mobileMenu.classList.toggle('open');
   });
 
-  /* ── Markdown renderer ──────────────────────────────────────────── */
+  /* ── Eye toggle (lock screen) ────────────────────────────────────── */
+  document.getElementById('post-lock-eye')?.addEventListener('click', () => {
+    const inp = document.getElementById('post-lock-pw');
+    const isText = inp.type === 'text';
+    inp.type = isText ? 'password' : 'text';
+    document.getElementById('lock-eye-open').style.display   = isText ? 'block' : 'none';
+    document.getElementById('lock-eye-closed').style.display = isText ? 'none'  : 'block';
+  });
+
+  /* ── Markdown renderer ───────────────────────────────────────────── */
   function renderMarkdown(md) {
     let html = md
-      // Escape HTML
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-      // Fenced code blocks
       .replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) =>
         `<pre><code class="lang-${lang}">${code.trimEnd()}</code></pre>`)
-      // Headings
       .replace(/^### (.+)$/gm, '<h3>$1</h3>')
       .replace(/^## (.+)$/gm,  '<h2>$1</h2>')
-      // Bold / italic
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*(.+?)\*/g,     '<em>$1</em>')
-      // Inline code
       .replace(/`([^`]+)`/g, '<code>$1</code>')
-      // Links
       .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
-      // Horizontal rule
       .replace(/^---$/gm, '<hr>')
-      // List items
       .replace(/^- (.+)$/gm, '<li>$1</li>')
-      // Paragraphs (double newline → <p>)
       .split(/\n{2,}/)
       .map(block => {
         block = block.trim();
         if (!block) return '';
         if (/^<(h[123]|pre|ul|li|hr)/.test(block)) return block;
-        // Wrap consecutive <li> in <ul>
         if (block.includes('<li>')) return `<ul>${block}</ul>`;
         return `<p>${block.replace(/\n/g, '<br>')}</p>`;
       })
@@ -180,7 +218,7 @@
     return html;
   }
 
-  /* ── Format date ────────────────────────────────────────────────── */
+  /* ── Format date ─────────────────────────────────────────────────── */
   function fmtDate(dateStr) {
     return new Date(dateStr + 'T12:00:00').toLocaleDateString(
       document.documentElement.lang || 'es',
@@ -188,63 +226,159 @@
     );
   }
 
-  /* ── Load and render post ───────────────────────────────────────── */
+  /* ── Render post in reader ───────────────────────────────────────── */
+  function renderReader(title, bodyMd, post) {
+    document.title = `${title} — Rubén García`;
+    document.getElementById('post-emoji').textContent = post.emoji || '📝';
+    document.getElementById('post-date').textContent  = fmtDate(post.date);
+    document.getElementById('post-date').setAttribute('datetime', post.date);
+    document.getElementById('post-title').textContent = title;
+    document.getElementById('post-tags').innerHTML = (post.tags || [])
+      .map(t => `<span class="blog-tag">${t}</span>`).join('');
+
+    const gallery = document.getElementById('post-gallery');
+    if (post.images && post.images.length > 0) {
+      gallery.style.display = 'flex';
+      gallery.innerHTML = post.images.map((src, i) =>
+        `<img class="blog-gallery-img" src="${src}" alt="Imagen ${i+1}" loading="lazy"
+          onclick="openLightbox('${src}')" role="button" tabindex="0"
+          onkeydown="if(event.key==='Enter')openLightbox('${src}')" />`
+      ).join('');
+    }
+
+    document.getElementById('post-body').innerHTML = renderMarkdown(bodyMd);
+    document.getElementById('blog-reader-loading').style.display = 'none';
+    document.getElementById('blog-reader').style.display = 'block';
+  }
+
+  /* ── Show lock screen ────────────────────────────────────────────── */
+  let _lockPost = null;
+
+  function showLockScreen(post, isLegacy) {
+    _lockPost = post;
+    const lockEl = document.getElementById('post-lock-screen');
+    lockEl.style.display = 'flex';
+    document.getElementById('blog-reader-loading').style.display = 'none';
+    if (isLegacy) {
+      lockEl.querySelector('.blog-lock-desc').textContent =
+        'Introduce la contraseña del blog para leer este post.';
+    }
+    setTimeout(() => document.getElementById('post-lock-pw').focus(), 50);
+  }
+
+  document.getElementById('post-lock-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn   = document.getElementById('post-lock-submit');
+    const errEl = document.getElementById('post-lock-error');
+    const pw    = document.getElementById('post-lock-pw').value.trim();
+    if (!pw || !_lockPost) return;
+    btn.disabled = true;
+    btn.querySelector('span').textContent = 'Verificando…';
+
+    try {
+      const post = _lockPost;
+      let valid = false;
+
+      if (isNewPrivate(post)) {
+        const hash = await blogCrypto.sha256(pw);
+        valid = (hash === post.postPasswordHash);
+      } else if (isLegacyPost(post)) {
+        const hash = await blogCrypto.sha256(pw);
+        valid = (hash === ADMIN_PW_HASH);
+      }
+
+      if (valid) {
+        sessionStorage.setItem('_post_pw_' + post.id, pw);
+        document.getElementById('post-lock-screen').style.display = 'none';
+        document.getElementById('blog-reader-loading').style.display = 'flex';
+        await decryptAndRender(post, pw);
+      } else {
+        errEl.textContent = '❌ Contraseña incorrecta.';
+        const card = document.querySelector('#post-lock-screen .blog-lock-card');
+        if (card) { card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake'); }
+        document.getElementById('post-lock-pw').value = '';
+        document.getElementById('post-lock-pw').focus();
+      }
+    } finally {
+      btn.disabled = false;
+      btn.querySelector('span').textContent = 'Acceder';
+    }
+  });
+
+  /* ── Decrypt and render (private/legacy) ─────────────────────────── */
+  async function decryptAndRender(post, pw) {
+    try {
+      let title, bodyMd;
+      if (isNewPrivate(post)) {
+        title  = await blogCrypto.decrypt(post.encryptedTitle, post.titleIv,  post.titleSalt, pw);
+        bodyMd = await blogCrypto.decrypt(post.encryptedBody,  post.iv,       post.salt,      pw);
+      } else {
+        /* legacy: title in plaintext, body encrypted */
+        title  = post.title;
+        bodyMd = await blogCrypto.decrypt(post.encryptedBody, post.iv, post.salt, pw);
+      }
+      renderReader(title, bodyMd, post);
+    } catch (err) {
+      console.error('Decrypt error:', err);
+      sessionStorage.removeItem('_post_pw_' + post.id);
+      showLockScreen(post, isLegacyPost(post));
+    }
+  }
+
+  /* ── Main load ───────────────────────────────────────────────────── */
   async function loadPost() {
     const params = new URLSearchParams(location.search);
     const id = params.get('id');
     if (!id) { location.href = 'blog.html'; return; }
 
-    const post = getAllPosts().find(p => p.id === id);
+    const post = getAllPosts().find(p => String(p.id) === String(id));
     if (!post) { location.href = 'blog.html'; return; }
 
-    // Update page title and meta
-    document.title = `${post.title} — Rubén García`;
+    /* ── Public post: render directly ─────────────────────────────── */
+    if (isPublicPost(post)) {
+      renderReader(post.title, post.body || '', post);
+      return;
+    }
 
-    const pw = sessionStorage.getItem(SESSION_PW);
-    if (!pw) { location.href = 'blog.html'; return; }
+    /* ── New private post ──────────────────────────────────────────── */
+    if (isNewPrivate(post)) {
+      let pw = sessionStorage.getItem('_post_pw_' + post.id);
 
-    try {
-      const plainBody = await blogCrypto.decrypt(post.encryptedBody, post.iv, post.salt, pw);
-
-      // Render header
-      document.getElementById('post-emoji').textContent = post.emoji;
-      document.getElementById('post-date').textContent  = fmtDate(post.date);
-      document.getElementById('post-date').setAttribute('datetime', post.date);
-      document.getElementById('post-title').textContent = post.title;
-      document.getElementById('post-tags').innerHTML = post.tags
-        .map(t => `<span class="blog-tag">${t}</span>`).join('');
-
-      // Render gallery
-      const gallery = document.getElementById('post-gallery');
-      if (post.images && post.images.length > 0) {
-        gallery.style.display = 'flex';
-        gallery.innerHTML = post.images.map((src, i) =>
-          `<img class="blog-gallery-img" src="${src}" alt="Imagen ${i+1}" loading="lazy"
-            onclick="openLightbox('${src}')" role="button" tabindex="0"
-            onkeydown="if(event.key==='Enter')openLightbox('${src}')" />`
-        ).join('');
+      /* Admin auto-decrypt via adminEncryptedPw */
+      if (!pw && sessionStorage.getItem(ADMIN_AUTH) === 'ok' && post.adminEncryptedPw) {
+        const adminPw = sessionStorage.getItem(ADMIN_PW);
+        if (adminPw) {
+          try {
+            pw = await blogCrypto.decrypt(post.adminEncryptedPw, post.adminPwIv, post.adminPwSalt, adminPw);
+            sessionStorage.setItem('_post_pw_' + post.id, pw);
+          } catch { pw = null; }
+        }
       }
 
-      // Render body
-      document.getElementById('post-body').innerHTML = renderMarkdown(plainBody);
-
-      // Show
-      document.getElementById('blog-reader-loading').style.display = 'none';
-      document.getElementById('blog-reader').style.display = 'block';
-    } catch (err) {
-      console.error('Decrypt error:', err);
-      sessionStorage.removeItem(SESSION_KEY);
-      sessionStorage.removeItem(SESSION_PW);
-      location.href = 'blog.html';
+      if (!pw) { showLockScreen(post, false); return; }
+      await decryptAndRender(post, pw);
+      return;
     }
+
+    /* ── Legacy post ───────────────────────────────────────────────── */
+    if (isLegacyPost(post)) {
+      let pw = sessionStorage.getItem('_post_pw_' + post.id) || sessionStorage.getItem(ADMIN_PW);
+      if (!pw) { showLockScreen(post, true); return; }
+      await decryptAndRender(post, pw);
+      return;
+    }
+
+    location.href = 'blog.html';
   }
 
-  /* ── Lightbox ───────────────────────────────────────────────────── */
+  /* ── Lightbox ────────────────────────────────────────────────────── */
   function openLightbox(src) {
     document.getElementById('lightbox-img').src = src;
     document.getElementById('blog-lightbox').style.display = 'flex';
     document.body.style.overflow = 'hidden';
   }
+  window.openLightbox = openLightbox;
+
   document.getElementById('lightbox-close').addEventListener('click', () => {
     document.getElementById('blog-lightbox').style.display = 'none';
     document.body.style.overflow = '';
@@ -256,21 +390,8 @@
     }
   });
 
-  /* ── Logout ─────────────────────────────────────────────────────── */
-  document.getElementById('post-logout-btn').addEventListener('click', () => {
-    sessionStorage.removeItem(SESSION_KEY);
-    sessionStorage.removeItem(SESSION_PW);
-    location.href = 'blog.html';
-  });
-
-  /* ── Init ───────────────────────────────────────────────────────── */
-  document.addEventListener('DOMContentLoaded', () => {
-    if (sessionStorage.getItem(SESSION_KEY) !== 'ok') {
-      location.href = 'blog.html';
-      return;
-    }
-    loadPost();
-  });
+  /* ── Init ────────────────────────────────────────────────────────── */
+  document.addEventListener('DOMContentLoaded', loadPost);
   </script>
   <script src="js/main.js"></script>
 </body>

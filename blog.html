@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Blog privado de Rubén García — Reflexiones sobre SAP, tecnología y carrera." />
+  <meta name="description" content="Blog de Rubén García — Reflexiones sobre SAP, tecnología y carrera." />
   <title>Blog — Rubén García</title>
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%237c6fff'/><text y='22' x='7' font-size='18' font-family='sans-serif' fill='white'>R</text></svg>" />
@@ -51,104 +51,93 @@
 
   <main>
 
-    <!-- LOCK SCREEN -->
-    <div class="blog-page-lock" id="blog-page-lock">
-      <div class="page-hero" style="min-height:100vh; display:flex; align-items:center; justify-content:center; flex-direction:column;">
-        <div class="blog-lock-card reveal" style="max-width:440px; width:100%; margin:0 auto;">
-          <div class="blog-lock-icon">🔐</div>
-          <span class="section-label" style="display:block; margin-bottom:0.5rem;" data-i18n="blog.label">Blog</span>
-          <h1 class="blog-lock-title" data-i18n="blog.title">Mis reflexiones</h1>
-          <p class="blog-lock-desc" data-i18n="blog.lock.desc">Este contenido está protegido. Introduce la contraseña para acceder.</p>
-          <form class="blog-lock-form" id="blog-lock-form" autocomplete="off">
-            <div class="blog-password-wrap">
-              <input type="password" id="blog-password" class="blog-password-input"
-                placeholder="Contraseña…" data-i18n-ph="blog.lock.placeholder"
-                aria-label="Contraseña del blog" autocomplete="new-password" />
-              <button type="button" class="blog-eye-btn" id="blog-eye-btn" aria-label="Mostrar contraseña">
-                <svg id="eye-open"   width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                <svg id="eye-closed" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-              </button>
-            </div>
-            <p class="blog-error" id="blog-error" aria-live="polite"></p>
-            <button type="submit" class="btn btn-primary blog-submit" id="blog-submit" style="width:100%; justify-content:center;">
-              <span data-i18n="blog.lock.btn">Acceder</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </button>
-          </form>
+    <!-- PAGE HERO -->
+    <section class="page-hero" aria-label="Blog">
+      <div>
+        <span class="section-label reveal" data-i18n="blog.label">Blog</span>
+        <h1 class="page-hero-title reveal">
+          Mis <span class="gradient-text" data-i18n="blog.title.word">reflexiones</span>
+        </h1>
+        <p class="page-hero-subtitle reveal" data-i18n="blog.subtitle">
+          Un espacio donde escribo sobre tecnología, proyectos y todo lo que me inspira.
+        </p>
+      </div>
+    </section>
+
+    <!-- TOOLBAR -->
+    <div class="search-container" role="search" id="blog-toolbar">
+      <div class="search-wrapper reveal">
+        <div class="search-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         </div>
+        <input type="search" id="blog-search" class="search-input"
+          placeholder="Buscar por título o etiqueta…" aria-label="Buscar en el blog"
+          autocomplete="off" />
+      </div>
+
+      <div class="filter-pills reveal" id="blog-tag-filters" role="group" aria-label="Filtros por etiqueta">
+        <button class="filter-pill active" data-tag="all">Todos</button>
+      </div>
+
+      <div class="blog-year-filter reveal">
+        <label for="blog-year-select" class="blog-year-label">Año:</label>
+        <select id="blog-year-select" class="blog-year-select">
+          <option value="all">Todos</option>
+        </select>
+        <div class="blog-toolbar-actions">
+          <a href="blog-admin.html" class="btn btn-outline" style="font-size:0.82rem; padding:0.45rem 1rem; display:inline-flex; align-items:center; gap:0.4rem;">
+            ✍️ <span>Administrar</span>
+          </a>
+          <button id="blog-admin-logout-btn" class="btn btn-outline" style="font-size:0.82rem; padding:0.45rem 1rem; display:none; align-items:center; gap:0.4rem;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+            <span>Cerrar sesión admin</span>
+          </button>
+        </div>
+      </div>
+
+      <p class="results-info reveal" id="blog-results-count" aria-live="polite"></p>
+    </div>
+
+    <!-- POSTS GRID -->
+    <section class="blog-list-section" aria-label="Lista de posts">
+      <div class="blog-list-grid" id="blog-list-grid"></div>
+      <div id="blog-no-results" class="no-results" style="display:none;" role="status" aria-live="polite">
+        <div class="no-results-emoji" aria-hidden="true">🔍</div>
+        <p>No se encontraron posts con ese criterio.</p>
+        <p style="margin-top:0.5rem; font-size:0.85rem;">Prueba con otro término o cambia los filtros.</p>
+      </div>
+    </section>
+
+    <!-- UNLOCK MODAL -->
+    <div id="post-unlock-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:1000; align-items:center; justify-content:center; padding:1rem;">
+      <div class="blog-lock-card reveal" style="max-width:420px; width:100%; position:relative;">
+        <button id="post-unlock-close" aria-label="Cerrar"
+          style="position:absolute; top:1rem; right:1rem; background:none; border:none; color:var(--text-muted); font-size:1.3rem; cursor:pointer; line-height:1;">✕</button>
+        <div class="blog-lock-icon">🔐</div>
+        <span class="section-label" style="display:block; margin-bottom:0.5rem;">Post privado</span>
+        <h2 class="blog-lock-title" style="font-size:1.4rem;">Contenido protegido</h2>
+        <p class="blog-lock-desc">Introduce la contraseña para acceder a este post.</p>
+        <form id="post-unlock-form" autocomplete="off">
+          <div class="blog-password-wrap">
+            <input type="password" id="post-unlock-pw" class="blog-password-input"
+              placeholder="Contraseña del post…" aria-label="Contraseña del post" autocomplete="new-password" />
+            <button type="button" class="blog-eye-btn" id="unlock-eye-btn" aria-label="Mostrar contraseña">
+              <svg id="unlock-eye-open"   width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg id="unlock-eye-closed" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
+          <p class="blog-error" id="post-unlock-error" aria-live="polite"></p>
+          <button type="submit" id="post-unlock-submit" class="btn btn-primary blog-submit" style="width:100%; justify-content:center;">
+            <span>Acceder</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </form>
       </div>
     </div>
 
-    <!-- BLOG CONTENT -->
-    <div id="blog-page-content" style="display:none;">
-
-      <!-- PAGE HERO -->
-      <section class="page-hero" aria-label="Blog">
-        <div>
-          <span class="section-label reveal" data-i18n="blog.label">Blog</span>
-          <h1 class="page-hero-title reveal">
-            Mis <span class="gradient-text" data-i18n="blog.title.word">reflexiones</span>
-          </h1>
-          <p class="page-hero-subtitle reveal" data-i18n="blog.subtitle">
-            Un espacio privado donde escribo sobre tecnología, proyectos y todo lo que me inspira.
-          </p>
-        </div>
-      </section>
-
-      <!-- TOOLBAR -->
-      <div class="search-container" role="search" id="blog-toolbar">
-        <div class="search-wrapper reveal">
-          <div class="search-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          </div>
-          <input type="search" id="blog-search" class="search-input"
-            placeholder="Buscar por título o etiqueta…" aria-label="Buscar en el blog"
-            autocomplete="off" />
-        </div>
-
-        <!-- Tag filter pills (generated by JS) -->
-        <div class="filter-pills reveal" id="blog-tag-filters" role="group" aria-label="Filtros por etiqueta">
-          <button class="filter-pill active" data-tag="all">Todos</button>
-        </div>
-
-        <!-- Year filter -->
-        <div class="blog-year-filter reveal">
-          <label for="blog-year-select" class="blog-year-label">Año:</label>
-          <select id="blog-year-select" class="blog-year-select">
-            <option value="all">Todos</option>
-          </select>
-          <div class="blog-toolbar-actions">
-            <a href="blog-admin.html" class="btn btn-outline" id="btn-admin" style="font-size:0.82rem; padding:0.45rem 1rem; display:inline-flex; align-items:center; gap:0.4rem;">
-              ✍️ <span>Administrar</span>
-            </a>
-            <button class="btn btn-outline" id="blog-logout-btn" style="font-size:0.82rem; padding:0.45rem 1rem; display:inline-flex; align-items:center; gap:0.4rem;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-              <span data-i18n="blog.logout">Cerrar sesión</span>
-            </button>
-          </div>
-        </div>
-
-        <p class="results-info reveal" id="blog-results-count" aria-live="polite"></p>
-      </div>
-
-      <!-- POSTS GRID -->
-      <section class="blog-list-section" aria-label="Lista de posts">
-        <div class="blog-list-grid" id="blog-list-grid">
-          <!-- JS render -->
-        </div>
-        <div id="blog-no-results" class="no-results" style="display:none;" role="status" aria-live="polite">
-          <div class="no-results-emoji" aria-hidden="true">🔍</div>
-          <p>No se encontraron posts con ese criterio.</p>
-          <p style="margin-top:0.5rem; font-size:0.85rem;">Prueba con otro término o cambia los filtros.</p>
-        </div>
-      </section>
-
-    </div><!-- /blog-page-content -->
-
   </main>
 
-  <!-- FOOTER -->
-  <footer class="footer" id="contact" role="contentinfo" style="display:none;" id="blog-footer">
+  <footer class="footer" role="contentinfo">
     <div class="footer-inner">
       <div class="footer-bottom" style="border-top:none; padding-top:0;">
         <p data-i18n="footer.copyright">© 2025 Rubén García. Todos los derechos reservados.</p>
@@ -160,110 +149,73 @@
     </div>
   </footer>
 
-  <script src="js/i18n.js"></script>
-  <script src="js/data.js"></script>
-  <script src="js/blog-crypto.js"></script>
+  <script src="js/i18n.js?v=2"></script>
+  <script src="js/data.js?v=3"></script>
+  <script src="js/blog-crypto.js?v=2"></script>
   <script>
-  /* ── Constantes ─────────────────────────────────────────────────── */
-  const BLOG_PASSWORD_HASH = '7367c98b14b9b37fcf0dd9bd6eb45e8671bed22fe70f085013ecae052eea27a4';
-  const SESSION_KEY  = '_blog_auth';
-  const SESSION_PW   = '_blog_pw';
-  const LOCAL_KEY    = '_blog_local_posts';
+  /* ════════════════════════════════════════════════════════════════════
+     blog.html — Lista de posts (público + privados por contraseña)
+  ════════════════════════════════════════════════════════════════════ */
 
-  /* ── Merge data.js posts + localStorage posts ───────────────────── */
+  const ADMIN_PW_HASH = '7367c98b14b9b37fcf0dd9bd6eb45e8671bed22fe70f085013ecae052eea27a4';
+  const LOCAL_KEY     = '_blog_local_posts';
+  const ADMIN_AUTH    = '_admin_auth';
+  const ADMIN_PW      = '_admin_pw';
+
+  /* ── Helpers ─────────────────────────────────────────────────────── */
   function getAllPosts() {
     const staticPosts = (typeof BLOG_POSTS !== 'undefined' ? BLOG_POSTS : []);
     let localPosts = [];
     try { localPosts = JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]'); } catch {}
-    return [...staticPosts, ...localPosts].sort((a,b) => new Date(b.date) - new Date(a.date));
+    const ids = new Set();
+    const merged = [];
+    for (const p of [...localPosts, ...staticPosts]) {
+      const key = String(p.id);
+      if (!ids.has(key)) { ids.add(key); merged.push(p); }
+    }
+    return merged.sort((a, b) => new Date(b.date) - new Date(a.date));
   }
 
-  /* ── Theme ──────────────────────────────────────────────────────── */
+  /* post type helpers */
+  function isPublicPost(p)  { return p.public === true; }
+  function isNewPrivate(p)  { return p.public === false && p.postPasswordHash; }
+  function isLegacyPost(p)  { return p.public === undefined && p.encryptedBody; }
+
+  /* ── Theme ───────────────────────────────────────────────────────── */
   const savedTheme = localStorage.getItem('portfolio-theme') || 'dark';
   document.documentElement.setAttribute('data-theme', savedTheme);
-  const themeBtn = document.getElementById('theme-toggle');
-  if (themeBtn) themeBtn.addEventListener('click', () => {
-    const cur = document.documentElement.getAttribute('data-theme');
-    const next = cur === 'dark' ? 'light' : 'dark';
+  document.getElementById('theme-toggle')?.addEventListener('click', () => {
+    const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
     localStorage.setItem('portfolio-theme', next);
   });
 
-  /* ── Nav ────────────────────────────────────────────────────────── */
-  const nav = document.querySelector('.nav');
-  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 20), { passive:true });
+  /* ── Nav ─────────────────────────────────────────────────────────── */
+  const navEl = document.querySelector('.nav');
+  window.addEventListener('scroll', () => navEl.classList.toggle('scrolled', window.scrollY > 20), { passive: true });
   const hamburger = document.getElementById('nav-hamburger');
   const mobileMenu = document.getElementById('nav-mobile');
-  if (hamburger && mobileMenu) {
-    hamburger.addEventListener('click', () => {
-      hamburger.classList.toggle('active');
-      mobileMenu.classList.toggle('open');
-    });
-  }
+  if (hamburger && mobileMenu) hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('active'); mobileMenu.classList.toggle('open');
+  });
 
-  /* ── Scroll reveal ──────────────────────────────────────────────── */
+  /* ── Scroll reveal ───────────────────────────────────────────────── */
   const revealObs = new IntersectionObserver(entries =>
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
     { threshold: 0.1 }
   );
   const observeReveal = () => document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
 
-  /* ── Eye toggle ─────────────────────────────────────────────────── */
-  const eyeBtn    = document.getElementById('blog-eye-btn');
-  const pwInput   = document.getElementById('blog-password');
-  const eyeOpen   = document.getElementById('eye-open');
-  const eyeClosed = document.getElementById('eye-closed');
-  if (eyeBtn) eyeBtn.addEventListener('click', () => {
-    const isText = pwInput.type === 'text';
-    pwInput.type = isText ? 'password' : 'text';
-    eyeOpen.style.display   = isText ? 'block' : 'none';
-    eyeClosed.style.display = isText ? 'none'  : 'block';
+  /* ── Eye toggle ──────────────────────────────────────────────────── */
+  document.getElementById('unlock-eye-btn')?.addEventListener('click', () => {
+    const inp = document.getElementById('post-unlock-pw');
+    const isText = inp.type === 'text';
+    inp.type = isText ? 'password' : 'text';
+    document.getElementById('unlock-eye-open').style.display   = isText ? 'block' : 'none';
+    document.getElementById('unlock-eye-closed').style.display = isText ? 'none'  : 'block';
   });
 
-  /* ── Unlock ─────────────────────────────────────────────────────── */
-  function unlockBlog() {
-    document.getElementById('blog-page-lock').style.display    = 'none';
-    document.getElementById('blog-page-content').style.display = 'block';
-    document.querySelector('footer').style.display             = 'block';
-    renderBlog();
-    observeReveal();
-  }
-
-  function lockBlog() {
-    sessionStorage.removeItem(SESSION_KEY);
-    sessionStorage.removeItem(SESSION_PW);
-    location.reload();
-  }
-
-  /* ── Auth form ──────────────────────────────────────────────────── */
-  const lockForm  = document.getElementById('blog-lock-form');
-  const lockError = document.getElementById('blog-error');
-  if (lockForm) lockForm.addEventListener('submit', async e => {
-    e.preventDefault();
-    const pw = pwInput.value.trim();
-    if (!pw) return;
-    const submitBtn = document.getElementById('blog-submit');
-    submitBtn.disabled = true;
-    try {
-      const hash = await blogCrypto.sha256(pw);
-      if (hash === BLOG_PASSWORD_HASH) {
-        sessionStorage.setItem(SESSION_KEY, 'ok');
-        sessionStorage.setItem(SESSION_PW, pw);
-        lockError.textContent = '';
-        unlockBlog();
-      } else {
-        const card = document.querySelector('.blog-lock-card');
-        if (card) { card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake'); }
-        lockError.textContent = window.i18n ? window.i18n.t('blog.lock.error') : '❌ Contraseña incorrecta.';
-        pwInput.value = '';
-        pwInput.focus();
-      }
-    } finally { submitBtn.disabled = false; }
-  });
-
-  document.getElementById('blog-logout-btn')?.addEventListener('click', lockBlog);
-
-  /* ── Format date ────────────────────────────────────────────────── */
+  /* ── Format date ─────────────────────────────────────────────────── */
   function fmtDate(dateStr) {
     return new Date(dateStr + 'T12:00:00').toLocaleDateString(
       document.documentElement.lang || 'es',
@@ -271,15 +223,14 @@
     );
   }
 
-  /* ── Build tag pills ────────────────────────────────────────────── */
+  /* ── Build filters ───────────────────────────────────────────────── */
   function buildFilters(posts) {
     const tagSet = new Set();
     const yearSet = new Set();
     posts.forEach(p => {
-      p.tags.forEach(t => tagSet.add(t));
-      yearSet.add(p.date.slice(0, 4));
+      (p.tags || []).forEach(t => tagSet.add(t));
+      if (p.date) yearSet.add(p.date.slice(0, 4));
     });
-
     const pillsEl = document.getElementById('blog-tag-filters');
     [...tagSet].sort().forEach(tag => {
       const btn = document.createElement('button');
@@ -288,20 +239,107 @@
       btn.textContent = tag;
       pillsEl.appendChild(btn);
     });
-
     const yearSel = document.getElementById('blog-year-select');
-    [...yearSet].sort((a,b) => b-a).forEach(yr => {
+    [...yearSet].sort((a, b) => b - a).forEach(yr => {
       const opt = document.createElement('option');
       opt.value = yr; opt.textContent = yr;
       yearSel.appendChild(opt);
     });
   }
 
-  /* ── Render posts ───────────────────────────────────────────────── */
-  function renderBlog() {
-    const posts = getAllPosts();
+  /* ── Unlock modal ────────────────────────────────────────────────── */
+  let _unlockingPostId = null;
+  const overlay = document.getElementById('post-unlock-overlay');
 
+  function openUnlockModal(postId) {
+    _unlockingPostId = postId;
+    document.getElementById('post-unlock-pw').value = '';
+    document.getElementById('post-unlock-error').textContent = '';
+    overlay.style.display = 'flex';
+    setTimeout(() => document.getElementById('post-unlock-pw').focus(), 50);
+  }
+
+  function closeUnlockModal() {
+    overlay.style.display = 'none';
+    _unlockingPostId = null;
+  }
+
+  document.getElementById('post-unlock-close').addEventListener('click', closeUnlockModal);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeUnlockModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeUnlockModal(); });
+
+  document.getElementById('post-unlock-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn  = document.getElementById('post-unlock-submit');
+    const errEl = document.getElementById('post-unlock-error');
+    const pw   = document.getElementById('post-unlock-pw').value.trim();
+    if (!pw || !_unlockingPostId) return;
+    btn.disabled = true;
+    btn.querySelector('span').textContent = 'Verificando…';
+    try {
+      const post = getAllPosts().find(p => String(p.id) === String(_unlockingPostId));
+      if (!post) { closeUnlockModal(); return; }
+
+      let valid = false;
+      if (isNewPrivate(post)) {
+        const hash = await blogCrypto.sha256(pw);
+        valid = (hash === post.postPasswordHash);
+      } else if (isLegacyPost(post)) {
+        const hash = await blogCrypto.sha256(pw);
+        valid = (hash === ADMIN_PW_HASH);
+      }
+
+      if (valid) {
+        sessionStorage.setItem('_post_pw_' + post.id, pw);
+        closeUnlockModal();
+        location.href = 'blog-post.html?id=' + post.id;
+      } else {
+        errEl.textContent = '❌ Contraseña incorrecta.';
+        const card = overlay.querySelector('.blog-lock-card');
+        if (card) { card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake'); }
+        document.getElementById('post-unlock-pw').value = '';
+        document.getElementById('post-unlock-pw').focus();
+      }
+    } finally {
+      btn.disabled = false;
+      btn.querySelector('span').textContent = 'Acceder';
+    }
+  });
+
+  /* ── Render blog ─────────────────────────────────────────────────── */
+  async function renderBlog() {
+    const posts = getAllPosts();
     buildFilters(posts);
+
+    const isAdmin = sessionStorage.getItem(ADMIN_AUTH) === 'ok';
+    const adminPw = sessionStorage.getItem(ADMIN_PW);
+
+    /* Admin: decrypt all private titles and auto-store per-post pw */
+    const decryptedTitles = {};
+    if (isAdmin && adminPw) {
+      document.getElementById('blog-admin-logout-btn').style.display = 'inline-flex';
+      for (const post of posts) {
+        if (isNewPrivate(post) && post.adminEncryptedPw) {
+          try {
+            const postPw = await blogCrypto.decrypt(post.adminEncryptedPw, post.adminPwIv, post.adminPwSalt, adminPw);
+            const title  = await blogCrypto.decrypt(post.encryptedTitle,   post.titleIv,  post.titleSalt,  postPw);
+            decryptedTitles[post.id] = title;
+            sessionStorage.setItem('_post_pw_' + post.id, postPw);
+          } catch { /* ignore */ }
+        } else if (isLegacyPost(post)) {
+          sessionStorage.setItem('_post_pw_' + post.id, adminPw);
+        }
+      }
+    }
+
+    /* Post display title */
+    function getDisplayTitle(post) {
+      if (isPublicPost(post))                          return post.title;
+      if (post._plainTitle)                            return post._plainTitle;
+      if (decryptedTitles[post.id])                   return decryptedTitles[post.id];
+      if (isLegacyPost(post) && post.title)           return post.title;
+      return null;
+    }
 
     const grid = document.getElementById('blog-list-grid');
 
@@ -317,21 +355,58 @@
         `Mostrando <span>${list.length}</span> post${list.length !== 1 ? 's' : ''}`;
 
       grid.innerHTML = list.map(post => {
-        const thumbs = (post.images || []).slice(0,3).map(src =>
+        const displayTitle = getDisplayTitle(post);
+        const isLocked = !isPublicPost(post);
+        const alreadyUnlocked = !!sessionStorage.getItem('_post_pw_' + post.id);
+        const thumbs = (post.images || []).slice(0, 3).map(src =>
           `<img class="blog-card-thumb" src="${src}" alt="imagen" loading="lazy" />`
         ).join('');
-        const tags = post.tags.map(t => `<span class="blog-tag">${t}</span>`).join('');
+        const tagsHtml = (post.tags || []).map(t => `<span class="blog-tag">${t}</span>`).join('');
+
+        if (isLocked && !alreadyUnlocked && !isAdmin) {
+          /* Locked card for non-admin */
+          return `
+            <article class="blog-list-card reveal blog-card-locked" id="blc-${post.id}"
+              onclick="openUnlockModal('${post.id}')"
+              role="button" tabindex="0"
+              onkeydown="if(event.key==='Enter')openUnlockModal('${post.id}')"
+              aria-label="Post privado — haz clic para introducir contraseña">
+              <div class="blog-card-top">
+                <span class="blog-post-emoji">${post.emoji || '📝'}</span>
+                <div class="blog-card-meta">
+                  <time class="blog-post-date" datetime="${post.date}">${fmtDate(post.date)}</time>
+                  <div class="blog-post-tags">${tagsHtml}</div>
+                </div>
+              </div>
+              <h2 class="blog-post-title blog-locked-title">
+                <span class="blog-lock-badge">🔐</span>
+                ${displayTitle ? `<span class="blog-locked-title-text">${displayTitle}</span>` : '<em style="opacity:.5">Post privado</em>'}
+              </h2>
+              <div class="blog-card-arrow" style="color:var(--text-muted);">
+                Introducir contraseña
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 1v22M1 12h22" style="display:none"/><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+              </div>
+            </article>`;
+        }
+
+        /* Accessible card (public, admin, or already unlocked) */
         return `
-          <article class="blog-list-card reveal" id="blc-${post.id}" onclick="location.href='blog-post.html?id=${post.id}'" role="button" tabindex="0"
+          <article class="blog-list-card reveal${isLocked ? ' blog-card-private-unlocked' : ''}"
+            id="blc-${post.id}"
+            onclick="location.href='blog-post.html?id=${post.id}'"
+            role="button" tabindex="0"
             onkeydown="if(event.key==='Enter')location.href='blog-post.html?id=${post.id}'">
             <div class="blog-card-top">
-              <span class="blog-post-emoji">${post.emoji}</span>
+              <span class="blog-post-emoji">${post.emoji || '📝'}</span>
               <div class="blog-card-meta">
                 <time class="blog-post-date" datetime="${post.date}">${fmtDate(post.date)}</time>
-                <div class="blog-post-tags">${tags}</div>
+                <div class="blog-post-tags">
+                  ${isLocked ? '<span class="blog-tag blog-tag-private">🔐 Privado</span>' : ''}
+                  ${tagsHtml}
+                </div>
               </div>
             </div>
-            <h2 class="blog-post-title">${post.title}</h2>
+            <h2 class="blog-post-title">${displayTitle || '(sin título)'}</h2>
             ${thumbs ? `<div class="blog-card-thumbs">${thumbs}</div>` : ''}
             <div class="blog-card-arrow">
               Leer entrada
@@ -342,17 +417,17 @@
       grid.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
     }
 
-    /* ── Filter logic ───────────────────────────────────────────────── */
+    /* ── Filter logic ──────────────────────────────────────────────── */
     let activeTag  = 'all';
     let activeYear = 'all';
 
     function applyFilters() {
       const query = (document.getElementById('blog-search').value || '').toLowerCase().trim();
       const filtered = posts.filter(p => {
-        const matchTag  = activeTag  === 'all' || p.tags.includes(activeTag);
-        const matchYear = activeYear === 'all' || p.date.startsWith(activeYear);
-        const matchQ    = !query || p.title.toLowerCase().includes(query) ||
-                          p.tags.some(t => t.toLowerCase().includes(query));
+        const matchTag  = activeTag  === 'all' || (p.tags || []).includes(activeTag);
+        const matchYear = activeYear === 'all' || (p.date || '').startsWith(activeYear);
+        const title     = (getDisplayTitle(p) || '').toLowerCase();
+        const matchQ    = !query || title.includes(query) || (p.tags || []).some(t => t.toLowerCase().includes(query));
         return matchTag && matchYear && matchQ;
       });
       renderCards(filtered);
@@ -375,9 +450,16 @@
     renderCards(posts);
   }
 
-  /* ── Auto-unlock ────────────────────────────────────────────────── */
+  /* ── Admin logout ────────────────────────────────────────────────── */
+  document.getElementById('blog-admin-logout-btn').addEventListener('click', () => {
+    sessionStorage.removeItem(ADMIN_AUTH);
+    sessionStorage.removeItem(ADMIN_PW);
+    location.reload();
+  });
+
+  /* ── Init ────────────────────────────────────────────────────────── */
   document.addEventListener('DOMContentLoaded', () => {
-    if (sessionStorage.getItem(SESSION_KEY) === 'ok') unlockBlog();
+    renderBlog();
     observeReveal();
   });
   </script>

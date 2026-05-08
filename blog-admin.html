@@ -7,6 +7,18 @@
   <title>Admin Blog — Rubén García</title>
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%237c6fff'/><text y='22' x='7' font-size='18' font-family='sans-serif' fill='white'>R</text></svg>" />
+  <style>
+    .visibility-toggle { display:flex; gap:0.5rem; margin-top:0.4rem; }
+    .vis-btn { flex:1; padding:0.55rem; border:1.5px solid var(--border); border-radius:8px; background:transparent;
+      color:var(--text-secondary); cursor:pointer; font-size:0.84rem; font-weight:500; transition:all .2s; }
+    .vis-btn.active { border-color:var(--accent-purple); background:rgba(124,111,255,.15); color:var(--accent-purple); }
+    .vis-btn.active-public { border-color:var(--accent-cyan); background:rgba(0,229,255,.12); color:var(--accent-cyan); }
+    .post-pw-field { transition:max-height .3s ease, opacity .3s; max-height:0; opacity:0; overflow:hidden; }
+    .post-pw-field.visible { max-height:120px; opacity:1; }
+    .admin-badge-public  { background:rgba(0,229,255,.15); color:var(--accent-cyan);  border:1px solid rgba(0,229,255,.3); }
+    .admin-badge-private { background:rgba(255,107,107,.12); color:#ff6b6b; border:1px solid rgba(255,107,107,.3); }
+    .admin-badge-legacy  { background:rgba(255,200,100,.12); color:#ffc864; border:1px solid rgba(255,200,100,.3); }
+  </style>
 </head>
 <body>
 
@@ -57,7 +69,7 @@
         <div class="blog-lock-icon">🛠️</div>
         <span class="section-label" style="display:block; margin-bottom:0.5rem;">Admin</span>
         <h1 class="blog-lock-title">Panel de Blog</h1>
-        <p class="blog-lock-desc">Introduce la contraseña del blog para acceder al panel de administración.</p>
+        <p class="blog-lock-desc">Introduce la contraseña de administrador para acceder al panel.</p>
         <form id="admin-lock-form" class="blog-lock-form" autocomplete="off">
           <div class="blog-password-wrap">
             <input type="password" id="admin-password" class="blog-password-input"
@@ -103,12 +115,12 @@
         <!-- ALERT -->
         <div id="admin-alert" style="display:none;"></div>
 
-        <!-- ═══════════════════════════════════
-             NUEVO POST
-        ════════════════════════════════════ -->
+        <!-- ══════════════════════════════════════
+             NUEVO / EDITAR POST
+        ════════════════════════════════════════ -->
         <div class="admin-card">
           <div class="admin-card-header">
-            <h2 class="admin-card-title">✍️ Nuevo post</h2>
+            <h2 class="admin-card-title">✍️ <span id="form-card-title">Nuevo post</span></h2>
             <button id="btn-toggle-form" class="btn btn-primary" style="font-size:0.82rem; padding:0.5rem 1.2rem;">
               + Crear post
             </button>
@@ -145,14 +157,12 @@
                 <textarea id="f-body" class="admin-textarea" placeholder="# Título principal&#10;&#10;Empieza a escribir en Markdown…&#10;&#10;## Sección&#10;&#10;**Negrita**, *cursiva*, `código`" required></textarea>
               </div>
 
-              <!-- IMAGES -->
+              <!-- IMÁGENES -->
               <div class="admin-field">
                 <label class="admin-label">Imágenes <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted)">(URL o subir archivo)</span></label>
                 <div class="admin-image-list" id="image-list"></div>
                 <div style="display:flex; gap:0.6rem; margin-top:0.5rem; flex-wrap:wrap;">
-                  <button type="button" id="btn-add-url" class="btn btn-outline" style="font-size:0.8rem; padding:0.45rem 1rem;">
-                    + Añadir URL
-                  </button>
+                  <button type="button" id="btn-add-url" class="btn btn-outline" style="font-size:0.8rem; padding:0.45rem 1rem;">+ Añadir URL</button>
                   <label class="btn btn-outline" style="font-size:0.8rem; padding:0.45rem 1rem; cursor:pointer; margin:0;">
                     📁 Subir imagen
                     <input type="file" id="file-upload" accept="image/*" style="display:none;" multiple />
@@ -163,22 +173,48 @@
                 </p>
               </div>
 
+              <!-- VISIBILIDAD -->
+              <div class="admin-field">
+                <label class="admin-label">Visibilidad</label>
+                <div class="visibility-toggle">
+                  <button type="button" id="vis-public"  class="vis-btn active-public active" data-vis="public">🌐 Público</button>
+                  <button type="button" id="vis-private" class="vis-btn" data-vis="private">🔐 Privado</button>
+                </div>
+                <p style="font-size:0.78rem; color:var(--text-muted); margin-top:0.4rem;" id="vis-desc">
+                  Los posts públicos son visibles para todos sin contraseña.
+                </p>
+              </div>
+
+              <!-- CONTRASEÑA DEL POST -->
+              <div class="admin-field post-pw-field" id="post-pw-field">
+                <label class="admin-label" for="f-post-password">
+                  Contraseña del post
+                  <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted)">(mínimo 6 caracteres)</span>
+                </label>
+                <div class="blog-password-wrap" style="margin-top:0.4rem;">
+                  <input type="password" id="f-post-password" class="admin-input blog-password-input"
+                    placeholder="Contraseña exclusiva de este post…" autocomplete="new-password" minlength="6" />
+                  <button type="button" class="blog-eye-btn" id="post-pw-eye" aria-label="Mostrar contraseña">
+                    <svg id="ppw-eye-open"   width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <svg id="ppw-eye-closed" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                  </button>
+                </div>
+              </div>
+
               <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-top:0.5rem;">
                 <button type="submit" id="btn-save-post" class="btn btn-primary">
                   🔐 Cifrar y guardar
                 </button>
-                <button type="button" id="btn-cancel-form" class="btn btn-outline">
-                  Cancelar
-                </button>
+                <button type="button" id="btn-cancel-form" class="btn btn-outline">Cancelar</button>
               </div>
 
             </form>
           </div>
         </div>
 
-        <!-- ═══════════════════════════════════
+        <!-- ══════════════════════════════════════
              LISTA DE POSTS
-        ════════════════════════════════════ -->
+        ════════════════════════════════════════ -->
         <div class="admin-card">
           <div class="admin-card-header">
             <h2 class="admin-card-title">📋 Posts publicados</h2>
@@ -189,9 +225,9 @@
           </div>
         </div>
 
-        <!-- ═══════════════════════════════════
+        <!-- ══════════════════════════════════════
              EXPORTAR
-        ════════════════════════════════════ -->
+        ════════════════════════════════════════ -->
         <div class="admin-card">
           <div class="admin-card-header">
             <h2 class="admin-card-title">📤 Exportar a data.js</h2>
@@ -201,8 +237,7 @@
           </div>
           <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:1rem; line-height:1.7;">
             Genera el bloque <code style="background:rgba(124,111,255,0.12);color:var(--accent-cyan);padding:0.1em 0.4em;border-radius:4px;font-size:0.85em;">BLOG_POSTS</code>
-            con los posts guardados en localStorage para reemplazarlo en <code style="background:rgba(124,111,255,0.12);color:var(--accent-cyan);padding:0.1em 0.4em;border-radius:4px;font-size:0.85em;">js/data.js</code>.
-            Incluye los posts estáticos más los posts locales.
+            listo para pegar en <code style="background:rgba(124,111,255,0.12);color:var(--accent-cyan);padding:0.1em 0.4em;border-radius:4px;font-size:0.85em;">js/data.js</code>.
           </p>
           <textarea id="export-area" class="admin-export-area" readonly placeholder="Pulsa «Generar snippet» para ver el código…"></textarea>
           <button id="btn-copy-export" class="btn btn-outline" style="margin-top:0.75rem; font-size:0.82rem; padding:0.5rem 1.1rem; display:none;">
@@ -224,20 +259,20 @@
     </div>
   </footer>
 
-  <script src="js/i18n.js"></script>
-  <script src="js/data.js"></script>
-  <script src="js/blog-crypto.js"></script>
+  <script src="js/i18n.js?v=2"></script>
+  <script src="js/data.js?v=3"></script>
+  <script src="js/blog-crypto.js?v=2"></script>
   <script>
-  /* ═══════════════════════════════════════════════════════════════════
+  /* ════════════════════════════════════════════════════════════════════
      blog-admin.html — Panel de administración
-  ═══════════════════════════════════════════════════════════════════ */
+  ════════════════════════════════════════════════════════════════════ */
 
-  const BLOG_PASSWORD_HASH = '7367c98b14b9b37fcf0dd9bd6eb45e8671bed22fe70f085013ecae052eea27a4';
-  const SESSION_KEY  = '_blog_auth';
-  const SESSION_PW   = '_blog_pw';
-  const LOCAL_KEY    = '_blog_local_posts';
+  const ADMIN_PW_HASH = '7367c98b14b9b37fcf0dd9bd6eb45e8671bed22fe70f085013ecae052eea27a4';
+  const ADMIN_AUTH    = '_admin_auth';
+  const ADMIN_PW      = '_admin_pw';
+  const LOCAL_KEY     = '_blog_local_posts';
 
-  /* ── Theme ──────────────────────────────────────────────────────── */
+  /* ── Theme ───────────────────────────────────────────────────────── */
   const savedTheme = localStorage.getItem('portfolio-theme') || 'dark';
   document.documentElement.setAttribute('data-theme', savedTheme);
   document.getElementById('theme-toggle')?.addEventListener('click', () => {
@@ -246,23 +281,23 @@
     localStorage.setItem('portfolio-theme', next);
   });
 
-  /* ── Nav ────────────────────────────────────────────────────────── */
+  /* ── Nav ─────────────────────────────────────────────────────────── */
   const navEl = document.querySelector('.nav');
-  window.addEventListener('scroll', () => navEl.classList.toggle('scrolled', window.scrollY > 20), { passive:true });
+  window.addEventListener('scroll', () => navEl.classList.toggle('scrolled', window.scrollY > 20), { passive: true });
   const hamburger = document.getElementById('nav-hamburger');
   const mobileMenu = document.getElementById('nav-mobile');
   if (hamburger && mobileMenu) hamburger.addEventListener('click', () => {
     hamburger.classList.toggle('active'); mobileMenu.classList.toggle('open');
   });
 
-  /* ── Scroll reveal ──────────────────────────────────────────────── */
+  /* ── Scroll reveal ───────────────────────────────────────────────── */
   const revealObs = new IntersectionObserver(entries =>
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
     { threshold: 0.1 }
   );
   document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
 
-  /* ── Eye toggle (lock screen) ───────────────────────────────────── */
+  /* ── Eye toggle (lock screen) ────────────────────────────────────── */
   const eyeBtn    = document.getElementById('admin-eye-btn');
   const pwInput   = document.getElementById('admin-password');
   const eyeOpen   = document.getElementById('eye-open');
@@ -274,22 +309,39 @@
     eyeClosed.style.display = t ? 'none'  : 'block';
   });
 
-  /* ── localStorage helpers ───────────────────────────────────────── */
+  /* Eye toggle (post password) */
+  document.getElementById('post-pw-eye')?.addEventListener('click', () => {
+    const inp = document.getElementById('f-post-password');
+    const t = inp.type === 'text';
+    inp.type = t ? 'password' : 'text';
+    document.getElementById('ppw-eye-open').style.display   = t ? 'block' : 'none';
+    document.getElementById('ppw-eye-closed').style.display = t ? 'none'  : 'block';
+  });
+
+  /* ── localStorage helpers ────────────────────────────────────────── */
   function getLocalPosts() {
-    try { return JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]'); }
-    catch { return []; }
+    try { return JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]'); } catch { return []; }
   }
-  function saveLocalPosts(posts) {
-    localStorage.setItem(LOCAL_KEY, JSON.stringify(posts));
-  }
+  function saveLocalPosts(posts) { localStorage.setItem(LOCAL_KEY, JSON.stringify(posts)); }
+
   function getAllPosts() {
     const staticPosts = (typeof BLOG_POSTS !== 'undefined' ? BLOG_POSTS : [])
       .map(p => ({ ...p, _source: 'static' }));
     const localPosts  = getLocalPosts().map(p => ({ ...p, _source: 'local' }));
-    return [...staticPosts, ...localPosts].sort((a,b) => new Date(b.date) - new Date(a.date));
+    const ids = new Set();
+    const merged = [];
+    for (const p of [...localPosts, ...staticPosts]) {
+      const key = String(p.id);
+      if (!ids.has(key)) { ids.add(key); merged.push(p); }
+    }
+    return merged.sort((a, b) => new Date(b.date) - new Date(a.date));
   }
 
-  /* ── Alert ──────────────────────────────────────────────────────── */
+  function isPublicPost(p)  { return p.public === true; }
+  function isNewPrivate(p)  { return p.public === false && p.postPasswordHash; }
+  function isLegacyPost(p)  { return p.public === undefined && p.encryptedBody; }
+
+  /* ── Alert ───────────────────────────────────────────────────────── */
   function showAlert(msg, type = 'success') {
     const el = document.getElementById('admin-alert');
     el.innerHTML = `<div class="admin-alert admin-alert-${type}">${type === 'success' ? '✅' : '❌'} ${msg}</div>`;
@@ -297,65 +349,47 @@
     setTimeout(() => { el.style.display = 'none'; }, 4000);
   }
 
-  /* ── Format date ────────────────────────────────────────────────── */
+  /* ── Format date ─────────────────────────────────────────────────── */
   function fmtDate(d) {
-    return new Date(d + 'T12:00:00').toLocaleDateString('es', { year:'numeric', month:'short', day:'numeric' });
+    return new Date(d + 'T12:00:00').toLocaleDateString('es', { year: 'numeric', month: 'short', day: 'numeric' });
   }
 
-  /* ═══════════════════════════════════════════════════════════════════
-     RENDER POSTS LIST
-  ═══════════════════════════════════════════════════════════════════ */
-  function renderPostList() {
-    const posts = getAllPosts();
-    const list  = document.getElementById('admin-post-list');
-    const count = document.getElementById('posts-count');
-    count.textContent = `${posts.length} post${posts.length !== 1 ? 's' : ''}`;
+  /* ── Visibility toggle ───────────────────────────────────────────── */
+  let currentVisibility = 'public';
 
-    if (!posts.length) {
-      list.innerHTML = '<p style="color:var(--text-muted);font-size:0.9rem;text-align:center;padding:1.5rem 0;">No hay posts todavía.</p>';
-      return;
+  function setVisibility(vis) {
+    currentVisibility = vis;
+    const pubBtn  = document.getElementById('vis-public');
+    const privBtn = document.getElementById('vis-private');
+    const pwField = document.getElementById('post-pw-field');
+    const desc    = document.getElementById('vis-desc');
+
+    pubBtn.classList.remove('active', 'active-public');
+    privBtn.classList.remove('active');
+
+    if (vis === 'public') {
+      pubBtn.classList.add('active', 'active-public');
+      pwField.classList.remove('visible');
+      document.getElementById('f-post-password').required = false;
+      desc.textContent = 'Los posts públicos son visibles para todos sin contraseña.';
+      document.getElementById('btn-save-post').innerHTML = '💾 Guardar post';
+    } else {
+      privBtn.classList.add('active');
+      pwField.classList.add('visible');
+      document.getElementById('f-post-password').required = true;
+      desc.textContent = 'El título y el contenido se cifrarán con la contraseña del post.';
+      document.getElementById('btn-save-post').innerHTML = '🔐 Cifrar y guardar';
     }
-
-    list.innerHTML = posts.map(p => `
-      <div class="admin-post-item">
-        <div class="admin-post-item-info">
-          <span class="admin-post-item-emoji">${p.emoji || '📝'}</span>
-          <div style="min-width:0;">
-            <div class="admin-post-item-title" title="${p.title}">${p.title}</div>
-            <div class="admin-post-item-meta">${fmtDate(p.date)} · ${(p.tags||[]).join(', ') || '—'}</div>
-          </div>
-        </div>
-        <div class="admin-post-item-actions">
-          <span class="admin-badge ${p._source === 'local' ? 'admin-badge-local' : 'admin-badge-static'}">
-            ${p._source === 'local' ? 'Local' : 'data.js'}
-          </span>
-          ${p._source === 'local' ? `
-            <button class="btn btn-outline" onclick="deletePost('${p.id}')"
-              style="font-size:0.75rem;padding:0.3rem 0.65rem;border-color:#ff6b6b50;color:#ff6b6b;"
-              title="Eliminar">
-              🗑
-            </button>` : ''}
-        </div>
-      </div>`).join('');
   }
 
-  /* ── Delete local post ──────────────────────────────────────────── */
-  function deletePost(id) {
-    if (!confirm('¿Eliminar este post? Esta acción no se puede deshacer.')) return;
-    const posts = getLocalPosts().filter(p => p.id !== id);
-    saveLocalPosts(posts);
-    renderPostList();
-    showAlert('Post eliminado.');
-  }
-  window.deletePost = deletePost;
+  document.getElementById('vis-public').addEventListener('click',  () => setVisibility('public'));
+  document.getElementById('vis-private').addEventListener('click', () => setVisibility('private'));
 
-  /* ═══════════════════════════════════════════════════════════════════
-     TAG INPUT
-  ═══════════════════════════════════════════════════════════════════ */
+  /* ── Tag input ───────────────────────────────────────────────────── */
   let tags = [];
 
   function renderTags() {
-    const box = document.getElementById('tag-box');
+    const box   = document.getElementById('tag-box');
     const input = document.getElementById('tag-input');
     box.querySelectorAll('.admin-tag-pill').forEach(el => el.remove());
     tags.forEach(tag => {
@@ -374,30 +408,22 @@
   window.removeTag = removeTag;
 
   document.getElementById('tag-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter' || e.key === ',') {
-      e.preventDefault();
-      addTag(e.target.value);
-      e.target.value = '';
-    } else if (e.key === 'Backspace' && !e.target.value && tags.length) {
-      tags.pop(); renderTags();
-    }
+    if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addTag(e.target.value); e.target.value = ''; }
+    else if (e.key === 'Backspace' && !e.target.value && tags.length) { tags.pop(); renderTags(); }
   });
   document.getElementById('tag-input').addEventListener('blur', e => {
     if (e.target.value) { addTag(e.target.value); e.target.value = ''; }
   });
 
-  /* ═══════════════════════════════════════════════════════════════════
-     IMAGE LIST
-  ═══════════════════════════════════════════════════════════════════ */
+  /* ── Image list ──────────────────────────────────────────────────── */
   let images = [];
 
   function renderImageList() {
     const list = document.getElementById('image-list');
     list.innerHTML = images.map((src, i) => `
       <div class="admin-image-row">
-        <input type="text" class="admin-input" value="${src.length > 80 ? src.substring(0,40)+'…'+src.slice(-20) : src}"
-          readonly title="${src}"
-          style="font-size:0.82rem; color:var(--text-secondary);" />
+        <input type="text" class="admin-input" value="${src.length > 80 ? src.substring(0, 40) + '…' + src.slice(-20) : src}"
+          readonly title="${src}" style="font-size:0.82rem; color:var(--text-secondary);" />
         <button type="button" class="admin-image-remove" onclick="removeImage(${i})" title="Eliminar">×</button>
       </div>`).join('');
   }
@@ -411,8 +437,7 @@
   });
 
   document.getElementById('file-upload').addEventListener('change', e => {
-    const files = Array.from(e.target.files);
-    files.forEach(file => {
+    Array.from(e.target.files).forEach(file => {
       const reader = new FileReader();
       reader.onload = ev => { images.push(ev.target.result); renderImageList(); };
       reader.readAsDataURL(file);
@@ -420,94 +445,286 @@
     e.target.value = '';
   });
 
-  /* ═══════════════════════════════════════════════════════════════════
-     FORM TOGGLE
-  ═══════════════════════════════════════════════════════════════════ */
+  /* ── Form toggle / reset ─────────────────────────────────────────── */
   const formWrap = document.getElementById('new-post-form-wrap');
+  let editingPostId = null;
+
+  function resetForm() {
+    document.getElementById('new-post-form').reset();
+    tags = []; renderTags();
+    images = []; renderImageList();
+    setVisibility('public');
+    editingPostId = null;
+    document.getElementById('f-date').value  = new Date().toISOString().split('T')[0];
+    document.getElementById('f-emoji').value = '📝';
+    document.getElementById('f-post-password').value = '';
+    document.getElementById('form-card-title').textContent = 'Nuevo post';
+    document.getElementById('btn-toggle-form').textContent = '+ Crear post';
+    document.getElementById('btn-save-post').innerHTML = '💾 Guardar post';
+  }
 
   document.getElementById('btn-toggle-form').addEventListener('click', () => {
     const isOpen = formWrap.classList.contains('open');
-    formWrap.classList.toggle('open', !isOpen);
-    document.getElementById('btn-toggle-form').textContent = isOpen ? '+ Crear post' : '− Cancelar';
-    if (!isOpen) {
-      const today = new Date().toISOString().split('T')[0];
-      document.getElementById('f-date').value = today;
-      document.getElementById('f-emoji').value = '📝';
-    }
+    if (isOpen) { formWrap.classList.remove('open'); resetForm(); }
+    else { formWrap.classList.add('open'); resetForm(); }
   });
 
   document.getElementById('btn-cancel-form').addEventListener('click', () => {
     formWrap.classList.remove('open');
-    document.getElementById('btn-toggle-form').textContent = '+ Crear post';
-    document.getElementById('new-post-form').reset();
-    tags = []; renderTags(); images = []; renderImageList();
+    resetForm();
   });
 
-  /* ═══════════════════════════════════════════════════════════════════
-     SAVE POST
-  ═══════════════════════════════════════════════════════════════════ */
+  /* ── Render post list ────────────────────────────────────────────── */
+  async function renderPostList() {
+    const posts   = getAllPosts();
+    const list    = document.getElementById('admin-post-list');
+    const count   = document.getElementById('posts-count');
+    const adminPw = sessionStorage.getItem(ADMIN_PW);
+    count.textContent = `${posts.length} post${posts.length !== 1 ? 's' : ''}`;
+
+    if (!posts.length) {
+      list.innerHTML = '<p style="color:var(--text-muted);font-size:0.9rem;text-align:center;padding:1.5rem 0;">No hay posts todavía.</p>';
+      return;
+    }
+
+    /* Decrypt titles for new private posts */
+    const decryptedTitles = {};
+    for (const p of posts) {
+      if (isNewPrivate(p) && p.adminEncryptedPw && adminPw) {
+        try {
+          const postPw = await blogCrypto.decrypt(p.adminEncryptedPw, p.adminPwIv, p.adminPwSalt, adminPw);
+          decryptedTitles[p.id] = await blogCrypto.decrypt(p.encryptedTitle, p.titleIv, p.titleSalt, postPw);
+        } catch { decryptedTitles[p.id] = '(error al descifrar)'; }
+      }
+    }
+
+    function getTitle(p) {
+      if (isPublicPost(p))              return p.title;
+      if (p._plainTitle)                return p._plainTitle;
+      if (decryptedTitles[p.id])        return decryptedTitles[p.id];
+      if (isLegacyPost(p) && p.title)  return p.title;
+      return '(sin título)';
+    }
+
+    function getBadge(p) {
+      if (isPublicPost(p))  return `<span class="admin-badge admin-badge-public">🌐 Público</span>`;
+      if (isNewPrivate(p))  return `<span class="admin-badge admin-badge-private">🔐 Privado</span>`;
+      if (isLegacyPost(p))  return `<span class="admin-badge admin-badge-legacy">⚠️ Legado</span>`;
+      return `<span class="admin-badge admin-badge-static">data.js</span>`;
+    }
+
+    list.innerHTML = posts.map(p => `
+      <div class="admin-post-item">
+        <div class="admin-post-item-info">
+          <span class="admin-post-item-emoji">${p.emoji || '📝'}</span>
+          <div style="min-width:0;">
+            <div class="admin-post-item-title" title="${getTitle(p)}">${getTitle(p)}</div>
+            <div class="admin-post-item-meta">${fmtDate(p.date)} · ${(p.tags || []).join(', ') || '—'}</div>
+          </div>
+        </div>
+        <div class="admin-post-item-actions">
+          ${getBadge(p)}
+          <span class="admin-badge ${p._source === 'local' ? 'admin-badge-local' : 'admin-badge-static'}">
+            ${p._source === 'local' ? 'Local' : 'data.js'}
+          </span>
+          ${p._source === 'local' ? `
+            <button class="btn btn-outline" onclick="editPost('${p.id}')"
+              style="font-size:0.75rem;padding:0.3rem 0.65rem;"
+              title="Editar">✏️</button>
+            <button class="btn btn-outline" onclick="deletePost('${p.id}')"
+              style="font-size:0.75rem;padding:0.3rem 0.65rem;border-color:#ff6b6b50;color:#ff6b6b;"
+              title="Eliminar">🗑</button>
+          ` : ''}
+        </div>
+      </div>`).join('');
+  }
+
+  /* ── Edit local post ─────────────────────────────────────────────── */
+  async function editPost(id) {
+    const post    = getAllPosts().find(p => String(p.id) === String(id));
+    const adminPw = sessionStorage.getItem(ADMIN_PW);
+    if (!post) return;
+
+    document.getElementById('f-emoji').value = post.emoji || '📝';
+    document.getElementById('f-date').value  = post.date;
+    tags = [...(post.tags || [])]; renderTags();
+    images = [...(post.images || [])]; renderImageList();
+
+    if (isPublicPost(post)) {
+      document.getElementById('f-title').value = post.title;
+      document.getElementById('f-body').value  = post.body || '';
+      setVisibility('public');
+
+    } else if (isNewPrivate(post) && post.adminEncryptedPw && adminPw) {
+      try {
+        const postPw = await blogCrypto.decrypt(post.adminEncryptedPw, post.adminPwIv, post.adminPwSalt, adminPw);
+        const title  = await blogCrypto.decrypt(post.encryptedTitle,   post.titleIv,  post.titleSalt,  postPw);
+        const body   = await blogCrypto.decrypt(post.encryptedBody,    post.iv,       post.salt,       postPw);
+        document.getElementById('f-title').value           = title;
+        document.getElementById('f-body').value            = body;
+        document.getElementById('f-post-password').value   = postPw;
+        setVisibility('private');
+      } catch { showAlert('Error al descifrar el post para editar.', 'error'); return; }
+
+    } else if (isLegacyPost(post) && adminPw) {
+      try {
+        const body = await blogCrypto.decrypt(post.encryptedBody, post.iv, post.salt, adminPw);
+        document.getElementById('f-title').value           = post.title;
+        document.getElementById('f-body').value            = body;
+        document.getElementById('f-post-password').value   = adminPw;
+        setVisibility('private');
+      } catch { showAlert('Error al descifrar el post legado para editar.', 'error'); return; }
+    } else {
+      showAlert('No se puede editar este post (sin contraseña disponible).', 'error');
+      return;
+    }
+
+    editingPostId = id;
+    document.getElementById('form-card-title').textContent = 'Editar post';
+    document.getElementById('btn-toggle-form').textContent = '− Cancelar edición';
+    formWrap.classList.add('open');
+    formWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  window.editPost = editPost;
+
+  /* ── Delete local post ───────────────────────────────────────────── */
+  function deletePost(id) {
+    if (!confirm('¿Eliminar este post? Esta acción no se puede deshacer.')) return;
+    saveLocalPosts(getLocalPosts().filter(p => String(p.id) !== String(id)));
+    renderPostList();
+    showAlert('Post eliminado.');
+  }
+  window.deletePost = deletePost;
+
+  /* ── Save post ───────────────────────────────────────────────────── */
   document.getElementById('new-post-form').addEventListener('submit', async e => {
     e.preventDefault();
     const btn = document.getElementById('btn-save-post');
     btn.disabled = true;
-    btn.textContent = 'Cifrando…';
+    const origLabel = btn.innerHTML;
+    btn.innerHTML = 'Guardando…';
 
     try {
-      const pw    = sessionStorage.getItem(SESSION_PW);
-      const title = document.getElementById('f-title').value.trim();
-      const date  = document.getElementById('f-date').value;
-      const emoji = document.getElementById('f-emoji').value.trim() || '📝';
-      const body  = document.getElementById('f-body').value.trim();
+      const adminPw = sessionStorage.getItem(ADMIN_PW);
+      const title   = document.getElementById('f-title').value.trim();
+      const date    = document.getElementById('f-date').value;
+      const emoji   = document.getElementById('f-emoji').value.trim() || '📝';
+      const body    = document.getElementById('f-body').value.trim();
 
       if (!title || !date || !body) { showAlert('Completa título, fecha y contenido.', 'error'); return; }
       if (!tags.length) { showAlert('Añade al menos una etiqueta.', 'error'); return; }
 
-      const enc = await blogCrypto.encrypt(body, pw);
-      const id  = 'post-' + Date.now();
+      const id = editingPostId || ('post-' + Date.now());
+      let post;
 
-      const post = { id, title, date, tags: [...tags], emoji, images: [...images], ...enc };
-      const local = getLocalPosts();
+      if (currentVisibility === 'public') {
+        post = { id, public: true, title, date, tags: [...tags], emoji, images: [...images], body };
+      } else {
+        const postPw = document.getElementById('f-post-password').value;
+        if (!postPw || postPw.length < 6) { showAlert('La contraseña del post debe tener al menos 6 caracteres.', 'error'); return; }
+
+        btn.innerHTML = 'Cifrando…';
+        const [bodyEnc, titleEnc, pwEnc, postPwHash] = await Promise.all([
+          blogCrypto.encrypt(body,   postPw),
+          blogCrypto.encrypt(title,  postPw),
+          blogCrypto.encrypt(postPw, adminPw),
+          blogCrypto.sha256(postPw),
+        ]);
+
+        post = {
+          id,
+          public: false,
+          date,
+          tags: [...tags],
+          emoji,
+          images: [...images],
+          encryptedTitle: titleEnc.encryptedBody,
+          titleIv:        titleEnc.iv,
+          titleSalt:      titleEnc.salt,
+          encryptedBody:  bodyEnc.encryptedBody,
+          iv:             bodyEnc.iv,
+          salt:           bodyEnc.salt,
+          postPasswordHash: postPwHash,
+          adminEncryptedPw: pwEnc.encryptedBody,
+          adminPwIv:        pwEnc.iv,
+          adminPwSalt:      pwEnc.salt,
+          _plainTitle: title,   /* admin-only, stripped on export */
+        };
+      }
+
+      /* Save / replace in localStorage */
+      const local = getLocalPosts().filter(p => String(p.id) !== String(id));
       local.push(post);
       saveLocalPosts(local);
 
-      showAlert(`Post "${title}" guardado y cifrado correctamente.`);
-      document.getElementById('new-post-form').reset();
-      tags = []; renderTags(); images = []; renderImageList();
+      const verb = editingPostId ? 'actualizado' : 'guardado';
+      showAlert(`Post "${title}" ${verb} correctamente.`);
       formWrap.classList.remove('open');
-      document.getElementById('btn-toggle-form').textContent = '+ Crear post';
+      resetForm();
       renderPostList();
-    } catch(err) {
+    } catch (err) {
       console.error(err);
-      showAlert('Error al cifrar el post.', 'error');
+      showAlert('Error al guardar el post.', 'error');
     } finally {
       btn.disabled = false;
-      btn.innerHTML = '🔐 Cifrar y guardar';
+      btn.innerHTML = origLabel;
     }
   });
 
-  /* ═══════════════════════════════════════════════════════════════════
-     EXPORT
-  ═══════════════════════════════════════════════════════════════════ */
+  /* ── Export ──────────────────────────────────────────────────────── */
   document.getElementById('btn-export').addEventListener('click', () => {
-    const all = getAllPosts().map(({ _source, ...p }) => p);
-    const lines = all.map(p => `  {
+    const all = getAllPosts().map(({ _source, _plainTitle, ...p }) => p);
+
+    const lines = all.map(p => {
+      if (isPublicPost(p)) {
+        return `  {
     id: '${p.id}',
+    public: true,
     title: ${JSON.stringify(p.title)},
     date: '${p.date}',
     tags: ${JSON.stringify(p.tags)},
     emoji: '${p.emoji}',
     images: ${JSON.stringify(p.images)},
+    body: ${JSON.stringify(p.body)},
+  }`;
+      }
+      if (isNewPrivate(p)) {
+        return `  {
+    id: '${p.id}',
+    public: false,
+    date: '${p.date}',
+    tags: ${JSON.stringify(p.tags)},
+    emoji: '${p.emoji}',
+    images: ${JSON.stringify(p.images)},
+    encryptedTitle: '${p.encryptedTitle}',
+    titleIv:   '${p.titleIv}',
+    titleSalt: '${p.titleSalt}',
     encryptedBody: '${p.encryptedBody}',
     iv:   '${p.iv}',
-    salt: '${p.salt}'
-  }`).join(',\n');
+    salt: '${p.salt}',
+    postPasswordHash: '${p.postPasswordHash}',
+    adminEncryptedPw: '${p.adminEncryptedPw}',
+    adminPwIv:   '${p.adminPwIv}',
+    adminPwSalt: '${p.adminPwSalt}',
+  }`;
+      }
+      /* legacy format */
+      return `  {
+    id: ${typeof p.id === 'string' ? `'${p.id}'` : p.id},
+    title: ${JSON.stringify(p.title)},
+    date: '${p.date}',
+    tags: ${JSON.stringify(p.tags)},
+    emoji: '${p.emoji}',
+    images: ${JSON.stringify(p.images || [])},
+    encryptedBody: '${p.encryptedBody}',
+    iv:   '${p.iv}',
+    salt: '${p.salt}',
+  }`;
+    }).join(',\n');
 
     const snippet = `const BLOG_POSTS = [\n${lines}\n];`;
-    const area = document.getElementById('export-area');
-    area.value = snippet;
-
-    const copyBtn = document.getElementById('btn-copy-export');
-    copyBtn.style.display = 'inline-flex';
+    document.getElementById('export-area').value = snippet;
+    document.getElementById('btn-copy-export').style.display = 'inline-flex';
     showAlert('Snippet generado. Cópialo y reemplaza BLOG_POSTS en js/data.js');
   });
 
@@ -517,21 +734,17 @@
       .catch(() => { document.getElementById('export-area').select(); document.execCommand('copy'); showAlert('Copiado.'); });
   });
 
-  /* ═══════════════════════════════════════════════════════════════════
-     AUTH
-  ═══════════════════════════════════════════════════════════════════ */
+  /* ── Auth ────────────────────────────────────────────────────────── */
   function unlockAdmin() {
     document.getElementById('admin-lock').style.display    = 'none';
     document.getElementById('admin-content').style.display = 'block';
+    resetForm();
     renderPostList();
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('f-date').value  = today;
-    document.getElementById('f-emoji').value = '📝';
   }
 
   function lockAdmin() {
-    sessionStorage.removeItem(SESSION_KEY);
-    sessionStorage.removeItem(SESSION_PW);
+    sessionStorage.removeItem(ADMIN_AUTH);
+    sessionStorage.removeItem(ADMIN_PW);
     location.reload();
   }
 
@@ -543,9 +756,9 @@
     btn.disabled = true;
     try {
       const hash = await blogCrypto.sha256(pw);
-      if (hash === BLOG_PASSWORD_HASH) {
-        sessionStorage.setItem(SESSION_KEY, 'ok');
-        sessionStorage.setItem(SESSION_PW, pw);
+      if (hash === ADMIN_PW_HASH) {
+        sessionStorage.setItem(ADMIN_AUTH, 'ok');
+        sessionStorage.setItem(ADMIN_PW, pw);
         document.getElementById('admin-error').textContent = '';
         unlockAdmin();
       } else {
@@ -560,7 +773,7 @@
   document.getElementById('admin-logout').addEventListener('click', lockAdmin);
 
   document.addEventListener('DOMContentLoaded', () => {
-    if (sessionStorage.getItem(SESSION_KEY) === 'ok') unlockAdmin();
+    if (sessionStorage.getItem(ADMIN_AUTH) === 'ok') unlockAdmin();
   });
   </script>
   <script src="js/main.js"></script>
