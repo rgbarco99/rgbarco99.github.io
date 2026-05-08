@@ -172,34 +172,10 @@ Si te quedas con una sola cosa: **documenta siempre**, especialmente lo que pare
   }`).join(',\n');
 
   console.log(`/* ===================================================================
-   data.js — Datos del portfolio (generado por generate-demo-posts.mjs)
+   data.js — Blog posts cifrados (generado por generate-demo-posts.mjs)
+   SKILLS y CLIENTS están en js/dataSkills.js — NO editar este archivo
+   manualmente, regenerar con: node generate-demo-posts.mjs > js/data.js
    =================================================================== */
-
-const SKILLS = [
-  { icon: '🎨', label: 'SAP Fiori / UI5' },
-  { icon: '⚙️', label: 'ABAP / RAP' },
-  { icon: '📡', label: 'OData Services' },
-  { icon: '🗂️', label: 'CDS Views' },
-  { icon: '🏗️', label: 'SAP Build' },
-  { icon: '🔧', label: 'SmartForms / Adobe Forms' },
-  { icon: '🧩', label: 'BADIs / User Exits' },
-  { icon: '🌐', label: 'JavaScript / TypeScript' },
-  { icon: '⚡', label: 'Node.js' },
-  { icon: '🐙', label: 'Git / GitHub' },
-  { icon: '🐋', label: 'Docker' },
-  { icon: '🗄️', label: 'SQL / HANA' },
-];
-
-const CLIENTS = [
-  { logo: '🏭', name: 'Industrias XYZ',   sector: 'Manufactura' },
-  { logo: '🏦', name: 'Banco Nacional',   sector: 'Banca & Finanzas' },
-  { logo: '🛒', name: 'RetailGroup',      sector: 'Retail' },
-  { logo: '⚡', name: 'EnergíaPlus',      sector: 'Energía' },
-  { logo: '🚚', name: 'LogiTrans',        sector: 'Logística' },
-  { logo: '🏥', name: 'HealthCorp',       sector: 'Salud' },
-  { logo: '🏗️', name: 'Constructora Sur', sector: 'Construcción' },
-  { logo: '✈️', name: 'AeroServices',     sector: 'Aviación' },
-];
 
 /* ── BLOG POSTS (cuerpo cifrado con AES-256-GCM + PBKDF2) ──────────
    Título, fecha, tags e imágenes van en claro para renderizar tarjetas.
