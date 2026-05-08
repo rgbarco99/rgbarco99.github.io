@@ -163,10 +163,15 @@
     return merged;
   }
 
-  function isPublicPost(p)    { return p.public === true; }
-  function isNewPrivate(p)    { return p.public === false && p.postPasswordHash; }
-  function isProtectedPost(p) { return p.public === false && p.postPasswordHash && p.protected === true; }
-  function isLegacyPost(p)    { return p.public === undefined && p.encryptedBody; }
+  function isPublicPost(p)  { return p.public === true; }
+  function isNewPrivate(p)  { return p.public === false && p.postPasswordHash; }
+  function isLegacyPost(p)  { return p.public === undefined && p.encryptedBody; }
+  function getVisibility(p) {
+    if (p.visibility) return p.visibility;
+    if (p.visible === false) return 'hidden';
+    if (p.protected === true) return 'protected';
+    return 'visible';
+  }
 
   /* ── Theme ───────────────────────────────────────────────────────── */
   const savedTheme = localStorage.getItem('portfolio-theme') || 'dark';
@@ -261,6 +266,7 @@
     _lockPost = post;
     const lockEl = document.getElementById('post-lock-screen');
     lockEl.style.display = 'flex';
+    lockEl.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
     document.getElementById('blog-reader-loading').style.display = 'none';
     if (isLegacy) {
       lockEl.querySelector('.blog-lock-desc').textContent =

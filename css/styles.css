@@ -1164,12 +1164,19 @@ h1,h2,h3,h4 { font-family: var(--font-heading); font-weight: 700; line-height: 1
 @media (max-width: 640px) {
   .blog-list-grid { grid-template-columns: 1fr; }
   .blog-preview-cards { grid-template-columns: 1fr; }
+  .blog-list-section { padding: 0 1.25rem 4rem; }
   .blog-reader { padding: 6rem 1.25rem 3rem; }
   .blog-reader-back { flex-direction: column; align-items: flex-start; }
   .blog-year-filter { gap: 0.6rem; justify-content: flex-start; }
   .blog-toolbar-actions { margin-left: 0; width: 100%; justify-content: flex-end; }
   .admin-row { grid-template-columns: 1fr; }
   .admin-section { padding: 0 1.25rem 4rem; }
+  .admin-post-item { flex-wrap: wrap; gap: 0.6rem; }
+  .admin-post-item-info { flex: 1 1 calc(100% - 3rem); min-width: 0; }
+  .admin-post-item-actions { flex-wrap: wrap; gap: 0.3rem; justify-content: flex-end; width: 100%; }
+  .admin-card { padding: 1.25rem; }
+  .admin-card-header { flex-wrap: wrap; }
+  .search-container { padding: 0 1.25rem; }
 }
 [data-theme="light"] .blog-year-select { background: var(--bg-card); }
 [data-theme="light"] .admin-input,

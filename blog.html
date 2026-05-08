@@ -114,7 +114,7 @@
         <button id="post-unlock-close" aria-label="Cerrar"
           style="position:absolute; top:1rem; right:1rem; background:none; border:none; color:var(--text-muted); font-size:1.3rem; cursor:pointer; line-height:1;">✕</button>
         <div class="blog-lock-icon">🔐</div>
-        <span class="section-label" style="display:block; margin-bottom:0.5rem;">Post privado</span>
+        <span class="section-label" style="display:block; margin-bottom:0.5rem;">Acceso requerido</span>
         <h2 class="blog-lock-title" style="font-size:1.4rem;">Contenido protegido</h2>
         <p class="blog-lock-desc">Introduce la contraseña para acceder a este post.</p>
         <form id="post-unlock-form" autocomplete="off">
@@ -179,12 +179,16 @@
   }
 
   /* post type helpers */
-  function isPublicPost(p)    { return p.public === true; }
-  function isNewPrivate(p)    { return p.public === false && p.postPasswordHash; }
-  function isProtectedPost(p) { return p.public === false && p.postPasswordHash && p.protected === true; }
-  function isPrivatePost(p)   { return p.public === false && p.postPasswordHash && !p.protected; }
-  function isLegacyPost(p)    { return p.public === undefined && p.encryptedBody; }
-  function isVisible(p)       { return p.visible !== false; }
+  function isPublicPost(p)  { return p.public === true; }
+  function isNewPrivate(p)  { return p.public === false && p.postPasswordHash; }
+  function isLegacyPost(p)  { return p.public === undefined && p.encryptedBody; }
+  function getVisibility(p) {
+    if (p.visibility) return p.visibility;
+    if (p.visible === false) return 'hidden';
+    if (p.protected === true) return 'protected';
+    return 'visible';
+  }
+  function isVisible(p) { return getVisibility(p) !== 'hidden'; }
 
   /* ── Theme ───────────────────────────────────────────────────────── */
   const savedTheme = localStorage.getItem('portfolio-theme') || 'dark';
@@ -365,29 +369,36 @@
 
       grid.innerHTML = list.map(post => {
         const displayTitle    = getDisplayTitle(post);
-        const isLocked        = !isPublicPost(post);
+        const isPrivate       = !isPublicPost(post);
         const alreadyUnlocked = !!sessionStorage.getItem('_post_pw_' + post.id);
+        const vis             = getVisibility(post);
         const thumbs = (post.images || []).slice(0, 3).map(src =>
           `<img class="blog-card-thumb" src="${src}" alt="imagen" loading="lazy" />`
         ).join('');
-        const tagsHtml = (post.tags || []).map(t => `<span class="blog-tag">${t}</span>`).join('');
-        const hiddenNote = isAdmin && !isVisible(post)
-          ? `<span class="blog-card-hidden-note">🚫 No visible en listado</span>` : '';
+        const tagsHtml  = (post.tags || []).map(t => `<span class="blog-tag">${t}</span>`).join('');
+        const hiddenNote = isAdmin && vis === 'hidden'
+          ? `<span class="blog-card-hidden-note">🚫 Solo link</span>` : '';
 
-        /* ── Protected card (blurred) for non-admin ─────────────────── */
-        if (isProtectedPost(post) && !alreadyUnlocked && !isAdmin) {
+        /* ── Blurred card for non-admin when visibility = 'protected' ── */
+        if (vis === 'protected' && !isAdmin) {
+          const clickFn  = isPrivate && !alreadyUnlocked
+            ? `openUnlockModal('${post.id}')`
+            : `location.href='blog-post.html?id=${post.id}'`;
+          const ctaText  = isPrivate && !alreadyUnlocked
+            ? '🔒 Protegido · Introducir contraseña'
+            : '👁 Protegido · Ver post';
           return `
             <article class="blog-list-card reveal blog-card-locked blog-card-protected" id="blc-${post.id}"
-              onclick="openUnlockModal('${post.id}')"
+              onclick="${clickFn}"
               role="button" tabindex="0"
-              onkeydown="if(event.key==='Enter')openUnlockModal('${post.id}')"
-              aria-label="Post protegido — haz clic para introducir contraseña">
+              onkeydown="if(event.key==='Enter')${clickFn}"
+              aria-label="Post protegido — haz clic para ver">
               <div class="blog-card-top">
                 <span class="blog-post-emoji">${post.emoji || '📝'}</span>
                 <div class="blog-card-meta">
                   <time class="blog-post-date" datetime="${post.date}">${fmtDate(post.date)}</time>
                   <div class="blog-post-tags">
-                    <span class="blog-tag blog-tag-protected">👁 Protegido</span>
+                    <span class="blog-tag blog-tag-protected">🌫 Protegido</span>
                     ${tagsHtml}
                   </div>
                 </div>
@@ -398,14 +409,12 @@
                   ████████ ███ ████████ ██████ ███ ████ ████████ ████.
                 </p>
               </div>
-              <div class="blog-protected-cta">
-                🔒 Protegido · Introducir contraseña
-              </div>
+              <div class="blog-protected-cta">${ctaText}</div>
             </article>`;
         }
 
-        /* ── Private card (locked, no blur) for non-admin ───────────── */
-        if (isLocked && !alreadyUnlocked && !isAdmin) {
+        /* ── Private locked card for non-admin ──────────────────────── */
+        if (isPrivate && !alreadyUnlocked && !isAdmin) {
           return `
             <article class="blog-list-card reveal blog-card-locked" id="blc-${post.id}"
               onclick="openUnlockModal('${post.id}')"
@@ -432,12 +441,11 @@
 
         /* ── Accessible card (public, admin, or already unlocked) ────── */
         let typeBadge = '';
-        if      (isProtectedPost(post)) typeBadge = '<span class="blog-tag blog-tag-protected">👁 Protegido</span>';
-        else if (isPrivatePost(post))   typeBadge = '<span class="blog-tag blog-tag-private">🔐 Privado</span>';
-        else if (isLegacyPost(post))    typeBadge = '<span class="blog-tag blog-tag-private">🔐 Privado</span>';
+        if (isNewPrivate(post) || isLegacyPost(post)) typeBadge += '<span class="blog-tag blog-tag-private">🔐 Privado</span>';
+        if (vis === 'protected' && isAdmin)            typeBadge += '<span class="blog-tag blog-tag-protected">🌫 Protegido</span>';
 
         return `
-          <article class="blog-list-card reveal${isLocked ? ' blog-card-private-unlocked' : ''}"
+          <article class="blog-list-card reveal${isPrivate ? ' blog-card-private-unlocked' : ''}"
             id="blc-${post.id}"
             onclick="location.href='blog-post.html?id=${post.id}'"
             role="button" tabindex="0"
@@ -458,7 +466,11 @@
             </div>
           </article>`;
       }).join('');
-      grid.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+      grid.querySelectorAll('.reveal').forEach(el => {
+        revealObs.observe(el);
+        const r = el.getBoundingClientRect();
+        if (r.top < window.innerHeight && r.bottom > 0) el.classList.add('visible');
+      });
     }
 
     /* ── Filter logic ──────────────────────────────────────────────── */
