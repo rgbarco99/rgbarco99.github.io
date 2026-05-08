@@ -11,8 +11,9 @@
     .visibility-toggle { display:flex; gap:0.5rem; margin-top:0.4rem; }
     .vis-btn { flex:1; padding:0.55rem; border:1.5px solid var(--border); border-radius:8px; background:transparent;
       color:var(--text-secondary); cursor:pointer; font-size:0.84rem; font-weight:500; transition:all .2s; }
-    .vis-btn.active { border-color:var(--accent-purple); background:rgba(124,111,255,.15); color:var(--accent-purple); }
-    .vis-btn.active-public { border-color:var(--accent-cyan); background:rgba(0,229,255,.12); color:var(--accent-cyan); }
+    .vis-btn.active           { border-color:var(--accent-purple); background:rgba(124,111,255,.15); color:var(--accent-purple); }
+    .vis-btn.active-public    { border-color:var(--accent-cyan);   background:rgba(0,229,255,.12);   color:var(--accent-cyan); }
+    .vis-btn.active-protected { border-color:#ff9f43; background:rgba(255,159,67,.12); color:#ff9f43; }
     .post-pw-field { transition:max-height .3s ease, opacity .3s; max-height:0; opacity:0; overflow:hidden; }
     .post-pw-field.visible { max-height:120px; opacity:1; }
     .admin-badge-public  { background:rgba(0,229,255,.15); color:var(--accent-cyan);  border:1px solid rgba(0,229,255,.3); }
@@ -173,12 +174,13 @@
                 </p>
               </div>
 
-              <!-- VISIBILIDAD -->
+              <!-- TIPO -->
               <div class="admin-field">
-                <label class="admin-label">Visibilidad</label>
+                <label class="admin-label">Tipo</label>
                 <div class="visibility-toggle">
-                  <button type="button" id="vis-public"  class="vis-btn active-public active" data-vis="public">🌐 Público</button>
-                  <button type="button" id="vis-private" class="vis-btn" data-vis="private">🔐 Privado</button>
+                  <button type="button" id="vis-public"    class="vis-btn active-public active" data-vis="public">🌐 Público</button>
+                  <button type="button" id="vis-private"   class="vis-btn" data-vis="private">🔐 Privado</button>
+                  <button type="button" id="vis-protected" class="vis-btn" data-vis="protected">👁 Protegido</button>
                 </div>
                 <p style="font-size:0.78rem; color:var(--text-muted); margin-top:0.4rem;" id="vis-desc">
                   Los posts públicos son visibles para todos sin contraseña.
@@ -199,6 +201,18 @@
                     <svg id="ppw-eye-closed" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
                   </button>
                 </div>
+              </div>
+
+              <!-- LISTADO -->
+              <div class="admin-field">
+                <label class="admin-label">Listado</label>
+                <div class="visibility-toggle">
+                  <button type="button" id="listed-yes" class="vis-btn active-public active" data-listed="yes">👁 Visible en listado</button>
+                  <button type="button" id="listed-no"  class="vis-btn" data-listed="no">🚫 Solo link directo</button>
+                </div>
+                <p style="font-size:0.78rem; color:var(--text-muted); margin-top:0.4rem;" id="listed-desc">
+                  El post aparecerá en el listado del blog.
+                </p>
               </div>
 
               <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-top:0.5rem;">
@@ -348,9 +362,11 @@
     return merged.sort((a, b) => new Date(b.date) - new Date(a.date));
   }
 
-  function isPublicPost(p)  { return p.public === true; }
-  function isNewPrivate(p)  { return p.public === false && p.postPasswordHash; }
-  function isLegacyPost(p)  { return p.public === undefined && p.encryptedBody; }
+  function isPublicPost(p)    { return p.public === true; }
+  function isNewPrivate(p)    { return p.public === false && p.postPasswordHash; }
+  function isProtectedPost(p) { return p.public === false && p.postPasswordHash && p.protected === true; }
+  function isPrivatePost(p)   { return p.public === false && p.postPasswordHash && !p.protected; }
+  function isLegacyPost(p)    { return p.public === undefined && p.encryptedBody; }
 
   /* ── Alert ───────────────────────────────────────────────────────── */
   function showAlert(msg, type = 'success') {
@@ -365,18 +381,18 @@
     return new Date(d + 'T12:00:00').toLocaleDateString('es', { year: 'numeric', month: 'short', day: 'numeric' });
   }
 
-  /* ── Visibility toggle ───────────────────────────────────────────── */
+  /* ── Type toggle (public / private / protected) ──────────────────── */
   let currentVisibility = 'public';
 
   function setVisibility(vis) {
     currentVisibility = vis;
     const pubBtn  = document.getElementById('vis-public');
     const privBtn = document.getElementById('vis-private');
+    const protBtn = document.getElementById('vis-protected');
     const pwField = document.getElementById('post-pw-field');
     const desc    = document.getElementById('vis-desc');
 
-    pubBtn.classList.remove('active', 'active-public');
-    privBtn.classList.remove('active');
+    [pubBtn, privBtn, protBtn].forEach(b => b.classList.remove('active', 'active-public', 'active-protected'));
 
     if (vis === 'public') {
       pubBtn.classList.add('active', 'active-public');
@@ -384,17 +400,45 @@
       document.getElementById('f-post-password').required = false;
       desc.textContent = 'Los posts públicos son visibles para todos sin contraseña.';
       document.getElementById('btn-save-post').innerHTML = '💾 Guardar post';
-    } else {
+    } else if (vis === 'private') {
       privBtn.classList.add('active');
       pwField.classList.add('visible');
       document.getElementById('f-post-password').required = true;
       desc.textContent = 'El título y el contenido se cifrarán con la contraseña del post.';
       document.getElementById('btn-save-post').innerHTML = '🔐 Cifrar y guardar';
+    } else {
+      protBtn.classList.add('active', 'active-protected');
+      pwField.classList.add('visible');
+      document.getElementById('f-post-password').required = true;
+      desc.textContent = 'Como privado, pero la tarjeta aparece difuminada en el listado para los visitantes.';
+      document.getElementById('btn-save-post').innerHTML = '🔐 Cifrar y guardar';
     }
   }
 
-  document.getElementById('vis-public').addEventListener('click',  () => setVisibility('public'));
-  document.getElementById('vis-private').addEventListener('click', () => setVisibility('private'));
+  document.getElementById('vis-public').addEventListener('click',    () => setVisibility('public'));
+  document.getElementById('vis-private').addEventListener('click',   () => setVisibility('private'));
+  document.getElementById('vis-protected').addEventListener('click', () => setVisibility('protected'));
+
+  /* ── Listed toggle (visible in listing / direct link only) ───────── */
+  let currentVisible = true;
+
+  function setListed(val) {
+    currentVisible = val;
+    const yesBtn = document.getElementById('listed-yes');
+    const noBtn  = document.getElementById('listed-no');
+    yesBtn.classList.remove('active', 'active-public');
+    noBtn.classList.remove('active');
+    if (val) {
+      yesBtn.classList.add('active', 'active-public');
+      document.getElementById('listed-desc').textContent = 'El post aparecerá en el listado del blog.';
+    } else {
+      noBtn.classList.add('active');
+      document.getElementById('listed-desc').textContent = 'El post no aparecerá en el listado. Solo accesible con link directo o como administrador.';
+    }
+  }
+
+  document.getElementById('listed-yes').addEventListener('click', () => setListed(true));
+  document.getElementById('listed-no').addEventListener('click',  () => setListed(false));
 
   /* ── Tag input ───────────────────────────────────────────────────── */
   let tags = [];
@@ -473,6 +517,7 @@
     document.getElementById('btn-toggle-form').textContent = '+ Crear post';
     document.getElementById('btn-save-post').innerHTML = '💾 Guardar post';
     document.getElementById('static-edit-note')?.remove();
+    setListed(true);
   }
 
   document.getElementById('btn-toggle-form').addEventListener('click', () => {
@@ -519,10 +564,14 @@
     }
 
     function getBadge(p) {
-      if (isPublicPost(p))  return `<span class="admin-badge admin-badge-public">🌐 Público</span>`;
-      if (isNewPrivate(p))  return `<span class="admin-badge admin-badge-private">🔐 Privado</span>`;
-      if (isLegacyPost(p))  return `<span class="admin-badge admin-badge-legacy">⚠️ Legado</span>`;
-      return `<span class="admin-badge admin-badge-static">data.js</span>`;
+      let badge = '';
+      if      (isPublicPost(p))    badge = `<span class="admin-badge admin-badge-public">🌐 Público</span>`;
+      else if (isProtectedPost(p)) badge = `<span class="admin-badge admin-badge-protected">👁 Protegido</span>`;
+      else if (isPrivatePost(p))   badge = `<span class="admin-badge admin-badge-private">🔐 Privado</span>`;
+      else if (isLegacyPost(p))    badge = `<span class="admin-badge admin-badge-legacy">⚠️ Legado</span>`;
+      const hiddenBadge = p.visible === false
+        ? `<span class="admin-badge admin-badge-hidden">🚫 Oculto</span>` : '';
+      return badge + hiddenBadge;
     }
 
     list.innerHTML = posts.map(p => `
@@ -560,6 +609,8 @@
     tags = [...(post.tags || [])]; renderTags();
     images = [...(post.images || [])]; renderImageList();
 
+    setListed(post.visible !== false);
+
     if (isPublicPost(post)) {
       document.getElementById('f-title').value = post.title;
       document.getElementById('f-body').value  = post.body || '';
@@ -573,7 +624,7 @@
         document.getElementById('f-title').value           = title;
         document.getElementById('f-body').value            = body;
         document.getElementById('f-post-password').value   = postPw;
-        setVisibility('private');
+        setVisibility(isProtectedPost(post) ? 'protected' : 'private');
       } catch { showAlert('Error al descifrar el post para editar.', 'error'); return; }
 
     } else if (isLegacyPost(post) && adminPw) {
@@ -654,7 +705,7 @@
       let post;
 
       if (currentVisibility === 'public') {
-        post = { id, public: true, title, date, tags: [...tags], emoji, images: [...images], body };
+        post = { id, public: true, visible: currentVisible, title, date, tags: [...tags], emoji, images: [...images], body };
       } else {
         const postPw = document.getElementById('f-post-password').value;
         if (!postPw || postPw.length < 6) { showAlert('La contraseña del post debe tener al menos 6 caracteres.', 'error'); return; }
@@ -670,6 +721,8 @@
         post = {
           id,
           public: false,
+          ...(currentVisibility === 'protected' ? { protected: true } : {}),
+          ...(currentVisible === false ? { visible: false } : {}),
           date,
           tags: [...tags],
           emoji,
@@ -684,7 +737,7 @@
           adminEncryptedPw: pwEnc.encryptedBody,
           adminPwIv:        pwEnc.iv,
           adminPwSalt:      pwEnc.salt,
-          _plainTitle: title,   /* admin-only, stripped on export */
+          _plainTitle: title,
         };
       }
 
@@ -712,10 +765,13 @@
     const all = getAllPosts().map(({ _source, _plainTitle, ...p }) => p);
 
     const lines = all.map(p => {
+      const visibleLine    = p.visible === false  ? `\n    visible: false,`   : '';
+      const protectedLine  = p.protected === true ? `\n    protected: true,`  : '';
+
       if (isPublicPost(p)) {
         return `  {
     id: '${p.id}',
-    public: true,
+    public: true,${visibleLine}
     title: ${JSON.stringify(p.title)},
     date: '${p.date}',
     tags: ${JSON.stringify(p.tags)},
@@ -727,7 +783,7 @@
       if (isNewPrivate(p)) {
         return `  {
     id: '${p.id}',
-    public: false,
+    public: false,${protectedLine}${visibleLine}
     date: '${p.date}',
     tags: ${JSON.stringify(p.tags)},
     emoji: '${p.emoji}',

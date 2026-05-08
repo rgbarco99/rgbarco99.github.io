@@ -152,18 +152,21 @@
     const staticPosts = (typeof BLOG_POSTS !== 'undefined' ? BLOG_POSTS : []);
     let localPosts = [];
     try { localPosts = JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]'); } catch {}
+    let deletedIds = new Set();
+    try { deletedIds = new Set(JSON.parse(localStorage.getItem('_blog_deleted_posts') || '[]')); } catch {}
     const ids = new Set();
     const merged = [];
     for (const p of [...localPosts, ...staticPosts]) {
       const key = String(p.id);
-      if (!ids.has(key)) { ids.add(key); merged.push(p); }
+      if (!ids.has(key) && !deletedIds.has(key)) { ids.add(key); merged.push(p); }
     }
     return merged;
   }
 
-  function isPublicPost(p) { return p.public === true; }
-  function isNewPrivate(p) { return p.public === false && p.postPasswordHash; }
-  function isLegacyPost(p) { return p.public === undefined && p.encryptedBody; }
+  function isPublicPost(p)    { return p.public === true; }
+  function isNewPrivate(p)    { return p.public === false && p.postPasswordHash; }
+  function isProtectedPost(p) { return p.public === false && p.postPasswordHash && p.protected === true; }
+  function isLegacyPost(p)    { return p.public === undefined && p.encryptedBody; }
 
   /* ── Theme ───────────────────────────────────────────────────────── */
   const savedTheme = localStorage.getItem('portfolio-theme') || 'dark';
