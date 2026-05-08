@@ -271,6 +271,7 @@
   const ADMIN_AUTH    = '_admin_auth';
   const ADMIN_PW      = '_admin_pw';
   const LOCAL_KEY     = '_blog_local_posts';
+  const DELETED_KEY   = '_blog_deleted_posts';
 
   /* ── Theme ───────────────────────────────────────────────────────── */
   const savedTheme = localStorage.getItem('portfolio-theme') || 'dark';
@@ -324,8 +325,18 @@
   }
   function saveLocalPosts(posts) { localStorage.setItem(LOCAL_KEY, JSON.stringify(posts)); }
 
+  function getDeletedIds() {
+    try { return JSON.parse(localStorage.getItem(DELETED_KEY) || '[]'); } catch { return []; }
+  }
+  function addDeletedId(id) {
+    const ids = getDeletedIds();
+    if (!ids.includes(String(id))) { ids.push(String(id)); localStorage.setItem(DELETED_KEY, JSON.stringify(ids)); }
+  }
+
   function getAllPosts() {
+    const deletedIds  = new Set(getDeletedIds());
     const staticPosts = (typeof BLOG_POSTS !== 'undefined' ? BLOG_POSTS : [])
+      .filter(p => !deletedIds.has(String(p.id)))
       .map(p => ({ ...p, _source: 'static' }));
     const localPosts  = getLocalPosts().map(p => ({ ...p, _source: 'local' }));
     const ids = new Set();
@@ -461,6 +472,7 @@
     document.getElementById('form-card-title').textContent = 'Nuevo post';
     document.getElementById('btn-toggle-form').textContent = '+ Crear post';
     document.getElementById('btn-save-post').innerHTML = '💾 Guardar post';
+    document.getElementById('static-edit-note')?.remove();
   }
 
   document.getElementById('btn-toggle-form').addEventListener('click', () => {
@@ -527,19 +539,17 @@
           <span class="admin-badge ${p._source === 'local' ? 'admin-badge-local' : 'admin-badge-static'}">
             ${p._source === 'local' ? 'Local' : 'data.js'}
           </span>
-          ${p._source === 'local' ? `
-            <button class="btn btn-outline" onclick="editPost('${p.id}')"
-              style="font-size:0.75rem;padding:0.3rem 0.65rem;"
-              title="Editar">✏️</button>
-            <button class="btn btn-outline" onclick="deletePost('${p.id}')"
-              style="font-size:0.75rem;padding:0.3rem 0.65rem;border-color:#ff6b6b50;color:#ff6b6b;"
-              title="Eliminar">🗑</button>
-          ` : ''}
+          <button class="btn btn-outline" onclick="editPost('${p.id}')"
+            style="font-size:0.75rem;padding:0.3rem 0.65rem;"
+            title="Editar">✏️</button>
+          <button class="btn btn-outline" onclick="deletePost('${p.id}')"
+            style="font-size:0.75rem;padding:0.3rem 0.65rem;border-color:#ff6b6b50;color:#ff6b6b;"
+            title="Eliminar">🗑</button>
         </div>
       </div>`).join('');
   }
 
-  /* ── Edit local post ─────────────────────────────────────────────── */
+  /* ── Edit post ───────────────────────────────────────────────────── */
   async function editPost(id) {
     const post    = getAllPosts().find(p => String(p.id) === String(id));
     const adminPw = sessionStorage.getItem(ADMIN_PW);
@@ -582,17 +592,43 @@
     editingPostId = id;
     document.getElementById('form-card-title').textContent = 'Editar post';
     document.getElementById('btn-toggle-form').textContent = '− Cancelar edición';
+
+    /* If editing a static post, show an info note */
+    let staticNote = document.getElementById('static-edit-note');
+    if (post._source === 'static') {
+      if (!staticNote) {
+        staticNote = document.createElement('p');
+        staticNote.id = 'static-edit-note';
+        staticNote.style.cssText = 'font-size:0.82rem;color:var(--accent-cyan);background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.2);border-radius:8px;padding:0.6rem 0.9rem;margin-bottom:0.75rem;';
+        document.getElementById('new-post-form').prepend(staticNote);
+      }
+      staticNote.textContent = 'ℹ️ Este post viene de data.js. Los cambios se guardarán como versión local — exporta y pega el snippet en data.js para hacerlos permanentes.';
+    } else if (staticNote) {
+      staticNote.remove();
+    }
+
     formWrap.classList.add('open');
     formWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
   window.editPost = editPost;
 
-  /* ── Delete local post ───────────────────────────────────────────── */
+  /* ── Delete post ─────────────────────────────────────────────────── */
   function deletePost(id) {
-    if (!confirm('¿Eliminar este post? Esta acción no se puede deshacer.')) return;
+    const post = getAllPosts().find(p => String(p.id) === String(id));
+    if (!post) return;
+    const isStatic = post._source === 'static';
+    const confirmMsg = isStatic
+      ? '¿Ocultar este post de data.js? El post quedará eliminado del panel pero deberás exportar y actualizar data.js para borrarlo definitivamente.'
+      : '¿Eliminar este post? Esta acción no se puede deshacer.';
+    if (!confirm(confirmMsg)) return;
+
+    if (isStatic) {
+      addDeletedId(id);
+    }
+    /* Always remove from local too (handles static with local override) */
     saveLocalPosts(getLocalPosts().filter(p => String(p.id) !== String(id)));
     renderPostList();
-    showAlert('Post eliminado.');
+    showAlert(isStatic ? 'Post ocultado. Exporta y actualiza data.js para eliminarlo definitivamente.' : 'Post eliminado.');
   }
   window.deletePost = deletePost;
 
