@@ -213,7 +213,11 @@
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
     { threshold: 0.1 }
   );
-  const observeReveal = () => document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+  const observeReveal = () => document.querySelectorAll('.reveal').forEach(el => {
+    revealObs.observe(el);
+    const r = el.getBoundingClientRect();
+    if (r.top < window.innerHeight && r.bottom > 0) el.classList.add('visible');
+  });
 
   /* ── Eye toggle ──────────────────────────────────────────────────── */
   document.getElementById('unlock-eye-btn')?.addEventListener('click', () => {

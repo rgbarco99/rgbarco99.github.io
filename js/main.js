@@ -111,7 +111,11 @@ const revealObserver = new IntersectionObserver((entries) => {
   entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
 }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
-document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+document.querySelectorAll('.reveal').forEach(el => {
+  revealObserver.observe(el);
+  const r = el.getBoundingClientRect();
+  if (r.top < window.innerHeight && r.bottom > 0) el.classList.add('visible');
+});
 
 /* --------------------------------------------------
    6. PARTICLE SYSTEM (canvas hero background)
@@ -222,7 +226,11 @@ function renderSkills() {
        <span class="skill-icon">${s.icon}</span> ${s.label}
      </span>`
   ).join('');
-  grid.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+  grid.querySelectorAll('.reveal').forEach(el => {
+    revealObserver.observe(el);
+    const r = el.getBoundingClientRect();
+    if (r.top < window.innerHeight && r.bottom > 0) el.classList.add('visible');
+  });
 }
 
 /* --------------------------------------------------
@@ -241,7 +249,11 @@ function renderClients() {
        </div>
      </div>`
   ).join('');
-  grid.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+  grid.querySelectorAll('.reveal').forEach(el => {
+    revealObserver.observe(el);
+    const r = el.getBoundingClientRect();
+    if (r.top < window.innerHeight && r.bottom > 0) el.classList.add('visible');
+  });
 }
 
 document.addEventListener('DOMContentLoaded', () => {

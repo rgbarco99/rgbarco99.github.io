@@ -1,61 +1,27 @@
-﻿/* ═══════════════════════════════════════════════════════════════════
-   data.js — Constantes centralizadas del portfolio
-═══════════════════════════════════════════════════════════════════ */
-
-/* ─── SKILLS ──────────────────────────────────────────────────────── */
-const SKILLS = [
-  { icon: '🎨', label: 'SAP Fiori / UI5' },
-  { icon: '⚙️', label: 'ABAP / RAP' },
-  { icon: '📡', label: 'OData Services' },
-  { icon: '🗂️', label: 'CDS Views' },
-  { icon: '🏗️', label: 'SAP Build' },
-  { icon: '🔧', label: 'SmartForms / Adobe Forms' },
-  { icon: '🧩', label: 'BADIs / User Exits' },
-  { icon: '🌐', label: 'JavaScript / TypeScript' },
-  { icon: '⚡', label: 'Node.js' },
-  { icon: '🐙', label: 'Git / GitHub' },
-  { icon: '🐋', label: 'Docker' },
-  { icon: '🗄️', label: 'SQL / HANA' },
-];
-
-/* ─── CLIENTS ─────────────────────────────────────────────────────── */
-const CLIENTS = [
-  { logo: '🏭', name: 'Industrias XYZ',   sector: 'Manufactura' },
-  { logo: '🏦', name: 'Banco Nacional',   sector: 'Banca & Finanzas' },
-  { logo: '🛒', name: 'RetailGroup',      sector: 'Retail' },
-  { logo: '⚡', name: 'EnergíaPlus',      sector: 'Energía' },
-  { logo: '🚚', name: 'LogiTrans',        sector: 'Logística' },
-  { logo: '🏥', name: 'HealthCorp',       sector: 'Salud' },
-  { logo: '🏗️', name: 'Constructora Sur', sector: 'Construcción' },
-  { logo: '✈️', name: 'AeroServices',     sector: 'Aviación' },
-];
-
-/* ─── BLOG POSTS ──────────────────────────────────────────────────── */
-const BLOG_POSTS = [
+﻿const BLOG_POSTS = [
   {
     id: 'post-1778240295864',
     public: false,
-    protected: true,
-    visible: false,
+    visibility: 'hidden',
     date: '2026-05-08',
     tags: ["nana"],
     emoji: '💝',
     images: [],
-    encryptedTitle: 'X7x/0qGofwDVtPJl1+hsvtP/BupF47AOHKrUAQ==',
-    titleIv:   'OBoK/mlQwW0yTPxx',
-    titleSalt: 'fbcm4XHz2glGLVZmTyiL1g==',
-    encryptedBody: 'i5f0CLzoV0g4XtTGp3qGb/nr5Pd3I8w43fa0eMcHH4jhotW5qDjaobcfg5XpHVEHIYu5YKeOP7RURNbOH4A7JYsoms9ADAxUU0LGkQxpPFGO4WJpmEVIqsGmfAHb16iR6hM+tn/CgY3jHi0TQBAemTOEZmQGlNn1P4s34GwlEbO2LnRFT2YGOd1VsPgvDcOeCiO5Hv9y2BK9ch2hM0gBBrxTCDbpGCKaCjzAmbQrMoYgCkWbMvaU+zs8oth/q+t5rqONOcxjlUJqKDBISBHhh8X9ZgQmRhYjPdyq7gzFJuOCVjgTPZgihxTdYgCerPCECmZ2mp59tFkwTC7axGK770FTp5pR8s3hZrEERw/brR2iumOOD5KGmHynBOSvI8cBTyYQLKzwz8UdLh9CQsb49P07S7/6chlavzEpHqRjyhFadQQIZ354sVkKL6Sib2s6DPeAXF/sFgYI20mMlmC5ePCUTHEfQsKqj2tAUw5Jzyu5nTjsAKmPLjt0b3QlMkUbwOsNMbUz4FyDIuwid950NHR7Jjbhs24m7gENdYHFPYh+W6JBMkhEhqqSoVXubRqIz7z5PtAELKqXweG8uE0CYCyJj+MDbLwsYwbrssT5nqsiuHsWVIgcrAC9AfGAoml6k9sgUjctnrKHgfCzISYbfhNFhhMqX45epL0//SMIgH+XFBbeO+WGDokrEzaDfbyoOhHuQQVeo5nQpsLUf+05rhRGpRrP3FT5Z07Qj4XJmfkJQ7mWTNV0otk/tkhlqtqa1YsFqUJs5uI/F1lONeIrwnmU267UBBEiciz98Y5TJLP/40lojeftEw0Sv1gh+mni0KbR70JySfRJIASbZ1AXh0bFVpjEmfRO24/VziBHB9G++RD8Ij6BG+Ebr0vaz5Uew4bjgxgsJsAZ0GnVGJdWaNtKmpjSb9qfC4WO8D30MY1TJeFG/0XrcFRnJUQmrO+chseesOk+luHmilng3w788SrLwcSX',
-    iv:   'vPLQpRPPeHIIEXZI',
-    salt: 'K7e1qJvTFBjqQyCKQoLJMw==',
+    encryptedTitle: 'KLgYi8OpsF0aHBazYVk7j5Kqy5Z9BszYr5nb9Q==',
+    titleIv:   'DB6naKHmnTyN5Jzv',
+    titleSalt: 'voOVZh83jZjVD1IN70Azxw==',
+    encryptedBody: 'wXBUc9IiuR7pESwin7Bhtw1NuCaYgMj298GGUllJZQncHlxzaKU2DUKXwrUQcpc3NdeXD9DwoWgxIP5LrMrAFg4cgoviCWgLOW9pkb++maSOI2kjYla273iuTO2+ve/3Zb83tJkfZbGtCw79OPaGPnS6+/429juC8VoRQzB3jORWIwuT6iveIk9tnJzTagDi5WPq18nC874MALI6Ic6DrvbHqqJxV5+UZm4lpWh06ogM9v9RS5aIATEKlZptzPgfOE7IzAtvnyMR8yiHeylRqPZC8JETxo1x58lXDJ73LH25ONvoO/EXSwMGpb9/aZKeNwowdrkBHzrbpKjzkc91dRiqn6LnLSV43dJNQs3v+BpYTiq/js4Dh7hH0xwPxAsFvbSLrh4ziS6vhE/UcA1BXJDKUEJc2ErooyOqXA8NAoR8wGW8c4LschylHqbuiZoAvAzc+2otCCiBIIjzQCFpCPpE4TnLLu5P3BuKl5nW8cCoAgtubn1CFQbjygiSA0o0EORbXcFmwxARSHl1sMTFWjRyqGzBNrOQDWCr9e+hnTYfQjUvVtcLKeGECu3UWx/qc0vxzilggz284qPGYD+/V0NzIiSlUqfVNFZVF9Mp8bhIMglHgL10hdSgDwPNQUyRgpXYJd1OHcik8vIX0qCcqeX4UoLUbftHPEEhiFqlFIdHqPlGLbBC8UlHliZOrHN2q3s5Ls3LNs/WMEmJKeYz9Bm0DhnDTX9rpZmqdojKIJvfm8LStcyILCmz1oLG8BY8HZGwtblv3N3GoIr1+yIYzf7JGbALizwqih0uB8exq1ZfoVwrGylF92TIMAq/MfUo1xKI4MQC0SPnSk/P96XEZIAwBbAaDNFoS57W6vMmnOO+LzPB3DY4kZOKHFM/qGPoZ+4kb4REjmvoJn0TrVAm851EsNZ/v7VU5nWs0jEVuUxmNMC2r1vsj9JeCnvHILCAU5zWKWADwv/Eyoqx6FaU3ZKJyqDYCQ==',
+    iv:   'aFXLWmUXwwyANsaF',
+    salt: '0zD7ecRh4hyER0kLREjlwg==',
     postPasswordHash: '2fedf45f75970eaf4e41c2f4c98597ab5f704dc063f24a034210cd775b70f244',
-    adminEncryptedPw: 'F/1P0MQ9JP0a/8xoVBQ1GnUpGCVPvQ==',
-    adminPwIv:   '547aEufZ8rBMOjCs',
-    adminPwSalt: 'fN5odoXGrxFj+XGKP6gCvQ==',
+    adminEncryptedPw: 'oqssVEtG1fdPSZFSx7F/zw+9QCMLiw==',
+    adminPwIv:   'GbgJirXlgj2Jas96',
+    adminPwSalt: 'X2sh/NUciiP6XcxJgBFp6w==',
   },
   {
     id: 'post-1778157415600',
     public: false,
-    protected: true,
+    visibility: 'protected',
     date: '2026-05-07',
     tags: ["Prueba"],
     emoji: '📝',
@@ -73,35 +39,32 @@ const BLOG_POSTS = [
   },
   {
     id: 'post-001',
+    public: true,
     title: "Optimizando OData V4 en SAP Fiori",
     date: '2025-04-28',
     tags: ["SAP","Fiori","OData"],
     emoji: '🚀',
     images: [],
-    encryptedBody: 'pJ4WmsWaGOteq1VGfay76jUFqJDe7ldAJk1nSd7Ay2264W3YWv41KIJ3djNFoHMQMSEudvjfalDDLv9kklImSxun+pJkIIrUJvv+POVmbHaABlDva1BU8HLldAJ4CLx2m8zd5OksBZMILDvRMvO/VOAQifFDTMXWwZ4hI5/lfRHL0dyamznwtDgeQnYrH9bfewV/47WM5B8hZdVP0gwHmfCGZka4KSXuA9Kk94mKZK8JlW92hrSyEL31v19fFQf1J7pyfJmCtzAkU28tMobzpCW23bOi048E3deKkOmf+roKvCXipkGnBUFFspqP2Z0nBfckl5ngI85VL2gs9smZ3o7P3/CWo3QzKE/JEzFNAIO6jG2Z8YwnfgqyEP795tS0higQjP5J9rka/D1+/prnoILBu3ifio+RbnyxYx5yo3E6paIP4/12ZMrIgbiWjlYHsIDuRnsMZSnvNMYThieyvMfELkbvLjvkP6N9RBb9mRVt0dAnc8Dy0OFWteK8IFNftyKV/GjiDTudjxh7/7KXuCsCMqSRQgvSAYiEb0YG0FrXFOm8LnLQpScV+jLMIxyhGFWq6FaOReb5o97uPjEP2yaRyFUpnXRsVcE8VmcaMeeQ1m3cBjn5rP4ATIs0789GAKssjEeTAce4Bs2yiKclUdZAZN1L6FLD9PNrb7HqcYnlz+SCacdKTTiXX9f2O2lpt0Wfympu5QHfMTk3LOHgNpC1Bqj11jPcAgAam7YA9liiPXkshlOPc1yEf9rDExFLY6t/Us3quL5dDWksJ4h6Gna56szbwSh8Jm64ZaD+m4lH1qDkfSyrYhlSYJPVch5MFQQsKrSDFFVI+YXsz6AGCI3KV3ML93SbHh52ae38u/K1FZzapC+7b45bhMAcG/AQgPeF6OXtg64/t5hJ1U+znl+meZ5uwN6vyDHofbMhi5mUkkKAYGrI7XFei/hsZ3FN442dxHVKEGMXHGM4QvqqNSxGk8xRIB61DdSRUnBclDzpA/V76b8Po2Ss9+B7QCGS54CdeZ3yc5+Yn0V0S8EKDMmvHBSCmbeTsX9Z3EWM+M3iQlvZKymp0WUoV37exuJsnIXquLWcyo9qAiNUXSjbGULR2Xrf6uNkgIOPb4MuIWaQTbGuJ3TSlHGKryBVmNmdO2tirG62zCOc+zSUIfoFPhMLvUKoBQSsbGDGdLLQmmrqU6jQMR7iYMIbIlaVsAb9NmYxksKxz/IG878ZeJdg/pgVW7Vf9W5Ct5MpF+0NxsBXI6UUPmcX436FzjrxZzQPncZQOXjRiapc8YY2KRecpgDH4+TiYLtW0womTOZ3kefj5ccAS/s/4ksbVRxrX1nRPtpSszfeyox/5UFxRFS55mQY4HAAIxIOcnUeuFC/+q4vsgZyoI5YUVF6E+KkV3ui3dqbX0F6KW+s7q+dWHz/OkgEPFT9JHPv5V/37Bjd+a5qQYUpQUa8jrLLfVts1HwtuKV57qdoyMYcYRMcYwSyIlKimaUC0QIxBEiHv6b8oT4UxzdpjQBp6BUTB2Mgjv6YUtc2vzUlhLTYHEaCgB8cEtZq3N5L/yQ/bIj8Djw6aYStkLze6DSs3YwWZd/KOR9BQoM7zFmSyat01qKxJAttreIV+ihouPhHiTgv2owLBEHXx1ZGPn0JSP+N1kiAvJsPnNSL9r4sSAY5A8mao8IoxsQRy5P0Hq9hEmQX/Ybaik3kRKssG8WNGnf8gFxqSOvB/dVN8DY9sVPIQ4Sp5DkFO6FzMj1wdW7/OzvWWRIuACCMpebmpwh8jVkjuazmW9AFwZNquQ==',
-    iv:   'dHjaicgWmHfGtme3',
-    salt: 'zLPdco89HZRJya0oUnAf5A==',
+    body: "Después de meses trabajando con OData V4 en proyectos reales, he recopilado los patrones que más me han ayudado a mejorar el rendimiento y la mantenibilidad de las aplicaciones Fiori.\n\n## El problema con los bindings por defecto\n\nEl mayor error que veo en proyectos Fiori es confiar en el binding automático de OData V4 sin entender qué queries se están lanzando. Un simple ListBinding con `$expand` mal configurado puede triplicar el tiempo de carga.\n\n## Patterns que funcionan\n\n**1. Server-side filtering siempre**\nEvita cargar listas completas para filtrar en el cliente. Usa `$filter` en el binding y apóyate en CDS annotations como `@Search.defaultSearchElement`.\n\n**2. $batch para múltiples reads**\nCuando la vista necesita datos de varias entidades, agrúpalos en un `$batch`. El framework lo soporta de forma transparente con `sap.ui.model.odata.v4.ODataModel`.\n\n**3. earlyRequests**\nHabilita `earlyRequests: true` en el modelo para que las queries arranquen antes de que el controlador esté listo.\n\n## Ejemplo\n\n```js\nconst oModel = new ODataModel({\n  serviceUrl: '/sap/opu/odata4/...',\n  synchronizationMode: 'None',\n  operationMode: 'Server',\n  earlyRequests: true\n});\n```\n\nCon estos tres cambios en un proyecto real redujimos el tiempo de carga inicial de 4.2s a 1.1s. No está mal para ajustes de configuración.",
   },
   {
     id: 'post-002',
+    public: true,
     title: "RAP vs ABAP clásico: ¿cuándo usar cada uno?",
     date: '2025-03-15',
     tags: ["ABAP","RAP","CDS"],
     emoji: '🔧',
     images: [],
-    encryptedBody: '51vulX2yo7+zS9Kv3b2NVTO/pAkoPbG5Tl3Hvl2YzmU19UwsrqsA78pgFXkWuRfVp2rfoY923JdkDdQ8cVvcWvpf0Qp2Bxtum4XUVL2R9PPyNBlbg9fBiRfMrKtfYNVlbdlLut1EiZF7xU9v+FxFXo/Amr5p5SltfnxzaYTKnOOpl/88nA+O/FYnnRKlYC6MmtgpL5rFCNoKz/kC3m8FzJdfcD74xk6uFqFZvtBQeAgieSNSLfhxyda9Mwc3+TM6cKS0Jv6OCfdVgDR2AZ6jbDpZj/A9LdY+PbdwiZRIkn7LlHNmy6Um2am6PdBHEoa93TCRpr6Rs+kTWZNgLT4h9a5ARxjEP7xM0mAUniQEnR/7gYiMajdKuKRVFENT6LldSFXVFKDN3WldlLY1d5pYjSuJXzpMt/mYch/v2ntQaUn6LnL8BQYvR3nhmOdBBEtn5Fp35lBodNw850BEyR5Fkd+3389odXX+uEbCS2n3IclaYny2WvCP5HYI8tweMi/1/bmBQ3hwUZKcrFZqLzwCerTUTbf+f92Nj8lolQdFR4vyyX7cwql9bsqHoCa0LbcQTWq9TILAL4wTHMDGC7QC6gxOnKX+NOFKbxV5GhyGUFlqNmDqNC6ebaEG5wCZso6kbIEeUTJYaWPV7QPMwOTHwjJ0y9M8Z+sQmeV6ReKzJaYCeYTjJusxSGgY052q+JBsydceoQQmyxzxP6BCC7zWfU3aSsOebiTlPwCXX/eVzgU0lMLVSvvhshg8BI7GU84Dc32XChtMxCGPQhLJ0/JPdLklNOl0k/bnIj3TBVA17h7vEjVhp8duSLEpo66IRc4PMtIRmsz3RGl52Hsq2osHcBKshcXD6tV6/lDeWP++zN2DxIz3MWZbdfE928Mtdz3MBB9NC/V7G5NRLtbYd8duPV9Z4tTnPnwNkgWUpmq+1pHlmhNLl6zDiFtHn5WeS8emxJVTB2Z77ZwUGvgsEz8ilL/QdWuJbnmqSV2h98BtFLD87kc/TlL/KLjRTZ6P5pTuQrI2wZeMmTn85QXNpTn37LQqLPnOOgU+dv6erRLVDE1p+MILjBOTmVljSvWFGveSR+CDUnDnB1qq0PewEl4QebeTbKqIIpzzqZrguZTaGDeVTKS+EwMG7G5t3lhw0+ycKc4krL0g8rkYzCuzY9InV0cDRKamgZAtZm9h5Fz/gqJgCpQALi1NWUAX1JrYkOEp66/4iHKQJuOAdtQ8Mw9Mq6oIyDZSm9bW/mncK8c+tmGizFzyWZyhLcOUN8uzc92PP+cMlW1BPRr6LIxJ34yQ5uJ8F2FEf75mGHuH5ES6Jq84+OdK8jEqmjebmHgSWrcE8GvkKbd08MZlfp05fkvq0vsbuYzGqcPKKmXZHl1DaJOrLFpPckHQykiPZuoJUFY1Md7wmGGwgPex474rElRJNjB5v3wtj7wj/N5uQdUosvgCQRHuM8rkIkDIsxejJYJoFgUhNey0OiH62L5EPcbTIw+iMG6V/qY1eEthV27YymMP1O0bNdxw7b0f76BsD7jQaLD96aEFAxJtJKz2lUgzHEaa+TT9y+c4SR7ivl+IUKnK4+T31L5rBMM=',
-    iv:   'TdnIp40iRbTsXPlP',
-    salt: '746eAKjeNRVbOWhsKTKYCg==',
+    body: "El RESTful Application Programming model (RAP) llegó para quedarse, pero eso no significa que el ABAP clásico esté muerto. Tras trabajar con ambos en producción, aquí va mi opinión honesta.\n\n## Cuándo usar RAP\n\n- **APIs OData expuestas externamente**: RAP genera automáticamente el binding de OData V4 con todo lo que conlleva.\n- **Proyectos nuevos en S/4HANA**: Si partes de cero y el cliente tiene S/4HANA 2020+, RAP es el camino.\n- **Draft handling**: El soporte de borradores en RAP es elegante y evita mucho código custom.\n\n## Cuándo seguir con ABAP clásico\n\n- **Proyectos legacy con business logic en Function Modules**: No vale la pena reescribir FMs robustos que llevan años funcionando.\n- **Reports complejos con ALV**: El clásico sigue siendo rey aquí.\n- **Sin S/4HANA**: RAP depende fuertemente de las CDS Views y el stack ABAP moderno.\n\n## El verdadero coste de migrar\n\nEl mayor error es subestimar el tiempo de reaprendizaje. RAP tiene una curva empinada: behavior definitions, behavior implementations, Entity Manipulation Language (EML)...\n\nMi recomendación: proyecto piloto pequeño primero, aprende el pattern con algo sin riesgo y luego escala.",
   },
   {
     id: 'post-003',
+    public: true,
     title: "Lo que nadie te dice sobre ser consultor SAP",
     date: '2025-02-02',
     tags: ["Reflexión","Carrera","SAP"],
     emoji: '💡',
     images: [],
-    encryptedBody: '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',
-    iv:   '5FXB848BHJw3IEHd',
-    salt: 'SuV8RWHripqt4CUSHxXYcg==',
+    body: "Cinco años en el mundo SAP dan para mucho. Reflexiones sin filtro para quien esté pensando en meterse en este mundillo.\n\n## La curva de aprendizaje real\n\nOlvídate de los 6 meses que dice el curso. La realidad es que hasta los 18 meses no te sientes cómodo moviendo proyectos solo. Y eso solo si tienes mentores decentes y proyectos variados.\n\nEl ecosistema SAP es inmenso: FICO, MM, SD, Fiori, ABAP, BTP... nadie sabe de todo. **Especialízate pronto.**\n\n## El networking importa más de lo que crees\n\nSAP es un mundo pequeño. El consultor que conociste en una formación en 2022 puede ser tu referencia para un proyecto en 2025. Cuida esas relaciones.\n\nLa comunidad SAP en España es activa: SAP Inside Tracks, grupos de LinkedIn, ASUG... Participa.\n\n## Gestionar al cliente final\n\nNadie te enseña esto en ningún curso:\n- El cliente siempre quiere más de lo que el scope dice\n- El cambio de alcance es la fuente de todos los conflictos\n- Documenta **todo**, incluso las conversaciones de Teams\n\n## Por qué la documentación importa más de lo que parece\n\nEn 18 meses tú ya no estarás en ese proyecto. El código que escribiste sin documentar lo va a mantener otro. Trátalo como si fuera código open source: escribe para el desconocido del futuro.\n\n```abap\n* Mal: hace algo con el importe\nDATA lv_amount TYPE decimal.\n\n* Bien: importe bruto en moneda del documento (campo BKPF-WAERS)\nDATA lv_gross_amount TYPE bkpf-wrbtr.\n```\n\nSi te quedas con una sola cosa: **documenta siempre**, especialmente lo que parece obvio.",
   }
 ];

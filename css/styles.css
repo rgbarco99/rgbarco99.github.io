@@ -767,6 +767,7 @@ h1,h2,h3,h4 { font-family: var(--font-heading); font-weight: 700; line-height: 1
 .blog-post-title {
   font-family: var(--font-heading); font-size: 1.1rem; font-weight: 700;
   color: var(--text-primary); line-height: 1.35;
+  overflow-wrap: break-word; word-break: break-word;
 }
 .blog-post-body {
   font-size: 0.875rem; color: var(--text-secondary); line-height: 1.8; flex: 1;
@@ -794,7 +795,7 @@ h1,h2,h3,h4 { font-family: var(--font-heading); font-weight: 700; line-height: 1
 .blog-list-section { padding: 0 2rem 6rem; }
 .blog-list-grid {
   max-width: 1200px; margin: 0 auto;
-  display: grid; grid-template-columns: repeat(3,1fr); gap: 1.75rem;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.75rem;
 }
 .blog-list-card {
   background: var(--bg-card); border: 1px solid var(--border);
@@ -1087,13 +1088,13 @@ h1,h2,h3,h4 { font-family: var(--font-heading); font-weight: 700; line-height: 1
   border-style: solid;
 }
 .blog-locked-title {
-  display: flex; align-items: center; gap: 0.5rem;
+  display: flex; align-items: center; gap: 0.5rem; overflow: hidden;
 }
 .blog-lock-badge {
   font-size: 1.1rem; flex-shrink: 0;
 }
 .blog-locked-title-text {
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0;
 }
 .blog-tag-private {
   background: rgba(255,107,107,.15); color: #ff6b6b;
