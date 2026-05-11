@@ -247,7 +247,7 @@
         ════════════════════════════════════════ -->
         <div class="admin-card">
           <div class="admin-card-header">
-            <h2 class="admin-card-title">📤 Exportar a data.js</h2>
+            <h2 class="admin-card-title">📤 Exportar a data.json</h2>
             <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
               <button id="btn-export" class="btn btn-outline" style="font-size:0.82rem; padding:0.5rem 1.1rem;">
                 Generar snippet
@@ -258,8 +258,8 @@
             </div>
           </div>
           <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:1rem; line-height:1.7;">
-            Genera el bloque <code style="background:rgba(124,111,255,0.12);color:var(--accent-cyan);padding:0.1em 0.4em;border-radius:4px;font-size:0.85em;">BLOG_POSTS</code>
-            listo para pegar en <code style="background:rgba(124,111,255,0.12);color:var(--accent-cyan);padding:0.1em 0.4em;border-radius:4px;font-size:0.85em;">js/data.js</code>,
+            Genera el JSON listo para reemplazar
+            <code style="background:rgba(124,111,255,0.12);color:var(--accent-cyan);padding:0.1em 0.4em;border-radius:4px;font-size:0.85em;">js/data.json</code>,
             o publícalo directamente en GitHub con un commit automático.
           </p>
           <textarea id="export-area" class="admin-export-area" readonly placeholder="Pulsa «Generar snippet» para ver el código…" style="display:none;"></textarea>
@@ -372,7 +372,6 @@
   </footer>
 
   <script src="js/i18n.js?v=2"></script>
-  <script src="js/data.js?v=3"></script>
   <script src="js/blog-crypto.js?v=2"></script>
   <script>
   /* ════════════════════════════════════════════════════════════════════
@@ -385,12 +384,13 @@
   const LOCAL_KEY     = '_blog_local_posts';
   const DELETED_KEY   = '_blog_deleted_posts';
 
-  const GITHUB_OWNER     = 'rgbarco99';
-  const GITHUB_REPO      = 'rgbarco99.github.io';
-  const GITHUB_BRANCH    = 'main';
-  const GITHUB_FILE      = 'js/data.js';
-  const GITHUB_TOKEN_KEY  = '_github_token_enc';
-  const ADMIN_HASH_KEY    = '_admin_pw_hash';
+  const GITHUB_OWNER        = 'rgbarco99';
+  const GITHUB_REPO         = 'rgbarco99.github.io';
+  const GITHUB_BRANCH       = 'main';
+  const GITHUB_DATA_FILE    = 'js/data.json';
+  const GITHUB_VERSION_FILE = 'js/data-version.json';
+  const GITHUB_TOKEN_KEY    = '_github_token_enc';
+  const ADMIN_HASH_KEY      = '_admin_pw_hash';
 
   /* ── Theme ───────────────────────────────────────────────────────── */
   const savedTheme = localStorage.getItem('portfolio-theme') || 'dark';
@@ -438,6 +438,16 @@
     document.getElementById('ppw-eye-closed').style.display = t ? 'none'  : 'block';
   });
 
+  /* ── Static posts (loaded via fetch) ────────────────────────────── */
+  let _staticPosts = [];
+
+  async function loadStaticPosts() {
+    try {
+      const ver = await fetch('js/data-version.json', { cache: 'no-store' }).then(r => r.json());
+      _staticPosts = await fetch(`js/data.json?t=${ver.t}`).then(r => r.json());
+    } catch { _staticPosts = []; }
+  }
+
   /* ── localStorage helpers ────────────────────────────────────────── */
   function getLocalPosts() {
     try { return JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]'); } catch { return []; }
@@ -454,7 +464,7 @@
 
   function getAllPosts() {
     const deletedIds  = new Set(getDeletedIds());
-    const staticPosts = (typeof BLOG_POSTS !== 'undefined' ? BLOG_POSTS : [])
+    const staticPosts = _staticPosts
       .filter(p => !deletedIds.has(String(p.id)))
       .map(p => ({ ...p, _source: 'static' }));
     const localPosts  = getLocalPosts().map(p => ({ ...p, _source: 'local' }));
@@ -706,7 +716,7 @@
         <div class="admin-post-item-actions">
           ${getBadge(p)}
           <span class="admin-badge ${p._source === 'local' ? 'admin-badge-local' : 'admin-badge-static'}">
-            ${p._source === 'local' ? 'Local' : 'data.js'}
+            ${p._source === 'local' ? 'Local' : 'data.json'}
           </span>
           <button class="btn btn-outline" onclick="editPost('${p.id}')"
             style="font-size:0.75rem;padding:0.3rem 0.65rem;"
@@ -773,7 +783,7 @@
         staticNote.style.cssText = 'font-size:0.82rem;color:var(--accent-cyan);background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.2);border-radius:8px;padding:0.6rem 0.9rem;margin-bottom:0.75rem;';
         document.getElementById('new-post-form').prepend(staticNote);
       }
-      staticNote.textContent = 'ℹ️ Este post viene de data.js. Los cambios se guardarán como versión local — exporta y pega el snippet en data.js para hacerlos permanentes.';
+      staticNote.textContent = 'ℹ️ Este post viene de data.json. Los cambios se guardarán como versión local — usa «Publicar en GitHub» para hacerlos permanentes.';
     } else if (staticNote) {
       staticNote.remove();
     }
@@ -789,7 +799,7 @@
     if (!post) return;
     const isStatic = post._source === 'static';
     const confirmMsg = isStatic
-      ? '¿Ocultar este post de data.js? El post quedará eliminado del panel pero deberás exportar y actualizar data.js para borrarlo definitivamente.'
+      ? '¿Ocultar este post de data.json? El post quedará eliminado del panel pero deberás publicar en GitHub para borrarlo definitivamente.'
       : '¿Eliminar este post? Esta acción no se puede deshacer.';
     if (!confirm(confirmMsg)) return;
 
@@ -799,7 +809,7 @@
     /* Always remove from local too (handles static with local override) */
     saveLocalPosts(getLocalPosts().filter(p => String(p.id) !== String(id)));
     renderPostList();
-    showAlert(isStatic ? 'Post ocultado. Exporta y actualiza data.js para eliminarlo definitivamente.' : 'Post eliminado.');
+    showAlert(isStatic ? 'Post ocultado. Publica en GitHub para eliminarlo definitivamente.' : 'Post eliminado.');
   }
   window.deletePost = deletePost;
 
@@ -884,68 +894,20 @@
     }
   });
 
-  /* ── Generate data.js content (shared) ──────────────────────────── */
-  function generateDataJs() {
+  /* ── Generate data.json content (shared) ────────────────────────── */
+  function generateDataJson() {
     const all = getAllPosts().map(({ _source, _plainTitle, ...p }) => p);
-    const lines = all.map(p => {
-      const vis     = getVisibility(p);
-      const visLine = vis !== 'visible' ? `\n    visibility: '${vis}',` : '';
-      if (isPublicPost(p)) {
-        return `  {
-    id: '${p.id}',
-    public: true,${visLine}
-    title: ${JSON.stringify(p.title)},
-    date: '${p.date}',
-    tags: ${JSON.stringify(p.tags)},
-    emoji: '${p.emoji}',
-    images: ${JSON.stringify(p.images)},
-    body: ${JSON.stringify(p.body)},
-  }`;
-      }
-      if (isNewPrivate(p)) {
-        return `  {
-    id: '${p.id}',
-    public: false,${visLine}
-    date: '${p.date}',
-    tags: ${JSON.stringify(p.tags)},
-    emoji: '${p.emoji}',
-    images: ${JSON.stringify(p.images)},
-    encryptedTitle: '${p.encryptedTitle}',
-    titleIv:   '${p.titleIv}',
-    titleSalt: '${p.titleSalt}',
-    encryptedBody: '${p.encryptedBody}',
-    iv:   '${p.iv}',
-    salt: '${p.salt}',
-    postPasswordHash: '${p.postPasswordHash}',
-    adminEncryptedPw: '${p.adminEncryptedPw}',
-    adminPwIv:   '${p.adminPwIv}',
-    adminPwSalt: '${p.adminPwSalt}',
-  }`;
-      }
-      /* legacy format */
-      return `  {
-    id: ${typeof p.id === 'string' ? `'${p.id}'` : p.id},
-    title: ${JSON.stringify(p.title)},
-    date: '${p.date}',
-    tags: ${JSON.stringify(p.tags)},
-    emoji: '${p.emoji}',
-    images: ${JSON.stringify(p.images || [])},
-    encryptedBody: '${p.encryptedBody}',
-    iv:   '${p.iv}',
-    salt: '${p.salt}',
-  }`;
-    }).join(',\n');
-    return `const BLOG_POSTS = [\n${lines}\n];`;
+    return JSON.stringify(all, null, 2);
   }
 
   /* ── Export (snippet) ────────────────────────────────────────────── */
   document.getElementById('btn-export').addEventListener('click', () => {
-    const snippet = generateDataJs();
+    const snippet = generateDataJson();
     const area = document.getElementById('export-area');
     area.style.display = 'block';
     area.value = snippet;
     document.getElementById('btn-copy-export').style.display = 'inline-flex';
-    showAlert('Snippet generado. Cópialo y reemplaza BLOG_POSTS en js/data.js');
+    showAlert('JSON generado. Cópialo y reemplaza el contenido de js/data.json');
   });
 
   document.getElementById('btn-copy-export').addEventListener('click', () => {
@@ -1045,36 +1007,32 @@
         return;
       }
 
-      btn.innerHTML = '🔄 Generando data.js…';
-      const content = generateDataJs();
-
-      btn.innerHTML = '🔄 Consultando GitHub…';
-      const apiBase = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_FILE}`;
-      const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' };
-
-      const getRes = await fetch(`${apiBase}?ref=${GITHUB_BRANCH}`, { headers });
-      if (!getRes.ok) {
-        const err = await getRes.json().catch(() => ({}));
-        throw new Error(err.message || `GitHub GET ${getRes.status}`);
-      }
-      const { sha } = await getRes.json();
-
-      btn.innerHTML = '🔄 Publicando commit…';
+      btn.innerHTML = '🔄 Generando data.json…';
+      const content = generateDataJson();
       const today   = new Date().toISOString().split('T')[0];
-      const putRes  = await fetch(apiBase, {
-        method: 'PUT',
-        headers: { ...headers, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: `blog: update data.js (${today})`,
-          content: toBase64Unicode(content),
-          sha,
-          branch: GITHUB_BRANCH,
-        }),
-      });
-      if (!putRes.ok) {
-        const err = await putRes.json().catch(() => ({}));
-        throw new Error(err.message || `GitHub PUT ${putRes.status}`);
+      const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' };
+
+      async function putFile(path, fileContent, message) {
+        const apiUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`;
+        const getRes = await fetch(`${apiUrl}?ref=${GITHUB_BRANCH}`, { headers });
+        const sha    = getRes.ok ? (await getRes.json()).sha : undefined;
+        const putRes = await fetch(apiUrl, {
+          method: 'PUT',
+          headers,
+          body: JSON.stringify({ message, content: toBase64Unicode(fileContent), ...(sha ? { sha } : {}), branch: GITHUB_BRANCH }),
+        });
+        if (!putRes.ok) {
+          const err = await putRes.json().catch(() => ({}));
+          throw new Error(err.message || `GitHub PUT ${putRes.status}`);
+        }
       }
+
+      btn.innerHTML = '🔄 Publicando data.json…';
+      await putFile(GITHUB_DATA_FILE, content, `blog: update data.json (${today})`);
+
+      btn.innerHTML = '🔄 Actualizando versión…';
+      await putFile(GITHUB_VERSION_FILE, JSON.stringify({ t: Date.now() }), `blog: bump data-version (${today})`);
+
       showAlert('Publicado en GitHub. El sitio se redesplegará en ~1 minuto.');
     } catch (err) {
       console.error(err);
@@ -1153,10 +1111,11 @@
   });
 
   /* ── Auth ────────────────────────────────────────────────────────── */
-  function unlockAdmin() {
+  async function unlockAdmin() {
     document.getElementById('admin-lock').style.display    = 'none';
     document.getElementById('admin-content').style.display = 'block';
     resetForm();
+    await loadStaticPosts();
     renderPostList();
     updateGitHubBadge();
   }

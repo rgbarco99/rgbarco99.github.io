@@ -135,7 +135,6 @@
   </footer>
 
   <script src="js/i18n.js?v=2"></script>
-  <script src="js/data.js?v=3"></script>
   <script src="js/blog-crypto.js?v=2"></script>
   <script>
   /* ════════════════════════════════════════════════════════════════════
@@ -147,9 +146,19 @@
   const ADMIN_AUTH = '_admin_auth';
   const ADMIN_PW   = '_admin_pw';
 
+  /* ── Static posts (loaded via fetch) ────────────────────────────── */
+  let _staticPosts = [];
+
+  async function loadStaticPosts() {
+    try {
+      const ver = await fetch('js/data-version.json', { cache: 'no-store' }).then(r => r.json());
+      _staticPosts = await fetch(`js/data.json?t=${ver.t}`).then(r => r.json());
+    } catch { _staticPosts = []; }
+  }
+
   /* ── Helpers ─────────────────────────────────────────────────────── */
   function getAllPosts() {
-    const staticPosts = (typeof BLOG_POSTS !== 'undefined' ? BLOG_POSTS : []);
+    const staticPosts = _staticPosts;
     let localPosts = [];
     try { localPosts = JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]'); } catch {}
     let deletedIds = new Set();
@@ -400,7 +409,7 @@
   });
 
   /* ── Init ────────────────────────────────────────────────────────── */
-  document.addEventListener('DOMContentLoaded', loadPost);
+  document.addEventListener('DOMContentLoaded', () => loadStaticPosts().then(loadPost));
   </script>
   <script src="js/main.js"></script>
 </body>
