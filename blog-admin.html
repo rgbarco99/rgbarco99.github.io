@@ -297,11 +297,18 @@
               <button type="submit" class="btn btn-primary" style="font-size:0.85rem;">
                 🔒 Guardar token cifrado
               </button>
+              <button type="button" id="btn-save-token-repo" class="btn btn-outline" style="font-size:0.85rem;">
+                💾 Guardar en repo
+              </button>
               <button type="button" id="btn-clear-token" class="btn btn-outline"
                 style="font-size:0.85rem; border-color:#ff6b6b50; color:#ff6b6b; display:none;">
-                🗑 Eliminar token
+                🗑 Eliminar token local
               </button>
             </div>
+            <p style="font-size:0.78rem; color:var(--text-muted); margin-top:0.5rem; line-height:1.6;">
+              «Guardar en repo» incrusta el blob cifrado en <code style="font-size:0.78em;">blog-admin.html</code>
+              para que funcione desde cualquier dispositivo con solo la contraseña de admin.
+            </p>
           </form>
         </div>
 
@@ -391,6 +398,7 @@
   const GITHUB_VERSION_FILE = 'js/data-version.json';
   const GITHUB_TOKEN_KEY    = '_github_token_enc';
   const ADMIN_HASH_KEY      = '_admin_pw_hash';
+  const HARDCODED_TOKEN_ENC = null;
 
   /* ── Theme ───────────────────────────────────────────────────────── */
   const savedTheme = localStorage.getItem('portfolio-theme') || 'dark';
@@ -918,23 +926,26 @@
 
   /* ── GitHub token helpers ────────────────────────────────────────── */
   function updateGitHubBadge() {
-    const badge   = document.getElementById('github-token-status-badge');
+    const badge    = document.getElementById('github-token-status-badge');
     const clearBtn = document.getElementById('btn-clear-token');
-    const stored  = localStorage.getItem(GITHUB_TOKEN_KEY);
-    if (stored) {
-      badge.innerHTML  = '<span class="github-token-ok">● Token configurado</span>';
-      clearBtn.style.display = 'inline-flex';
+    const inLocal  = !!localStorage.getItem(GITHUB_TOKEN_KEY);
+    const inRepo   = !!HARDCODED_TOKEN_ENC;
+    if (inLocal || inRepo) {
+      const source = inLocal && inRepo ? 'Local + Repo' : inLocal ? 'Local' : 'Repo';
+      badge.innerHTML = `<span class="github-token-ok">● Token configurado (${source})</span>`;
+      clearBtn.style.display = inLocal ? 'inline-flex' : 'none';
     } else {
-      badge.innerHTML  = '<span class="github-token-none">● Sin token</span>';
+      badge.innerHTML = '<span class="github-token-none">● Sin token</span>';
       clearBtn.style.display = 'none';
     }
   }
 
   async function getGitHubToken() {
     const adminPw = sessionStorage.getItem(ADMIN_PW);
-    const stored  = JSON.parse(localStorage.getItem(GITHUB_TOKEN_KEY) || 'null');
-    if (!stored || !adminPw) return null;
-    return await blogCrypto.decrypt(stored.encryptedBody, stored.iv, stored.salt, adminPw);
+    if (!adminPw) return null;
+    const enc = JSON.parse(localStorage.getItem(GITHUB_TOKEN_KEY) || 'null') || HARDCODED_TOKEN_ENC;
+    if (!enc) return null;
+    return await blogCrypto.decrypt(enc.encryptedBody, enc.iv, enc.salt, adminPw);
   }
 
   /* Decrypt adminEncryptedPw using token (new) or adminPw fallback (legacy posts) */
@@ -980,10 +991,66 @@
 
   /* Clear token */
   document.getElementById('btn-clear-token').addEventListener('click', () => {
-    if (!confirm('¿Eliminar el token de GitHub guardado?')) return;
+    if (!confirm('¿Eliminar el token local? El blob del repo seguirá activo si fue guardado.')) return;
     localStorage.removeItem(GITHUB_TOKEN_KEY);
     updateGitHubBadge();
-    showAlert('Token eliminado.');
+    showAlert('Token local eliminado.');
+  });
+
+  /* Save token blob into the repo (self-modifying blog-admin.html) */
+  document.getElementById('btn-save-token-repo').addEventListener('click', async () => {
+    const btn = document.getElementById('btn-save-token-repo');
+    btn.disabled = true;
+    const origLabel = btn.innerHTML;
+    try {
+      const stored = JSON.parse(localStorage.getItem(GITHUB_TOKEN_KEY) || 'null');
+      if (!stored) {
+        showAlert('Guarda primero el token cifrado en local (campo de arriba).', 'error');
+        return;
+      }
+      const token = await getGitHubToken();
+      if (!token) { showAlert('No se pudo descifrar el token local.', 'error'); return; }
+
+      btn.innerHTML = '🔄 Descargando blog-admin.html…';
+      const apiUrl  = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/blog-admin.html`;
+      const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' };
+
+      const getRes = await fetch(`${apiUrl}?ref=${GITHUB_BRANCH}`, { headers });
+      if (!getRes.ok) throw new Error(`GitHub GET ${getRes.status}`);
+      const { sha, content: b64Content } = await getRes.json();
+
+      const htmlBytes  = Uint8Array.from(atob(b64Content.replace(/\n/g, '')), c => c.charCodeAt(0));
+      const htmlContent = new TextDecoder().decode(htmlBytes);
+
+      const marker = 'const HARDCODED_TOKEN_ENC = ';
+      if (!htmlContent.includes(marker)) throw new Error('Marcador no encontrado en blog-admin.html');
+
+      const replacement = `${marker}${JSON.stringify(stored)};`;
+      const updated = htmlContent.replace(/const HARDCODED_TOKEN_ENC = [^;]+;/, replacement);
+
+      btn.innerHTML = '🔄 Publicando en repo…';
+      const putRes = await fetch(apiUrl, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify({
+          message: 'admin: embed encrypted GitHub token in repo',
+          content: toBase64Unicode(updated),
+          sha,
+          branch: GITHUB_BRANCH,
+        }),
+      });
+      if (!putRes.ok) {
+        const err = await putRes.json().catch(() => ({}));
+        throw new Error(err.message || `GitHub PUT ${putRes.status}`);
+      }
+      showAlert('Token cifrado guardado en el repo. Disponible desde cualquier dispositivo tras recargar la página.');
+    } catch (err) {
+      console.error(err);
+      showAlert(`Error: ${err.message}`, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = origLabel;
+    }
   });
 
   /* ── Publish to GitHub ───────────────────────────────────────────── */
