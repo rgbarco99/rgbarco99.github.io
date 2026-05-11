@@ -305,6 +305,58 @@
           </form>
         </div>
 
+        <!-- ══════════════════════════════════════
+             CAMBIAR CONTRASEÑA DE ADMIN
+        ════════════════════════════════════════ -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h2 class="admin-card-title">🔑 Cambiar contraseña de admin</h2>
+          </div>
+          <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:1rem; line-height:1.7;">
+            Re-cifrará el token de GitHub y los posts privados locales con la nueva contraseña.
+            Se cerrará la sesión al finalizar.
+          </p>
+          <form id="change-pw-form" autocomplete="off">
+            <div class="admin-field">
+              <label class="admin-label" for="f-old-pw">Contraseña actual</label>
+              <div class="blog-password-wrap" style="margin-top:0.4rem;">
+                <input type="password" id="f-old-pw" class="admin-input blog-password-input"
+                  placeholder="Contraseña actual…" autocomplete="current-password" required />
+                <button type="button" class="blog-eye-btn" data-eye-input="f-old-pw" aria-label="Mostrar contraseña">
+                  <svg class="eye-open-svg"   width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg class="eye-closed-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="admin-field">
+              <label class="admin-label" for="f-new-pw">Nueva contraseña <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted)">(mínimo 8 caracteres)</span></label>
+              <div class="blog-password-wrap" style="margin-top:0.4rem;">
+                <input type="password" id="f-new-pw" class="admin-input blog-password-input"
+                  placeholder="Nueva contraseña…" autocomplete="new-password" minlength="8" required />
+                <button type="button" class="blog-eye-btn" data-eye-input="f-new-pw" aria-label="Mostrar contraseña">
+                  <svg class="eye-open-svg"   width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg class="eye-closed-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="admin-field">
+              <label class="admin-label" for="f-confirm-pw">Confirmar nueva contraseña</label>
+              <div class="blog-password-wrap" style="margin-top:0.4rem;">
+                <input type="password" id="f-confirm-pw" class="admin-input blog-password-input"
+                  placeholder="Repite la nueva contraseña…" autocomplete="new-password" required />
+                <button type="button" class="blog-eye-btn" data-eye-input="f-confirm-pw" aria-label="Mostrar contraseña">
+                  <svg class="eye-open-svg"   width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg class="eye-closed-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </button>
+              </div>
+            </div>
+            <p id="change-pw-error" style="font-size:0.83rem; color:#ff6b6b; min-height:1.2em; margin-top:0.25rem;"></p>
+            <button type="submit" id="btn-change-pw" class="btn btn-primary" style="font-size:0.85rem; margin-top:0.25rem;">
+              🔑 Cambiar contraseña y cerrar sesión
+            </button>
+          </form>
+        </div>
+
       </div><!-- /admin-section -->
     </div><!-- /admin-content -->
 
@@ -337,7 +389,8 @@
   const GITHUB_REPO      = 'rgbarco99.github.io';
   const GITHUB_BRANCH    = 'main';
   const GITHUB_FILE      = 'js/data.js';
-  const GITHUB_TOKEN_KEY = '_github_token_enc';
+  const GITHUB_TOKEN_KEY  = '_github_token_enc';
+  const ADMIN_HASH_KEY    = '_admin_pw_hash';
 
   /* ── Theme ───────────────────────────────────────────────────────── */
   const savedTheme = localStorage.getItem('portfolio-theme') || 'dark';
@@ -614,9 +667,9 @@
     /* Decrypt titles for new private posts */
     const decryptedTitles = {};
     for (const p of posts) {
-      if (isNewPrivate(p) && p.adminEncryptedPw && adminPw) {
+      if (isNewPrivate(p) && p.adminEncryptedPw) {
         try {
-          const postPw = await blogCrypto.decrypt(p.adminEncryptedPw, p.adminPwIv, p.adminPwSalt, adminPw);
+          const postPw = await decryptAdminEncryptedPw(p);
           decryptedTitles[p.id] = await blogCrypto.decrypt(p.encryptedTitle, p.titleIv, p.titleSalt, postPw);
         } catch { decryptedTitles[p.id] = '(error al descifrar)'; }
       }
@@ -683,9 +736,9 @@
       document.getElementById('f-body').value  = post.body || '';
       setVisibility('public');
 
-    } else if (isNewPrivate(post) && post.adminEncryptedPw && adminPw) {
+    } else if (isNewPrivate(post) && post.adminEncryptedPw) {
       try {
-        const postPw = await blogCrypto.decrypt(post.adminEncryptedPw, post.adminPwIv, post.adminPwSalt, adminPw);
+        const postPw = await decryptAdminEncryptedPw(post);
         const title  = await blogCrypto.decrypt(post.encryptedTitle,   post.titleIv,  post.titleSalt,  postPw);
         const body   = await blogCrypto.decrypt(post.encryptedBody,    post.iv,       post.salt,       postPw);
         document.getElementById('f-title').value           = title;
@@ -780,10 +833,13 @@
         if (!postPw || postPw.length < 6) { showAlert('La contraseña del post debe tener al menos 6 caracteres.', 'error'); return; }
 
         btn.innerHTML = 'Cifrando…';
+        const token = await getGitHubToken();
+        if (!token) { showAlert('Configura el token de GitHub antes de crear posts privados.', 'error'); return; }
+
         const [bodyEnc, titleEnc, pwEnc, postPwHash] = await Promise.all([
           blogCrypto.encrypt(body,   postPw),
           blogCrypto.encrypt(title,  postPw),
-          blogCrypto.encrypt(postPw, adminPw),
+          blogCrypto.encrypt(postPw, token),
           blogCrypto.sha256(postPw),
         ]);
 
@@ -919,6 +975,17 @@
     return await blogCrypto.decrypt(stored.encryptedBody, stored.iv, stored.salt, adminPw);
   }
 
+  /* Decrypt adminEncryptedPw using token (new) or adminPw fallback (legacy posts) */
+  async function decryptAdminEncryptedPw(p) {
+    const token   = await getGitHubToken();
+    const adminPw = sessionStorage.getItem(ADMIN_PW);
+    if (token) {
+      try { return await blogCrypto.decrypt(p.adminEncryptedPw, p.adminPwIv, p.adminPwSalt, token); }
+      catch { /* fall through to adminPw fallback */ }
+    }
+    return await blogCrypto.decrypt(p.adminEncryptedPw, p.adminPwIv, p.adminPwSalt, adminPw);
+  }
+
   /* Eye toggle for token field */
   document.getElementById('github-token-eye')?.addEventListener('click', () => {
     const inp = document.getElementById('f-github-token');
@@ -1018,6 +1085,73 @@
     }
   });
 
+  /* ── Generic eye toggles (data-eye-input) ───────────────────────── */
+  document.querySelectorAll('.blog-eye-btn[data-eye-input]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const inp    = document.getElementById(btn.dataset.eyeInput);
+      const isText = inp.type === 'text';
+      inp.type = isText ? 'password' : 'text';
+      btn.querySelector('.eye-open-svg').style.display   = isText ? 'block' : 'none';
+      btn.querySelector('.eye-closed-svg').style.display = isText ? 'none'  : 'block';
+    });
+  });
+
+  /* ── Change admin password ───────────────────────────────────────── */
+  document.getElementById('change-pw-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const errEl   = document.getElementById('change-pw-error');
+    const btn     = document.getElementById('btn-change-pw');
+    const oldPw   = document.getElementById('f-old-pw').value;
+    const newPw   = document.getElementById('f-new-pw').value;
+    const confirm = document.getElementById('f-confirm-pw').value;
+    errEl.textContent = '';
+
+    if (newPw !== confirm) {
+      errEl.textContent = '❌ Las contraseñas nuevas no coinciden.';
+      return;
+    }
+    if (newPw.length < 8) {
+      errEl.textContent = '❌ La nueva contraseña debe tener al menos 8 caracteres.';
+      return;
+    }
+    if (newPw === oldPw) {
+      errEl.textContent = '❌ La nueva contraseña debe ser diferente a la actual.';
+      return;
+    }
+
+    btn.disabled = true;
+    const origLabel = btn.innerHTML;
+    try {
+      /* 1 — Validate old password */
+      btn.innerHTML = '🔄 Validando…';
+      const oldHash    = await blogCrypto.sha256(oldPw);
+      const activeHash = localStorage.getItem(ADMIN_HASH_KEY) || ADMIN_PW_HASH;
+      if (oldHash !== activeHash) {
+        errEl.textContent = '❌ La contraseña actual es incorrecta.';
+        return;
+      }
+
+      /* 2 — Re-encrypt GitHub token */
+      btn.innerHTML = '🔄 Re-cifrando token…';
+      const storedToken = JSON.parse(localStorage.getItem(GITHUB_TOKEN_KEY) || 'null');
+      if (storedToken) {
+        const token = await blogCrypto.decrypt(storedToken.encryptedBody, storedToken.iv, storedToken.salt, oldPw);
+        const enc   = await blogCrypto.encrypt(token, newPw);
+        localStorage.setItem(GITHUB_TOKEN_KEY, JSON.stringify({ encryptedBody: enc.encryptedBody, iv: enc.iv, salt: enc.salt }));
+      }
+
+      /* 3 — Save new hash and logout */
+      const newHash = await blogCrypto.sha256(newPw);
+      localStorage.setItem(ADMIN_HASH_KEY, newHash);
+      lockAdmin();
+    } catch (err) {
+      console.error(err);
+      errEl.textContent = `❌ Error: ${err.message}`;
+      btn.disabled  = false;
+      btn.innerHTML = origLabel;
+    }
+  });
+
   /* ── Auth ────────────────────────────────────────────────────────── */
   function unlockAdmin() {
     document.getElementById('admin-lock').style.display    = 'none';
@@ -1040,8 +1174,9 @@
     const btn = document.getElementById('admin-submit');
     btn.disabled = true;
     try {
-      const hash = await blogCrypto.sha256(pw);
-      if (hash === ADMIN_PW_HASH) {
+      const hash        = await blogCrypto.sha256(pw);
+      const activeHash  = localStorage.getItem(ADMIN_HASH_KEY) || ADMIN_PW_HASH;
+      if (hash === activeHash) {
         sessionStorage.setItem(ADMIN_AUTH, 'ok');
         sessionStorage.setItem(ADMIN_PW, pw);
         document.getElementById('admin-error').textContent = '';
