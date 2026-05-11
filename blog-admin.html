@@ -20,6 +20,8 @@
     .admin-badge-public  { background:rgba(0,229,255,.15); color:var(--accent-cyan);  border:1px solid rgba(0,229,255,.3); }
     .admin-badge-private { background:rgba(255,107,107,.12); color:#ff6b6b; border:1px solid rgba(255,107,107,.3); }
     .admin-badge-legacy  { background:rgba(255,200,100,.12); color:#ffc864; border:1px solid rgba(255,200,100,.3); }
+    .github-token-ok   { background:rgba(100,220,120,.12); color:#64dc78; border:1px solid rgba(100,220,120,.3); font-size:0.78rem; padding:0.2rem 0.7rem; border-radius:20px; }
+    .github-token-none { background:rgba(255,107,107,.10); color:#ff6b6b; border:1px solid rgba(255,107,107,.3); font-size:0.78rem; padding:0.2rem 0.7rem; border-radius:20px; }
   </style>
 </head>
 <body>
@@ -246,18 +248,61 @@
         <div class="admin-card">
           <div class="admin-card-header">
             <h2 class="admin-card-title">📤 Exportar a data.js</h2>
-            <button id="btn-export" class="btn btn-outline" style="font-size:0.82rem; padding:0.5rem 1.1rem;">
-              Generar snippet
-            </button>
+            <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+              <button id="btn-export" class="btn btn-outline" style="font-size:0.82rem; padding:0.5rem 1.1rem;">
+                Generar snippet
+              </button>
+              <button id="btn-publish" class="btn btn-primary" style="font-size:0.82rem; padding:0.5rem 1.1rem;">
+                🚀 Publicar en GitHub
+              </button>
+            </div>
           </div>
           <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:1rem; line-height:1.7;">
             Genera el bloque <code style="background:rgba(124,111,255,0.12);color:var(--accent-cyan);padding:0.1em 0.4em;border-radius:4px;font-size:0.85em;">BLOG_POSTS</code>
-            listo para pegar en <code style="background:rgba(124,111,255,0.12);color:var(--accent-cyan);padding:0.1em 0.4em;border-radius:4px;font-size:0.85em;">js/data.js</code>.
+            listo para pegar en <code style="background:rgba(124,111,255,0.12);color:var(--accent-cyan);padding:0.1em 0.4em;border-radius:4px;font-size:0.85em;">js/data.js</code>,
+            o publícalo directamente en GitHub con un commit automático.
           </p>
-          <textarea id="export-area" class="admin-export-area" readonly placeholder="Pulsa «Generar snippet» para ver el código…"></textarea>
+          <textarea id="export-area" class="admin-export-area" readonly placeholder="Pulsa «Generar snippet» para ver el código…" style="display:none;"></textarea>
           <button id="btn-copy-export" class="btn btn-outline" style="margin-top:0.75rem; font-size:0.82rem; padding:0.5rem 1.1rem; display:none;">
             📋 Copiar al portapapeles
           </button>
+        </div>
+
+        <!-- ══════════════════════════════════════
+             CONFIGURACIÓN GITHUB
+        ════════════════════════════════════════ -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h2 class="admin-card-title">⚙️ Configuración GitHub</h2>
+            <span id="github-token-status-badge"></span>
+          </div>
+          <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:1rem; line-height:1.7;">
+            Token con permiso <code style="background:rgba(124,111,255,0.12);color:var(--accent-cyan);padding:0.1em 0.4em;border-radius:4px;font-size:0.85em;">contents:write</code>
+            para el repo <code style="background:rgba(124,111,255,0.12);color:var(--accent-cyan);padding:0.1em 0.4em;border-radius:4px;font-size:0.85em;">rgbarco99/rgbarco99.github.io</code>.
+            Se cifra con tu contraseña de admin antes de guardarse en el navegador.
+          </p>
+          <form id="github-token-form" autocomplete="off">
+            <div class="admin-field">
+              <label class="admin-label" for="f-github-token">Personal Access Token</label>
+              <div class="blog-password-wrap" style="margin-top:0.4rem;">
+                <input type="password" id="f-github-token" class="admin-input blog-password-input"
+                  placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="new-password" />
+                <button type="button" class="blog-eye-btn" id="github-token-eye" aria-label="Mostrar token">
+                  <svg id="gt-eye-open"   width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg id="gt-eye-closed" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </button>
+              </div>
+            </div>
+            <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-top:0.5rem;">
+              <button type="submit" class="btn btn-primary" style="font-size:0.85rem;">
+                🔒 Guardar token cifrado
+              </button>
+              <button type="button" id="btn-clear-token" class="btn btn-outline"
+                style="font-size:0.85rem; border-color:#ff6b6b50; color:#ff6b6b; display:none;">
+                🗑 Eliminar token
+              </button>
+            </div>
+          </form>
         </div>
 
       </div><!-- /admin-section -->
@@ -287,6 +332,12 @@
   const ADMIN_PW      = '_admin_pw';
   const LOCAL_KEY     = '_blog_local_posts';
   const DELETED_KEY   = '_blog_deleted_posts';
+
+  const GITHUB_OWNER     = 'rgbarco99';
+  const GITHUB_REPO      = 'rgbarco99.github.io';
+  const GITHUB_BRANCH    = 'main';
+  const GITHUB_FILE      = 'js/data.js';
+  const GITHUB_TOKEN_KEY = '_github_token_enc';
 
   /* ── Theme ───────────────────────────────────────────────────────── */
   const savedTheme = localStorage.getItem('portfolio-theme') || 'dark';
@@ -777,14 +828,12 @@
     }
   });
 
-  /* ── Export ──────────────────────────────────────────────────────── */
-  document.getElementById('btn-export').addEventListener('click', () => {
+  /* ── Generate data.js content (shared) ──────────────────────────── */
+  function generateDataJs() {
     const all = getAllPosts().map(({ _source, _plainTitle, ...p }) => p);
-
     const lines = all.map(p => {
       const vis     = getVisibility(p);
       const visLine = vis !== 'visible' ? `\n    visibility: '${vis}',` : '';
-
       if (isPublicPost(p)) {
         return `  {
     id: '${p.id}',
@@ -830,9 +879,15 @@
     salt: '${p.salt}',
   }`;
     }).join(',\n');
+    return `const BLOG_POSTS = [\n${lines}\n];`;
+  }
 
-    const snippet = `const BLOG_POSTS = [\n${lines}\n];`;
-    document.getElementById('export-area').value = snippet;
+  /* ── Export (snippet) ────────────────────────────────────────────── */
+  document.getElementById('btn-export').addEventListener('click', () => {
+    const snippet = generateDataJs();
+    const area = document.getElementById('export-area');
+    area.style.display = 'block';
+    area.value = snippet;
     document.getElementById('btn-copy-export').style.display = 'inline-flex';
     showAlert('Snippet generado. Cópialo y reemplaza BLOG_POSTS en js/data.js');
   });
@@ -843,12 +898,133 @@
       .catch(() => { document.getElementById('export-area').select(); document.execCommand('copy'); showAlert('Copiado.'); });
   });
 
+  /* ── GitHub token helpers ────────────────────────────────────────── */
+  function updateGitHubBadge() {
+    const badge   = document.getElementById('github-token-status-badge');
+    const clearBtn = document.getElementById('btn-clear-token');
+    const stored  = localStorage.getItem(GITHUB_TOKEN_KEY);
+    if (stored) {
+      badge.innerHTML  = '<span class="github-token-ok">● Token configurado</span>';
+      clearBtn.style.display = 'inline-flex';
+    } else {
+      badge.innerHTML  = '<span class="github-token-none">● Sin token</span>';
+      clearBtn.style.display = 'none';
+    }
+  }
+
+  async function getGitHubToken() {
+    const adminPw = sessionStorage.getItem(ADMIN_PW);
+    const stored  = JSON.parse(localStorage.getItem(GITHUB_TOKEN_KEY) || 'null');
+    if (!stored || !adminPw) return null;
+    return await blogCrypto.decrypt(stored.encryptedBody, stored.iv, stored.salt, adminPw);
+  }
+
+  /* Eye toggle for token field */
+  document.getElementById('github-token-eye')?.addEventListener('click', () => {
+    const inp = document.getElementById('f-github-token');
+    const open   = document.getElementById('gt-eye-open');
+    const closed = document.getElementById('gt-eye-closed');
+    const isText = inp.type === 'text';
+    inp.type = isText ? 'password' : 'text';
+    open.style.display   = isText ? 'block' : 'none';
+    closed.style.display = isText ? 'none'  : 'block';
+  });
+
+  /* Save token */
+  document.getElementById('github-token-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const token   = document.getElementById('f-github-token').value.trim();
+    const adminPw = sessionStorage.getItem(ADMIN_PW);
+    if (!token) { showAlert('Introduce un token antes de guardar.', 'error'); return; }
+    if (!token.startsWith('ghp_') && !token.startsWith('github_pat_')) {
+      showAlert('El token no parece válido (debe empezar por ghp_ o github_pat_).', 'error');
+      return;
+    }
+    try {
+      const enc = await blogCrypto.encrypt(token, adminPw);
+      localStorage.setItem(GITHUB_TOKEN_KEY, JSON.stringify({ encryptedBody: enc.encryptedBody, iv: enc.iv, salt: enc.salt }));
+      document.getElementById('f-github-token').value = '';
+      updateGitHubBadge();
+      showAlert('Token guardado y cifrado correctamente.');
+    } catch { showAlert('Error al cifrar el token.', 'error'); }
+  });
+
+  /* Clear token */
+  document.getElementById('btn-clear-token').addEventListener('click', () => {
+    if (!confirm('¿Eliminar el token de GitHub guardado?')) return;
+    localStorage.removeItem(GITHUB_TOKEN_KEY);
+    updateGitHubBadge();
+    showAlert('Token eliminado.');
+  });
+
+  /* ── Publish to GitHub ───────────────────────────────────────────── */
+  function toBase64Unicode(str) {
+    const bytes = new TextEncoder().encode(str);
+    let binary = '';
+    for (const b of bytes) binary += String.fromCharCode(b);
+    return btoa(binary);
+  }
+
+  document.getElementById('btn-publish').addEventListener('click', async () => {
+    const btn = document.getElementById('btn-publish');
+    btn.disabled = true;
+    const origLabel = btn.innerHTML;
+    try {
+      btn.innerHTML = '🔄 Descifrando token…';
+      const token = await getGitHubToken();
+      if (!token) {
+        showAlert('Configura primero el token de GitHub en la sección de abajo.', 'error');
+        document.querySelector('#github-token-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      btn.innerHTML = '🔄 Generando data.js…';
+      const content = generateDataJs();
+
+      btn.innerHTML = '🔄 Consultando GitHub…';
+      const apiBase = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_FILE}`;
+      const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' };
+
+      const getRes = await fetch(`${apiBase}?ref=${GITHUB_BRANCH}`, { headers });
+      if (!getRes.ok) {
+        const err = await getRes.json().catch(() => ({}));
+        throw new Error(err.message || `GitHub GET ${getRes.status}`);
+      }
+      const { sha } = await getRes.json();
+
+      btn.innerHTML = '🔄 Publicando commit…';
+      const today   = new Date().toISOString().split('T')[0];
+      const putRes  = await fetch(apiBase, {
+        method: 'PUT',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: `blog: update data.js (${today})`,
+          content: toBase64Unicode(content),
+          sha,
+          branch: GITHUB_BRANCH,
+        }),
+      });
+      if (!putRes.ok) {
+        const err = await putRes.json().catch(() => ({}));
+        throw new Error(err.message || `GitHub PUT ${putRes.status}`);
+      }
+      showAlert('Publicado en GitHub. El sitio se redesplegará en ~1 minuto.');
+    } catch (err) {
+      console.error(err);
+      showAlert(`Error al publicar: ${err.message}`, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = origLabel;
+    }
+  });
+
   /* ── Auth ────────────────────────────────────────────────────────── */
   function unlockAdmin() {
     document.getElementById('admin-lock').style.display    = 'none';
     document.getElementById('admin-content').style.display = 'block';
     resetForm();
     renderPostList();
+    updateGitHubBadge();
   }
 
   function lockAdmin() {
