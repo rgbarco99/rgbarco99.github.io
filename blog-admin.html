@@ -846,9 +846,18 @@
   }
   window.deletePost = deletePost;
 
+  let _toastTimer = null;
+  function showToast(msg) {
+    const el = document.getElementById('admin-toast');
+    el.textContent = msg;
+    el.classList.add('admin-toast-show');
+    clearTimeout(_toastTimer);
+    _toastTimer = setTimeout(() => el.classList.remove('admin-toast-show'), 2000);
+  }
+
   function copyPostLink(id) {
     const url = new URL(`blog-post.html?id=${id}`, window.location.href).href;
-    navigator.clipboard.writeText(url).then(() => showAlert('Enlace copiado al portapapeles.'));
+    navigator.clipboard.writeText(url).then(() => showToast('¡Enlace copiado!'));
   }
   window.copyPostLink = copyPostLink;
 
@@ -1300,5 +1309,6 @@
   });
   </script>
   <script src="js/main.js"></script>
+  <div id="admin-toast" aria-live="polite"></div>
 </body>
 </html>

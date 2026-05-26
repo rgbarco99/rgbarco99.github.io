@@ -1066,6 +1066,19 @@ h1,h2,h3,h4 { font-family: var(--font-heading); font-weight: 700; line-height: 1
 }
 .admin-post-item-title:hover { color: var(--accent); text-decoration: underline; }
 .admin-post-item-meta { font-size: 0.72rem; color: var(--text-muted); white-space: nowrap; }
+#admin-toast {
+  position: fixed; bottom: 1.75rem; left: 50%; translate: -50% 0;
+  background: var(--bg-glass); color: var(--text-primary);
+  border: 1px solid var(--border-accent); border-radius: var(--radius-full);
+  padding: 0.55rem 1.25rem; font-size: 0.85rem; font-weight: 500;
+  box-shadow: 0 4px 24px #0008; backdrop-filter: blur(12px);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.18s ease, translate 0.18s ease;
+  white-space: nowrap; z-index: 9999;
+}
+#admin-toast.admin-toast-show {
+  opacity: 1; translate: -50% 0;
+}
 .admin-post-item-actions { display: flex; gap: 0.4rem; flex-shrink: 0; align-items: center; }
 .admin-badge {
   font-size: 0.62rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
