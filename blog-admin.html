@@ -333,8 +333,7 @@
           </div>
           <div class="admin-card-body"><div>
           <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:1rem; line-height:1.7; margin-top:0.25rem;">
-            Re-cifrará el token de GitHub y los posts privados locales con la nueva contraseña.
-            Se cerrará la sesión al finalizar.
+            Re-cifrará el token de GitHub con la nueva contraseña, publicará el cambio en el repositorio y cerrará la sesión.
           </p>
           <form id="change-pw-form" autocomplete="off">
             <div class="admin-field">
@@ -1188,18 +1187,55 @@
         return;
       }
 
-      /* 2 — Re-encrypt GitHub token */
+      /* 2 — Get raw token and re-encrypt with new password */
       btn.innerHTML = '🔄 Re-cifrando token…';
-      const storedToken = JSON.parse(localStorage.getItem(GITHUB_TOKEN_KEY) || 'null');
-      if (storedToken) {
-        const token = await blogCrypto.decrypt(storedToken.encryptedBody, storedToken.iv, storedToken.salt, oldPw);
-        const enc   = await blogCrypto.encrypt(token, newPw);
-        localStorage.setItem(GITHUB_TOKEN_KEY, JSON.stringify({ encryptedBody: enc.encryptedBody, iv: enc.iv, salt: enc.salt }));
+      const rawToken = await getGitHubToken();
+      if (!rawToken) throw new Error('No se pudo obtener el token de GitHub. Configura el token antes de cambiar la contraseña.');
+      const newTokenEnc = await blogCrypto.encrypt(rawToken, newPw);
+      const newEncObj   = { encryptedBody: newTokenEnc.encryptedBody, iv: newTokenEnc.iv, salt: newTokenEnc.salt };
+
+      /* 3 — Compute new hash */
+      const newHash = await blogCrypto.sha256(newPw);
+
+      /* 4 — Push updated ADMIN_PW_HASH + HARDCODED_TOKEN_ENC to GitHub */
+      btn.innerHTML = '🔄 Descargando blog-admin.html…';
+      const apiUrl  = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/blog-admin.html`;
+      const headers = { Authorization: `Bearer ${rawToken}`, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' };
+
+      const getRes = await fetch(`${apiUrl}?ref=${GITHUB_BRANCH}`, { headers });
+      if (!getRes.ok) throw new Error(`GitHub GET ${getRes.status}`);
+      const { sha, content: b64Content } = await getRes.json();
+      const htmlBytes   = Uint8Array.from(atob(b64Content.replace(/\n/g, '')), c => c.charCodeAt(0));
+      let   htmlContent = new TextDecoder().decode(htmlBytes);
+
+      htmlContent = htmlContent.replace(
+        /const ADMIN_PW_HASH = '[0-9a-f]+';/,
+        `const ADMIN_PW_HASH = '${newHash}';`
+      );
+      htmlContent = htmlContent.replace(
+        /const HARDCODED_TOKEN_ENC = [^;]+;/,
+        `const HARDCODED_TOKEN_ENC = ${JSON.stringify(newEncObj)};`
+      );
+
+      btn.innerHTML = '🔄 Publicando en repo…';
+      const putRes = await fetch(apiUrl, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify({
+          message: 'admin: update password hash',
+          content: toBase64Unicode(htmlContent),
+          sha,
+          branch: GITHUB_BRANCH,
+        }),
+      });
+      if (!putRes.ok) {
+        const errJson = await putRes.json().catch(() => ({}));
+        throw new Error(errJson.message || `GitHub PUT ${putRes.status}`);
       }
 
-      /* 3 — Save new hash and logout */
-      const newHash = await blogCrypto.sha256(newPw);
+      /* 5 — Update localStorage and logout */
       localStorage.setItem(ADMIN_HASH_KEY, newHash);
+      localStorage.setItem(GITHUB_TOKEN_KEY, JSON.stringify(newEncObj));
       lockAdmin();
     } catch (err) {
       console.error(err);
