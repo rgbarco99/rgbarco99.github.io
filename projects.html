@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -17,12 +17,24 @@
     <div class="nav-container">
       <a href="index.html" class="nav-logo" aria-label="Inicio">RG</a>
       <ul class="nav-links" role="list">
-        <li><a href="index.html"    class="nav-link" id="nav-home">Inicio</a></li>
-        <li><a href="index.html#skills" class="nav-link">Skills</a></li>
-        <li><a href="projects.html" class="nav-link" id="nav-projects">Proyectos</a></li>
-        <li><a href="index.html#cv" class="nav-link">Currículum</a></li>
-        <li><a href="index.html#contact" class="nav-link nav-cta">Contacto</a></li>
+        <li><a href="index.html"         class="nav-link" data-i18n="nav.home">Inicio</a></li>
+        <li><a href="index.html#skills"  class="nav-link" data-i18n="nav.skills">Skills</a></li>
+        <li><a href="projects.html"      class="nav-link active" data-i18n="nav.projects">Proyectos</a></li>
+        <li><a href="index.html#cv"      class="nav-link" data-i18n="nav.cv">Currículum</a></li>
+        <li><a href="index.html#contact" class="nav-link nav-cta" data-i18n="nav.contact">Contacto</a></li>
+        <li><a href="blog.html"          class="nav-link" data-i18n="nav.blog">Blog</a></li>
       </ul>
+      <div class="nav-controls">
+        <div class="lang-switcher" role="group" aria-label="Idioma">
+          <button class="lang-btn" data-lang="es" aria-pressed="true"  title="Español">ES</button>
+          <button class="lang-btn" data-lang="en" aria-pressed="false" title="English">EN</button>
+          <button class="lang-btn" data-lang="fr" aria-pressed="false" title="Français">FR</button>
+        </div>
+        <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema">
+          <span class="theme-icon-sun">☀️</span>
+          <span class="theme-icon-moon">🌙</span>
+        </button>
+      </div>
       <button class="nav-hamburger" id="nav-hamburger" aria-label="Abrir menú" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
@@ -31,11 +43,12 @@
 
   <!-- Mobile drawer -->
   <nav class="nav-mobile" id="nav-mobile" aria-label="Menú móvil">
-    <a href="index.html"        class="nav-link">Inicio</a>
-    <a href="index.html#skills" class="nav-link">Skills</a>
-    <a href="projects.html"     class="nav-link">Proyectos</a>
-    <a href="index.html#cv"     class="nav-link">Currículum</a>
-    <a href="index.html#contact" class="nav-link">Contacto</a>
+    <a href="index.html"         class="nav-link" data-i18n="nav.home">Inicio</a>
+    <a href="index.html#skills"  class="nav-link" data-i18n="nav.skills">Skills</a>
+    <a href="projects.html"      class="nav-link" data-i18n="nav.projects">Proyectos</a>
+    <a href="index.html#cv"      class="nav-link" data-i18n="nav.cv">Currículum</a>
+    <a href="index.html#contact" class="nav-link" data-i18n="nav.contact">Contacto</a>
+    <a href="blog.html"          class="nav-link" data-i18n="nav.blog">Blog</a>
   </nav>
 
   <main>
@@ -45,12 +58,12 @@
     ============================================================ -->
     <section class="page-hero" aria-label="Encabezado de proyectos">
       <div>
-        <span class="section-label reveal">Portafolio</span>
+        <span class="section-label reveal" data-i18n="projects.label">Portafolio</span>
         <h1 class="page-hero-title reveal">
-          Mis <span class="gradient-text">Proyectos</span>
+          <span data-i18n="projects.title.prefix">Mis</span> <span class="gradient-text" data-i18n="projects.title.word">Proyectos</span>
         </h1>
-        <p class="page-hero-subtitle reveal">
-          Ideas convertidas en realidad. Aquí encontrarás todo lo que he construido, explorado o experimentado.
+        <p class="page-hero-subtitle reveal" data-i18n="projects.subtitle">
+          Ideas convertidas en realidad. Explora todo lo que he construido y experimentado.
         </p>
       </div>
     </section>
@@ -69,17 +82,18 @@
           class="search-input"
           placeholder="Buscar por nombre, tecnología o descripción…"
           aria-label="Buscar proyectos"
+          data-i18n-ph="projects.search"
           autocomplete="off"
         />
       </div>
 
       <div class="filter-pills reveal" role="group" aria-label="Filtros por categoría">
-        <button class="filter-pill active" data-filter="all"         aria-pressed="true">Todos</button>
-        <button class="filter-pill"        data-filter="web"         aria-pressed="false">🌐 Web</button>
-        <button class="filter-pill"        data-filter="data"        aria-pressed="false">📊 Data</button>
-        <button class="filter-pill"        data-filter="mobile"      aria-pressed="false">📱 Mobile</button>
-        <button class="filter-pill"        data-filter="ia"          aria-pressed="false">🤖 IA / ML</button>
-        <button class="filter-pill"        data-filter="herramienta" aria-pressed="false">🔧 Herramienta</button>
+        <button class="filter-pill active" data-filter="all"         aria-pressed="true"  data-i18n="projects.filter.all">Todos</button>
+        <button class="filter-pill"        data-filter="web"         aria-pressed="false" data-i18n="projects.filter.web">🌐 Web</button>
+        <button class="filter-pill"        data-filter="data"        aria-pressed="false" data-i18n="projects.filter.data">📊 Data</button>
+        <button class="filter-pill"        data-filter="mobile"      aria-pressed="false" data-i18n="projects.filter.mob">📱 Mobile</button>
+        <button class="filter-pill"        data-filter="ia"          aria-pressed="false" data-i18n="projects.filter.ia">🤖 IA / ML</button>
+        <button class="filter-pill"        data-filter="herramienta" aria-pressed="false" data-i18n="projects.filter.tool">🔧 Herramienta</button>
       </div>
 
       <p class="results-info reveal" id="results-count" aria-live="polite"></p>
@@ -100,7 +114,7 @@
           <div class="project-img-wrap">
             <img src="assets/img/project-dashboard.png" alt="Preview del proyecto Dashboard Analytics" loading="lazy" />
             <div class="project-overlay" aria-hidden="true">
-              <span class="project-overlay-btn">Ver proyecto →</span>
+              <span class="project-overlay-btn"><span data-i18n="projects.view">Ver proyecto</span> →</span>
             </div>
           </div>
           <div class="project-body">
@@ -115,12 +129,12 @@
             </p>
             <div class="project-footer">
               <a href="#" class="project-link" aria-label="Ver Dashboard Analytics">
-                Ver proyecto
+                <span data-i18n="projects.view">Ver proyecto</span>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
               </a>
               <a href="https://github.com/rubgarcia" target="_blank" rel="noopener" class="project-link" aria-label="Código fuente en GitHub">
                 <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
-                GitHub
+                <span data-i18n="projects.source">GitHub</span>
               </a>
             </div>
           </div>
@@ -135,7 +149,7 @@
           <div class="project-img-wrap">
             <img src="assets/img/project-data.png" alt="Preview del proyecto Predictor de Precios ML" loading="lazy" />
             <div class="project-overlay" aria-hidden="true">
-              <span class="project-overlay-btn">Ver proyecto →</span>
+              <span class="project-overlay-btn"><span data-i18n="projects.view">Ver proyecto</span> →</span>
             </div>
           </div>
           <div class="project-body">
@@ -150,12 +164,12 @@
             </p>
             <div class="project-footer">
               <a href="#" class="project-link" aria-label="Ver Predictor de Precios ML">
-                Ver proyecto
+                <span data-i18n="projects.view">Ver proyecto</span>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
               </a>
               <a href="https://github.com/rubgarcia" target="_blank" rel="noopener" class="project-link" aria-label="Código fuente en GitHub">
                 <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
-                GitHub
+                <span data-i18n="projects.source">GitHub</span>
               </a>
             </div>
           </div>
@@ -170,7 +184,7 @@
           <div class="project-img-wrap">
             <img src="assets/img/project-mobile.png" alt="Preview del proyecto App de Productividad" loading="lazy" />
             <div class="project-overlay" aria-hidden="true">
-              <span class="project-overlay-btn">Ver proyecto →</span>
+              <span class="project-overlay-btn"><span data-i18n="projects.view">Ver proyecto</span> →</span>
             </div>
           </div>
           <div class="project-body">
@@ -185,12 +199,12 @@
             </p>
             <div class="project-footer">
               <a href="#" class="project-link" aria-label="Ver App de Productividad">
-                Ver proyecto
+                <span data-i18n="projects.view">Ver proyecto</span>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
               </a>
               <a href="https://github.com/rubgarcia" target="_blank" rel="noopener" class="project-link" aria-label="Código fuente en GitHub">
                 <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
-                GitHub
+                <span data-i18n="projects.source">GitHub</span>
               </a>
             </div>
           </div>
@@ -208,7 +222,7 @@
               <div style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.1rem; color:#7c6fff;">Node.js + Express</div>
             </div>
             <div class="project-overlay" aria-hidden="true">
-              <span class="project-overlay-btn">Ver proyecto →</span>
+              <span class="project-overlay-btn"><span data-i18n="projects.view">Ver proyecto</span> →</span>
             </div>
           </div>
           <div class="project-body">
@@ -223,12 +237,12 @@
             </p>
             <div class="project-footer">
               <a href="#" class="project-link" aria-label="Ver API REST con Node.js">
-                Ver proyecto
+                <span data-i18n="projects.view">Ver proyecto</span>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
               </a>
               <a href="https://github.com/rubgarcia" target="_blank" rel="noopener" class="project-link" aria-label="Código fuente en GitHub">
                 <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
-                GitHub
+                <span data-i18n="projects.source">GitHub</span>
               </a>
             </div>
           </div>
@@ -246,7 +260,7 @@
               <div style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.1rem; color:#00e5ff;">Pandas + Matplotlib</div>
             </div>
             <div class="project-overlay" aria-hidden="true">
-              <span class="project-overlay-btn">Ver proyecto →</span>
+              <span class="project-overlay-btn"><span data-i18n="projects.view">Ver proyecto</span> →</span>
             </div>
           </div>
           <div class="project-body">
@@ -261,12 +275,12 @@
             </p>
             <div class="project-footer">
               <a href="#" class="project-link" aria-label="Ver Análisis de Datos Spotify">
-                Ver proyecto
+                <span data-i18n="projects.view">Ver proyecto</span>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
               </a>
               <a href="https://github.com/rubgarcia" target="_blank" rel="noopener" class="project-link" aria-label="Código fuente en GitHub">
                 <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
-                GitHub
+                <span data-i18n="projects.source">GitHub</span>
               </a>
             </div>
           </div>
@@ -284,7 +298,7 @@
               <div style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.1rem; background:linear-gradient(135deg,#7c6fff,#00e5ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">HTML · CSS · JS</div>
             </div>
             <div class="project-overlay" aria-hidden="true">
-              <span class="project-overlay-btn">Ver proyecto →</span>
+              <span class="project-overlay-btn"><span data-i18n="projects.view">Ver proyecto</span> →</span>
             </div>
           </div>
           <div class="project-body">
@@ -299,12 +313,12 @@
             </p>
             <div class="project-footer">
               <a href="index.html" class="project-link" aria-label="Ver Portfolio Web Personal">
-                Ver proyecto
+                <span data-i18n="projects.view">Ver proyecto</span>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
               </a>
               <a href="https://github.com/rubgarcia" target="_blank" rel="noopener" class="project-link" aria-label="Código fuente en GitHub">
                 <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
-                GitHub
+                <span data-i18n="projects.source">GitHub</span>
               </a>
             </div>
           </div>
@@ -313,8 +327,8 @@
         <!-- No results message -->
         <div id="no-results" class="no-results" style="display:none;" role="status" aria-live="polite">
           <div class="no-results-emoji" aria-hidden="true">🔍</div>
-          <p>No se encontraron proyectos con ese criterio.</p>
-          <p style="margin-top:0.5rem; font-size:0.85rem;">Prueba con otro término o selecciona "Todos".</p>
+          <p data-i18n="projects.noresults">No se encontraron proyectos con ese criterio.</p>
+          <p style="margin-top:0.5rem; font-size:0.85rem;" data-i18n="projects.noresults2">Prueba con otro término o selecciona "Todos".</p>
         </div>
 
       </div>
@@ -330,8 +344,8 @@
       <div class="footer-top">
         <div class="footer-brand">
           <div class="footer-brand-name gradient-text">Rubén García</div>
-          <p class="footer-brand-desc">
-            Desarrollador apasionado por la tecnología, el diseño y las soluciones que marcan la diferencia. Siempre abierto a nuevos retos.
+          <p class="footer-brand-desc" data-i18n="footer.brand.desc">
+            Especialista SAP Fiori &amp; ABAP apasionado por construir soluciones empresariales robustas. Siempre abierto a nuevos retos.
           </p>
           <div class="footer-social" role="list" aria-label="Redes sociales">
             <a href="https://github.com/rubgarcia"      target="_blank" rel="noopener" class="social-icon" aria-label="GitHub" role="listitem">
@@ -347,35 +361,36 @@
         </div>
 
         <div>
-          <h3 class="footer-col-title">Navegación</h3>
+          <h3 class="footer-col-title" data-i18n="footer.nav.title">Navegación</h3>
           <ul class="footer-links">
-            <li><a href="index.html"        class="footer-link">Inicio</a></li>
-            <li><a href="index.html#skills" class="footer-link">Skills</a></li>
-            <li><a href="projects.html"     class="footer-link">Proyectos</a></li>
-            <li><a href="index.html#cv"     class="footer-link">Currículum</a></li>
+            <li><a href="index.html"        class="footer-link" data-i18n="nav.home">Inicio</a></li>
+            <li><a href="index.html#skills" class="footer-link" data-i18n="nav.skills">Skills</a></li>
+            <li><a href="projects.html"     class="footer-link" data-i18n="nav.projects">Proyectos</a></li>
+            <li><a href="index.html#cv"     class="footer-link" data-i18n="nav.cv">Currículum</a></li>
           </ul>
         </div>
 
         <div>
-          <h3 class="footer-col-title">Contacto</h3>
+          <h3 class="footer-col-title" data-i18n="footer.contact.title">Contacto</h3>
           <ul class="footer-links">
             <li><a href="mailto:rubgarcia@email.com"             class="footer-link">rubgarcia@email.com</a></li>
             <li><a href="https://linkedin.com/in/rubgarcia"      target="_blank" rel="noopener" class="footer-link">LinkedIn</a></li>
             <li><a href="https://github.com/rubgarcia"           target="_blank" rel="noopener" class="footer-link">GitHub</a></li>
-            <li><a href="index.html#cv"                          class="footer-link">Descargar CV</a></li>
+            <li><a href="index.html#cv"                          class="footer-link" data-i18n="hero.btn.cv">Descargar CV</a></li>
           </ul>
         </div>
       </div>
 
       <div class="footer-bottom">
-        <p>© 2025 Rubén García. Todos los derechos reservados.</p>
+        <p data-i18n="footer.copyright">© 2025 Rubén García. Todos los derechos reservados.</p>
         <p class="footer-bottom-right">
-          Hecho con <span class="footer-heart" aria-label="amor">♥</span> y mucho café
+          <span data-i18n="footer.made">Hecho con mucho café</span> <span class="footer-heart" aria-label="amor">♥</span>
         </p>
       </div>
     </div>
   </footer>
 
+  <script src="js/i18n.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

@@ -56,7 +56,7 @@
       <div>
         <span class="section-label reveal" data-i18n="blog.label">Blog</span>
         <h1 class="page-hero-title reveal">
-          Mis <span class="gradient-text" data-i18n="blog.title.word">reflexiones</span>
+          <span data-i18n="blog.title.prefix">Mis</span> <span class="gradient-text" data-i18n="blog.title.word">reflexiones</span>
         </h1>
         <p class="page-hero-subtitle reveal" data-i18n="blog.subtitle">
           Un espacio donde escribo sobre tecnología, proyectos y todo lo que me inspira.
@@ -72,25 +72,26 @@
         </div>
         <input type="search" id="blog-search" class="search-input"
           placeholder="Buscar por título o etiqueta…" aria-label="Buscar en el blog"
+          data-i18n-ph="blog.search" data-i18n-aria="blog.search.aria"
           autocomplete="off" />
       </div>
 
       <div class="filter-pills reveal" id="blog-tag-filters" role="group" aria-label="Filtros por etiqueta">
-        <button class="filter-pill active" data-tag="all">Todos</button>
+        <button class="filter-pill active" data-tag="all" data-i18n="blog.filter.all">Todos</button>
       </div>
 
       <div class="blog-year-filter reveal">
-        <label for="blog-year-select" class="blog-year-label">Año:</label>
+        <label for="blog-year-select" class="blog-year-label" data-i18n="blog.year.label">Año:</label>
         <select id="blog-year-select" class="blog-year-select">
-          <option value="all">Todos</option>
+          <option value="all" data-i18n="blog.year.all">Todos</option>
         </select>
         <div class="blog-toolbar-actions">
           <a href="blog-admin.html" class="btn btn-outline" style="font-size:0.82rem; padding:0.45rem 1rem; display:inline-flex; align-items:center; gap:0.4rem;">
-            ✍️ <span>Administrar</span>
+            ✍️ <span data-i18n="blog.admin">Administrar</span>
           </a>
           <button id="blog-admin-logout-btn" class="btn btn-outline" style="font-size:0.82rem; padding:0.45rem 1rem; display:none; align-items:center; gap:0.4rem;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-            <span>Cerrar sesión admin</span>
+            <span data-i18n="blog.logout">Cerrar sesión</span>
           </button>
         </div>
       </div>
@@ -103,8 +104,8 @@
       <div class="blog-list-grid" id="blog-list-grid"></div>
       <div id="blog-no-results" class="no-results" style="display:none;" role="status" aria-live="polite">
         <div class="no-results-emoji" aria-hidden="true">🔍</div>
-        <p>No se encontraron posts con ese criterio.</p>
-        <p style="margin-top:0.5rem; font-size:0.85rem;">Prueba con otro término o cambia los filtros.</p>
+        <p data-i18n="blog.noresults">No se encontraron posts con ese criterio.</p>
+        <p style="margin-top:0.5rem; font-size:0.85rem;" data-i18n="blog.noresults2">Prueba con otro término o cambia los filtros.</p>
       </div>
     </section>
 
@@ -114,9 +115,9 @@
         <button id="post-unlock-close" aria-label="Cerrar"
           style="position:absolute; top:1rem; right:1rem; background:none; border:none; color:var(--text-muted); font-size:1.3rem; cursor:pointer; line-height:1;">✕</button>
         <div class="blog-lock-icon">🔐</div>
-        <span class="section-label" style="display:block; margin-bottom:0.5rem;">Acceso requerido</span>
-        <h2 class="blog-lock-title" style="font-size:1.4rem;">Contenido protegido</h2>
-        <p class="blog-lock-desc">Introduce la contraseña para acceder a este post.</p>
+        <span class="section-label" style="display:block; margin-bottom:0.5rem;" data-i18n="blog.lock.access">Acceso requerido</span>
+        <h2 class="blog-lock-title" style="font-size:1.4rem;" data-i18n="blog.lock.title">Contenido protegido</h2>
+        <p class="blog-lock-desc" data-i18n="blog.lock.desc">Este contenido está protegido. Introduce la contraseña para acceder.</p>
         <form id="post-unlock-form" autocomplete="off">
           <div class="blog-password-wrap">
             <input type="password" id="post-unlock-pw" class="blog-password-input"
@@ -128,7 +129,7 @@
           </div>
           <p class="blog-error" id="post-unlock-error" aria-live="polite"></p>
           <button type="submit" id="post-unlock-submit" class="btn btn-primary blog-submit" style="width:100%; justify-content:center;">
-            <span>Acceder</span>
+            <span data-i18n="blog.lock.btn">Acceder</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </button>
         </form>
@@ -297,7 +298,7 @@
     const pw   = document.getElementById('post-unlock-pw').value.trim();
     if (!pw || !_unlockingPostId) return;
     btn.disabled = true;
-    btn.querySelector('span').textContent = 'Verificando…';
+    btn.querySelector('span').textContent = window.i18n.t('blog.lock.verifying');
     try {
       const post = getAllPosts().find(p => String(p.id) === String(_unlockingPostId));
       if (!post) { closeUnlockModal(); return; }
@@ -316,7 +317,7 @@
         closeUnlockModal();
         location.href = 'blog-post.html?id=' + post.id;
       } else {
-        errEl.textContent = '❌ Contraseña incorrecta.';
+        errEl.textContent = window.i18n.t('blog.lock.error');
         const card = overlay.querySelector('.blog-lock-card');
         if (card) { card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake'); }
         document.getElementById('post-unlock-pw').value = '';
@@ -324,7 +325,7 @@
       }
     } finally {
       btn.disabled = false;
-      btn.querySelector('span').textContent = 'Acceder';
+      btn.querySelector('span').textContent = window.i18n.t('blog.lock.btn');
     }
   });
 
