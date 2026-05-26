@@ -96,6 +96,34 @@
         </a>
       </div>
 
+      <!-- DeepL translate bar -->
+      <div id="translate-bar" style="display:none; flex-wrap:wrap; gap:0.6rem; align-items:center; margin-bottom:1.25rem;">
+        <button id="btn-translate" class="btn btn-outline"
+          style="font-size:0.82rem; padding:0.4rem 0.9rem; display:inline-flex; align-items:center; gap:0.4rem;">
+          🌐 <span id="translate-btn-label"></span>
+        </button>
+        <button id="btn-translate-restore" class="btn btn-outline"
+          style="display:none; font-size:0.82rem; padding:0.4rem 0.9rem; display:inline-flex; align-items:center; gap:0.4rem;">
+          ↩ <span id="translate-restore-label"></span>
+        </button>
+        <span id="translate-msg" style="font-size:0.8rem; color:var(--text-muted);"></span>
+      </div>
+
+      <!-- DeepL key setup (first-time) -->
+      <div id="deepl-key-setup" style="display:none; flex-wrap:wrap; gap:0.5rem; align-items:center; margin-bottom:1.25rem; padding:0.75rem 1rem; background:var(--bg-glass); border:1px solid var(--border-accent); border-radius:var(--radius);">
+        <input type="password" id="deepl-key-input"
+          class="blog-password-input"
+          placeholder="DeepL API key (termina en :fx si es la versión gratuita)…"
+          style="flex:1; min-width:220px; font-size:0.82rem;" />
+        <button id="deepl-key-save" class="btn btn-primary" style="font-size:0.82rem; padding:0.4rem 0.9rem; white-space:nowrap;">
+          Guardar y traducir
+        </button>
+        <a href="https://www.deepl.com/pro-api" target="_blank" rel="noopener"
+          style="font-size:0.78rem; color:var(--accent); white-space:nowrap;">
+          Obtener key gratuita →
+        </a>
+      </div>
+
       <!-- Post header -->
       <header class="blog-reader-header">
         <div class="blog-reader-emoji" id="post-emoji">📝</div>
@@ -266,6 +294,16 @@
     document.getElementById('post-body').innerHTML = renderMarkdown(bodyMd);
     document.getElementById('blog-reader-loading').style.display = 'none';
     document.getElementById('blog-reader').style.display = 'block';
+
+    // Reset + show translate bar
+    _origTitle = null;
+    _origBody  = null;
+    _isTranslated = false;
+    document.getElementById('translate-msg').textContent = '';
+    document.getElementById('btn-translate').style.display = '';
+    document.getElementById('btn-translate-restore').style.display = 'none';
+    document.getElementById('deepl-key-setup').style.display = 'none';
+    document.getElementById('translate-bar').style.display = 'flex';
   }
 
   /* ── Show lock screen ────────────────────────────────────────────── */
@@ -388,6 +426,137 @@
 
     location.href = 'blog.html';
   }
+
+  /* ── DeepL Translation ───────────────────────────────────────────── */
+  const DEEPL_KEY_KEY  = '_deepl_key';
+  const DEEPL_LANG_MAP = { es: 'ES', en: 'EN-US', fr: 'FR' };
+  const DEEPL_LABELS   = {
+    btn:     { es: 'Traducir al español',  en: 'Translate to English',  fr: 'Traduire en français'     },
+    restore: { es: 'Restaurar original',   en: 'Restore original',      fr: 'Restaurer l\'original'    },
+    already: { es: '✓ Ya está en español.', en: '✓ Already in English.', fr: '✓ Déjà en français.'     },
+  };
+
+  let _origTitle    = null;
+  let _origBody     = null;
+  let _isTranslated = false;
+
+  function updateTranslateLabels() {
+    const lang = window.i18n?.lang() || 'en';
+    const btnEl     = document.getElementById('translate-btn-label');
+    const restoreEl = document.getElementById('translate-restore-label');
+    if (btnEl)     btnEl.textContent     = DEEPL_LABELS.btn[lang]     || 'Translate';
+    if (restoreEl) restoreEl.textContent = DEEPL_LABELS.restore[lang] || 'Restore original';
+  }
+
+  function restoreOriginal() {
+    if (!_isTranslated) return;
+    document.getElementById('post-title').textContent = _origTitle;
+    document.getElementById('post-body').innerHTML    = _origBody;
+    _isTranslated = false;
+    document.getElementById('translate-msg').textContent = '';
+    document.getElementById('btn-translate').style.display = '';
+    document.getElementById('btn-translate-restore').style.display = 'none';
+  }
+
+  async function doTranslate() {
+    const key = localStorage.getItem(DEEPL_KEY_KEY) || '';
+    if (!key) {
+      const setup = document.getElementById('deepl-key-setup');
+      setup.style.display = 'flex';
+      document.getElementById('deepl-key-input').focus();
+      return;
+    }
+
+    const lang    = window.i18n?.lang() || 'en';
+    const target  = DEEPL_LANG_MAP[lang] || 'EN-US';
+    const titleEl = document.getElementById('post-title');
+    const bodyEl  = document.getElementById('post-body');
+    const btn     = document.getElementById('btn-translate');
+    const msgEl   = document.getElementById('translate-msg');
+
+    _origTitle = _origTitle ?? titleEl.textContent;
+    _origBody  = _origBody  ?? bodyEl.innerHTML;
+    msgEl.textContent = '';
+
+    const origHTML = btn.innerHTML;
+    btn.disabled   = true;
+    btn.innerHTML  = '⏳';
+
+    try {
+      const endpoint = key.endsWith(':fx')
+        ? 'https://api-free.deepl.com/v2/translate'
+        : 'https://api.deepl.com/v2/translate';
+
+      const params = new URLSearchParams();
+      params.append('text', _origTitle);
+      params.append('text', _origBody);
+      params.append('target_lang', target);
+      params.append('tag_handling', 'html');
+
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Authorization': `DeepL-Auth-Key ${key}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: params,
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || `Error ${res.status}`);
+      }
+
+      const data     = await res.json();
+      const detected = data.translations[0].detected_source_language;
+
+      if (detected === target.slice(0, 2)) {
+        msgEl.textContent = DEEPL_LABELS.already[lang] || '✓ Already in this language.';
+        return;
+      }
+
+      titleEl.textContent = data.translations[0].text;
+      bodyEl.innerHTML    = data.translations[1].text;
+      _isTranslated = true;
+      btn.style.display = 'none';
+      document.getElementById('btn-translate-restore').style.display = 'inline-flex';
+    } catch (err) {
+      console.error('DeepL:', err);
+      msgEl.textContent = `❌ ${err.message}`;
+    } finally {
+      btn.disabled  = false;
+      btn.innerHTML = origHTML;
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    updateTranslateLabels();
+
+    document.getElementById('btn-translate').addEventListener('click', doTranslate);
+
+    document.getElementById('btn-translate-restore').addEventListener('click', () => {
+      restoreOriginal();
+      document.getElementById('deepl-key-setup').style.display = 'none';
+    });
+
+    document.getElementById('deepl-key-save').addEventListener('click', async () => {
+      const key = document.getElementById('deepl-key-input').value.trim();
+      if (!key) return;
+      localStorage.setItem(DEEPL_KEY_KEY, key);
+      document.getElementById('deepl-key-input').value = '';
+      document.getElementById('deepl-key-setup').style.display = 'none';
+      await doTranslate();
+    });
+
+    document.getElementById('deepl-key-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('deepl-key-save').click();
+    });
+
+    document.addEventListener('langchange', () => {
+      updateTranslateLabels();
+      if (_isTranslated) restoreOriginal();
+    });
+  });
 
   /* ── Lightbox ────────────────────────────────────────────────────── */
   function openLightbox(src) {
