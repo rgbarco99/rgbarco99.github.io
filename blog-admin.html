@@ -739,7 +739,7 @@
         <div class="admin-post-item-info">
           <span class="admin-post-item-emoji">${p.emoji || '📝'}</span>
           <div style="min-width:0;">
-            <div class="admin-post-item-title" title="${getTitle(p)}">${getTitle(p)}</div>
+            <a class="admin-post-item-title" href="blog-post.html?id=${p.id}" target="_blank" rel="noopener" title="${getTitle(p)}">${getTitle(p)}</a>
             <div class="admin-post-item-meta">${fmtDate(p.date)} · ${(p.tags || []).join(', ') || '—'}</div>
           </div>
         </div>
@@ -748,6 +748,9 @@
           <span class="admin-badge ${p._source === 'local' ? 'admin-badge-local' : 'admin-badge-static'}">
             ${p._source === 'local' ? 'Local' : 'data.json'}
           </span>
+          <button class="btn btn-outline" onclick="copyPostLink('${p.id}')"
+            style="font-size:0.75rem;padding:0.3rem 0.65rem;"
+            title="Copiar enlace">🔗</button>
           <button class="btn btn-outline" onclick="editPost('${p.id}')"
             style="font-size:0.75rem;padding:0.3rem 0.65rem;"
             title="Editar">✏️</button>
@@ -842,6 +845,12 @@
     showAlert(isStatic ? 'Post ocultado. Publica en GitHub para eliminarlo definitivamente.' : 'Post eliminado.');
   }
   window.deletePost = deletePost;
+
+  function copyPostLink(id) {
+    const url = new URL(`blog-post.html?id=${id}`, window.location.href).href;
+    navigator.clipboard.writeText(url).then(() => showAlert('Enlace copiado al portapapeles.'));
+  }
+  window.copyPostLink = copyPostLink;
 
   /* ── Save post ───────────────────────────────────────────────────── */
   document.getElementById('new-post-form').addEventListener('submit', async e => {
