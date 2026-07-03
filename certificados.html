@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Certificados y títulos académicos de Rubén García — Formación y certificaciones profesionales." />
+  <title>Certificados — Rubén García</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%237c6fff'/><text y='22' x='7' font-size='18' font-family='sans-serif' fill='white'>R</text></svg>" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav" id="nav" role="navigation" aria-label="Menú principal">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo" aria-label="Inicio">RG</a>
+      <ul class="nav-links" role="list">
+        <li><a href="index.html"         class="nav-link" data-i18n="nav.home">Inicio</a></li>
+        <li><a href="index.html#skills"  class="nav-link" data-i18n="nav.skills">Skills</a></li>
+        <li><a href="projects.html"      class="nav-link" data-i18n="nav.projects">Proyectos</a></li>
+        <li><a href="certificados.html"  class="nav-link active" data-i18n="nav.certs">Certificados</a></li>
+        <li><a href="index.html#cv"      class="nav-link" data-i18n="nav.cv">Currículum</a></li>
+        <li><a href="index.html#contact" class="nav-link nav-cta" data-i18n="nav.contact">Contacto</a></li>
+        <li><a href="blog.html"          class="nav-link" data-i18n="nav.blog">Blog</a></li>
+      </ul>
+      <div class="nav-controls">
+        <div class="lang-switcher" role="group" aria-label="Idioma">
+          <button class="lang-btn" data-lang="es" aria-pressed="true"  title="Español">ES</button>
+          <button class="lang-btn" data-lang="en" aria-pressed="false" title="English">EN</button>
+          <button class="lang-btn" data-lang="fr" aria-pressed="false" title="Français">FR</button>
+        </div>
+        <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema">
+          <span class="theme-icon-sun">☀️</span>
+          <span class="theme-icon-moon">🌙</span>
+        </button>
+      </div>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Abrir menú" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile drawer -->
+  <nav class="nav-mobile" id="nav-mobile" aria-label="Menú móvil">
+    <a href="index.html"         class="nav-link" data-i18n="nav.home">Inicio</a>
+    <a href="index.html#skills"  class="nav-link" data-i18n="nav.skills">Skills</a>
+    <a href="projects.html"      class="nav-link" data-i18n="nav.projects">Proyectos</a>
+    <a href="certificados.html"  class="nav-link" data-i18n="nav.certs">Certificados</a>
+    <a href="index.html#cv"      class="nav-link" data-i18n="nav.cv">Currículum</a>
+    <a href="index.html#contact" class="nav-link" data-i18n="nav.contact">Contacto</a>
+    <a href="blog.html"          class="nav-link" data-i18n="nav.blog">Blog</a>
+  </nav>
+
+  <main>
+
+    <!-- PAGE HERO -->
+    <section class="page-hero" aria-label="Certificados y títulos">
+      <div>
+        <span class="section-label reveal" data-i18n="certs.label">Formación</span>
+        <h1 class="page-hero-title reveal">
+          <span data-i18n="certs.title.prefix">Certificados y</span> <span class="gradient-text" data-i18n="certs.title.word">Títulos</span>
+        </h1>
+        <p class="page-hero-subtitle reveal" data-i18n="certs.subtitle">
+          Certificaciones profesionales y formación académica que respaldan mi experiencia.
+        </p>
+      </div>
+    </section>
+
+    <!-- TOOLBAR -->
+    <div class="search-container" role="search" id="certs-toolbar">
+      <div class="search-wrapper reveal">
+        <div class="search-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+        <input type="search" id="certs-search" class="search-input"
+          placeholder="Buscar por título, emisor o etiqueta…" aria-label="Buscar certificados"
+          data-i18n-ph="certs.search"
+          autocomplete="off" />
+      </div>
+
+      <div class="filter-pills reveal" id="certs-filters" role="group" aria-label="Filtros por categoría">
+        <button class="filter-pill active" data-filter="all"         aria-pressed="true"  data-i18n="certs.filter.all">Todos</button>
+        <button class="filter-pill"        data-filter="sap"         aria-pressed="false" data-i18n="certs.filter.sap">🟦 SAP</button>
+        <button class="filter-pill"        data-filter="cloud"       aria-pressed="false" data-i18n="certs.filter.cloud">☁️ Cloud</button>
+        <button class="filter-pill"        data-filter="idiomas"     aria-pressed="false" data-i18n="certs.filter.idiomas">🗣️ Idiomas</button>
+        <button class="filter-pill"        data-filter="universidad" aria-pressed="false" data-i18n="certs.filter.uni">🎓 Universidad</button>
+        <button class="filter-pill"        data-filter="otros"       aria-pressed="false" data-i18n="certs.filter.otros">📄 Otros</button>
+      </div>
+
+      <div class="blog-year-filter reveal" style="justify-content:flex-end;">
+        <div class="blog-toolbar-actions" style="margin-left:0;">
+          <a href="certs-admin.html" class="btn btn-outline" style="font-size:0.82rem; padding:0.45rem 1rem; display:inline-flex; align-items:center; gap:0.4rem;">
+            🛠️ <span data-i18n="certs.admin">Administrar</span>
+          </a>
+          <button id="certs-admin-logout-btn" class="btn btn-outline" style="font-size:0.82rem; padding:0.45rem 1rem; display:none; align-items:center; gap:0.4rem;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+            <span data-i18n="blog.logout">Cerrar sesión</span>
+          </button>
+        </div>
+      </div>
+
+      <p class="results-info reveal" id="certs-results-count" aria-live="polite"></p>
+    </div>
+
+    <!-- CERTIFICATES GRID -->
+    <section class="projects-section" aria-label="Lista de certificados">
+      <div class="certs-grid" id="certs-grid"></div>
+      <div id="certs-no-results" class="no-results" style="display:none;" role="status" aria-live="polite">
+        <div class="no-results-emoji" aria-hidden="true">🏆</div>
+        <p data-i18n="certs.noresults">No se encontraron certificados con ese criterio.</p>
+        <p style="margin-top:0.5rem; font-size:0.85rem;" data-i18n="certs.noresults2">Prueba con otro término o cambia los filtros.</p>
+      </div>
+    </section>
+
+    <!-- CERT DETAIL MODAL -->
+    <div class="cert-modal-overlay" id="cert-modal" aria-hidden="true">
+      <div class="cert-modal" role="dialog" aria-modal="true" aria-labelledby="cert-modal-title">
+        <button type="button" class="cert-modal-close" id="cert-modal-close" aria-label="Cerrar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+        <div class="cert-modal-media" id="cert-modal-media"></div>
+        <div class="cert-modal-body">
+          <div class="cert-modal-tags" id="cert-modal-tags"></div>
+          <h2 class="cert-modal-title" id="cert-modal-title">Título del certificado</h2>
+          <p class="cert-modal-meta" id="cert-modal-meta">Emisor · Fecha</p>
+          <p class="cert-modal-desc" id="cert-modal-desc"></p>
+          <a href="#" target="_blank" rel="noopener" class="cert-modal-link" id="cert-modal-link">
+            <span data-i18n="certs.modal.link">Ver certificado oficial</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="footer-inner">
+      <div class="footer-bottom" style="border-top:none; padding-top:0;">
+        <p data-i18n="footer.copyright">© 2025 Rubén García. Todos los derechos reservados.</p>
+        <p class="footer-bottom-right">
+          <span data-i18n="footer.made">Hecho con mucho café</span>
+          <span class="footer-heart" aria-label="amor">♥</span>
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/i18n.js?v=2"></script>
+  <script>
+  /* ════════════════════════════════════════════════════════════════════
+     certificados.html — Listado de certificados (público)
+  ════════════════════════════════════════════════════════════════════ */
+
+  const ADMIN_AUTH  = '_admin_auth';
+  const LOCAL_KEY   = '_certs_local_items';
+  const DELETED_KEY = '_certs_deleted_items';
+
+  /* ── Static certs (loaded via fetch) ─────────────────────────────── */
+  let _staticCerts = [];
+
+  async function loadStaticCerts() {
+    try {
+      const ver = await fetch('js/certs-version.json', { cache: 'no-store' }).then(r => r.json());
+      _staticCerts = await fetch(`js/certs.json?t=${ver.t}`).then(r => r.json());
+    } catch { _staticCerts = []; }
+  }
+
+  function getAllCerts() {
+    const staticCerts = _staticCerts;
+    let localCerts = [];
+    try { localCerts = JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]'); } catch {}
+    let deletedIds = new Set();
+    try { deletedIds = new Set(JSON.parse(localStorage.getItem(DELETED_KEY) || '[]')); } catch {}
+    const ids = new Set();
+    const merged = [];
+    for (const c of [...localCerts, ...staticCerts]) {
+      const key = String(c.id);
+      if (!ids.has(key) && !deletedIds.has(key)) { ids.add(key); merged.push(c); }
+    }
+    return merged.sort((a, b) => new Date(b.date) - new Date(a.date));
+  }
+
+  /* ── Theme ───────────────────────────────────────────────────────── */
+  const savedTheme = localStorage.getItem('portfolio-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+
+  /* ── Reveal on scroll ────────────────────────────────────────────── */
+  const revealObs = new IntersectionObserver(entries =>
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+    { threshold: 0.1 }
+  );
+  const observeReveal = () => document.querySelectorAll('.reveal').forEach(el => {
+    revealObs.observe(el);
+    const r = el.getBoundingClientRect();
+    if (r.top < window.innerHeight && r.bottom > 0) el.classList.add('visible');
+  });
+
+  /* ── Format date ─────────────────────────────────────────────────── */
+  function fmtDate(dateStr) {
+    if (!dateStr) return '';
+    return new Date(dateStr + 'T12:00:00').toLocaleDateString(
+      document.documentElement.lang || 'es',
+      { year: 'numeric', month: 'long' }
+    );
+  }
+
+  const CATEGORY_LABELS = {
+    sap: '🟦 SAP', cloud: '☁️ Cloud', idiomas: '🗣️ Idiomas',
+    universidad: '🎓 Universidad', otros: '📄 Otros'
+  };
+
+  /* ── Modal ───────────────────────────────────────────────────────── */
+  const certModal = document.getElementById('cert-modal');
+
+  function mediaMarkup(cert) {
+    if (!cert.media) {
+      return `<div class="cert-modal-media-placeholder" aria-hidden="true">🏆</div>`;
+    }
+    if (cert.mediaType === 'pdf') {
+      return `<iframe src="${cert.media}" title="${cert.title}" loading="lazy"></iframe>`;
+    }
+    return `<img src="${cert.media}" alt="${cert.title}" loading="lazy" />`;
+  }
+
+  function openCertModal(cert) {
+    document.getElementById('cert-modal-media').innerHTML = mediaMarkup(cert);
+    document.getElementById('cert-modal-title').textContent = cert.title;
+    document.getElementById('cert-modal-meta').textContent = [cert.issuer, fmtDate(cert.date)].filter(Boolean).join(' · ');
+    document.getElementById('cert-modal-desc').textContent = cert.description || '';
+    document.getElementById('cert-modal-tags').innerHTML = (cert.tags || []).map(t => `<span class="blog-tag">${t}</span>`).join('');
+    const linkEl = document.getElementById('cert-modal-link');
+    if (cert.link) { linkEl.href = cert.link; linkEl.style.display = 'inline-flex'; }
+    else { linkEl.style.display = 'none'; }
+    certModal.classList.add('open');
+    certModal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeCertModal() {
+    certModal.classList.remove('open');
+    certModal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    document.getElementById('cert-modal-media').innerHTML = '';
+  }
+
+  document.getElementById('cert-modal-close').addEventListener('click', closeCertModal);
+  certModal.addEventListener('click', e => { if (e.target === certModal) closeCertModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && certModal.classList.contains('open')) closeCertModal(); });
+
+  /* ── Render ──────────────────────────────────────────────────────── */
+  function renderCerts() {
+    const certs = getAllCerts();
+    const grid = document.getElementById('certs-grid');
+    const noResults = document.getElementById('certs-no-results');
+    const resultsCount = document.getElementById('certs-results-count');
+
+    const query = (document.getElementById('certs-search').value || '').toLowerCase().trim();
+    const activeFilter = document.querySelector('#certs-filters .filter-pill.active')?.dataset.filter || 'all';
+
+    const filtered = certs.filter(c => {
+      const matchesFilter = activeFilter === 'all' || c.category === activeFilter;
+      const haystack = [c.title, c.issuer, ...(c.tags || [])].join(' ').toLowerCase();
+      const matchesSearch = !query || haystack.includes(query);
+      return matchesFilter && matchesSearch;
+    });
+
+    if (!filtered.length) {
+      grid.innerHTML = '';
+      noResults.style.display = 'block';
+      resultsCount.innerHTML = '';
+      return;
+    }
+    noResults.style.display = 'none';
+    resultsCount.innerHTML = `Mostrando <span>${filtered.length}</span> certificado${filtered.length !== 1 ? 's' : ''}`;
+
+    grid.innerHTML = filtered.map((c, i) => {
+      const mediaThumb = c.media
+        ? (c.mediaType === 'pdf'
+            ? `<div class="cert-card-media cert-card-media-pdf" aria-hidden="true">📄</div>`
+            : `<img class="cert-card-media" src="${c.media}" alt="${c.title}" loading="lazy" />`)
+        : `<div class="cert-card-media cert-card-media-placeholder" aria-hidden="true">🏆</div>`;
+      const tagsHtml = (c.tags || []).slice(0, 3).map(t => `<span class="project-tag">${t}</span>`).join('');
+      return `
+        <article class="cert-card reveal" data-cert-id="${c.id}" role="button" tabindex="0">
+          ${mediaThumb}
+          <div class="cert-card-body">
+            <div class="cert-card-tags">${tagsHtml}</div>
+            <h2 class="cert-card-title">${c.title}</h2>
+            <p class="cert-card-issuer">${[c.issuer, fmtDate(c.date)].filter(Boolean).join(' · ')}</p>
+          </div>
+        </article>`;
+    }).join('');
+
+    grid.querySelectorAll('.cert-card').forEach(card => {
+      const openFn = () => {
+        const cert = filtered.find(c => String(c.id) === card.dataset.certId);
+        if (cert) openCertModal(cert);
+      };
+      card.addEventListener('click', openFn);
+      card.addEventListener('keydown', e => { if (e.key === 'Enter') openFn(); });
+    });
+
+    grid.querySelectorAll('.reveal').forEach(el => {
+      revealObs.observe(el);
+      const r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight && r.bottom > 0) el.classList.add('visible');
+    });
+  }
+
+  document.getElementById('certs-search').addEventListener('input', renderCerts);
+  document.getElementById('certs-filters').addEventListener('click', e => {
+    const pill = e.target.closest('.filter-pill');
+    if (!pill) return;
+    document.querySelectorAll('#certs-filters .filter-pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    renderCerts();
+  });
+
+  /* ── Admin session (shared with blog + certs-admin) ─────────────── */
+  if (sessionStorage.getItem(ADMIN_AUTH) === 'ok') {
+    document.getElementById('certs-admin-logout-btn').style.display = 'inline-flex';
+  }
+  document.getElementById('certs-admin-logout-btn').addEventListener('click', () => {
+    sessionStorage.removeItem(ADMIN_AUTH);
+    sessionStorage.removeItem('_admin_pw');
+    location.reload();
+  });
+
+  /* ── Init ────────────────────────────────────────────────────────── */
+  document.addEventListener('DOMContentLoaded', () => {
+    loadStaticCerts().then(() => { renderCerts(); observeReveal(); });
+  });
+  </script>
+  <script src="js/main.js"></script>
+</body>
+</html>

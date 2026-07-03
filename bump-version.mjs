@@ -7,7 +7,7 @@
 import { execSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
 
-const FILES = ['index.html', 'blog.html', 'blog-post.html', 'blog-admin.html', 'projects.html'];
+const FILES = ['index.html', 'blog.html', 'blog-post.html', 'blog-admin.html', 'projects.html', 'certificados.html', 'certs-admin.html'];
 
 let version;
 try {
