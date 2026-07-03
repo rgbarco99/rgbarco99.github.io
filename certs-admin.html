@@ -392,6 +392,9 @@
     try { return JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]'); } catch { return []; }
   }
   function saveLocalCerts(certs) { localStorage.setItem(LOCAL_KEY, JSON.stringify(certs)); }
+  function isQuotaError(err) {
+    return !!err && (err.name === 'QuotaExceededError' || err.code === 22 || err.code === 1014);
+  }
 
   function getDeletedIds() {
     try { return JSON.parse(localStorage.getItem(DELETED_KEY) || '[]'); } catch { return []; }
@@ -507,8 +510,8 @@
     if (!file) return;
 
     if (file.type === 'application/pdf') {
-      if (file.size > 4 * 1024 * 1024) {
-        showAlert('El PDF pesa más de 4MB — se guardará igualmente, pero engordará el repositorio.', 'error');
+      if (file.size > 2 * 1024 * 1024) {
+        showAlert('El PDF pesa más de 2MB — el borrador local tiene un límite de espacio (localStorage) y podría no guardarse. Si falla, prueba con un PDF más ligero o comprimido.', 'error', { persistent: true });
       }
       const reader = new FileReader();
       reader.onload = ev => {
@@ -687,16 +690,37 @@
 
       const local = getLocalCerts().filter(c => String(c.id) !== String(id));
       local.push(cert);
-      saveLocalCerts(local);
+
+      let savedWithoutMedia = false;
+      try {
+        saveLocalCerts(local);
+      } catch (err) {
+        if (isQuotaError(err) && cert.media) {
+          const retry = confirm('El archivo adjunto es demasiado grande para guardarse en el navegador (el borrador local tiene un límite de unos 5-10MB). ¿Guardar el certificado sin la imagen/PDF adjunto? Podrás intentar añadirlo más tarde con un archivo más ligero.');
+          if (!retry) throw err;
+          cert.media = null;
+          cert.mediaType = null;
+          saveLocalCerts(local);
+          savedWithoutMedia = true;
+        } else {
+          throw err;
+        }
+      }
 
       const verb = editingCertId ? 'actualizado' : 'guardado';
       formWrap.classList.remove('open');
       resetForm();
       renderCertList();
-      showAlert(`Certificado "${title}" ${verb} correctamente.`);
+      showAlert(savedWithoutMedia
+        ? `Certificado "${title}" ${verb} sin el archivo adjunto (era demasiado grande para el almacenamiento local).`
+        : `Certificado "${title}" ${verb} correctamente.`);
     } catch (err) {
       console.error(err);
-      showAlert('Error al guardar el certificado.', 'error', { persistent: true });
+      if (isQuotaError(err)) {
+        showAlert('No se pudo guardar: el almacenamiento local está lleno. Elimina o reduce el tamaño de las imágenes/PDFs adjuntos, o publica en GitHub los certificados existentes para liberar espacio del borrador local.', 'error', { persistent: true });
+      } else {
+        showAlert('Error al guardar el certificado.', 'error', { persistent: true });
+      }
     } finally {
       btn.disabled = false;
       btn.innerHTML = origLabel;
@@ -898,5 +922,6 @@
   });
   </script>
   <script src="js/main.js"></script>
+
 </body>
 </html>
