@@ -97,19 +97,12 @@
 
           <!-- Social icons -->
           <div class="hero-social" role="list" aria-label="Redes sociales">
-            <a href="https://github.com/rubgarcia" target="_blank" rel="noopener" class="social-icon"
-              aria-label="GitHub" role="listitem">
-              <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" /></svg>
-            </a>
-            <a href="https://linkedin.com/in/rubgarcia" target="_blank" rel="noopener" class="social-icon"
+            <a href="https://www.linkedin.com/in/rgbarco/" target="_blank" rel="noopener" class="social-icon"
               aria-label="LinkedIn" role="listitem">
               <svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z" /><circle cx="4" cy="4" r="2" /></svg>
             </a>
-            <a href="mailto:rubgarcia@email.com" class="social-icon" aria-label="Email" role="listitem">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                <polyline points="22,6 12,13 2,6" />
-              </svg>
+            <a href="mailto:rgbarco99@gmail.com" class="social-icon" aria-label="Email" role="listitem">
+              <svg viewBox="0 0 24 24"><path d="M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z" /><path d="M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z" /></svg>
             </a>
           </div>
         </div>
@@ -136,21 +129,21 @@
         <div class="section-header reveal">
           <span class="section-label" data-i18n="about.label">Mi especialidad</span>
           <h2 class="section-title" data-i18n="about.title">SAP Fiori &amp; ABAP</h2>
-          <p class="section-subtitle" data-i18n="about.subtitle">Con más de 5 años de experiencia en el ecosistema SAP.</p>
+          <p class="section-subtitle" data-i18n="about.subtitle" id="about-subtitle">Soy un desarrollador Fiori ABAP que ha trabajado en proyectos de CRM y EWM con más de {years} años de experiencia.</p>
         </div>
 
         <!-- Stats -->
         <div class="stats-grid">
           <div class="stat-card reveal reveal-delay-1">
-            <div class="stat-value counter" data-target="5" data-suffix="+">0+</div>
+            <div class="stat-value counter" id="stat-experience-years" data-target="4" data-suffix="+">0+</div>
             <div class="stat-label" data-i18n="stat1.label">Años en SAP</div>
           </div>
           <div class="stat-card reveal reveal-delay-2">
-            <div class="stat-value counter" data-target="20" data-suffix="+">0+</div>
+            <div class="stat-value counter" data-target="10" data-suffix="+">0+</div>
             <div class="stat-label" data-i18n="stat2.label">Proyectos SAP</div>
           </div>
           <div class="stat-card reveal reveal-delay-3">
-            <div class="stat-value counter" data-target="8" data-suffix="">0</div>
+            <div class="stat-value counter" id="stat-clients-count" data-target="3" data-suffix="">0</div>
             <div class="stat-label" data-i18n="stat3.label">Clientes</div>
           </div>
         </div>
@@ -165,7 +158,7 @@
           <div class="expertise-card">
             <div class="expertise-icon">⚙️</div>
             <h3 class="expertise-title" data-i18n="exp.abap.title">ABAP</h3>
-            <p class="expertise-desc" data-i18n="exp.abap.desc">Programación ABAP clásico y RESTful (RAP). Reports, BADIs, OData, CDS Views.</p>
+            <p class="expertise-desc" data-i18n="exp.abap.desc">Programación ABAP clásico. Reports, BADIs, User Exits, OData Services, CDS Views y SmartForms.</p>
           </div>
         </div>
       </div>
@@ -210,49 +203,79 @@
       <div class="section-inner">
         <div class="section-header reveal">
           <span class="section-label" data-i18n="cv.label">Currículum</span>
-          <h2 class="section-title" data-i18n="cv.title">Descarga mi CV</h2>
-          <p class="section-subtitle" data-i18n="cv.subtitle">Disponible en tres idiomas. Elige el que prefieras y descárgalo directamente.</p>
+          <h2 class="section-title" data-i18n="cv.title">Mi CV</h2>
+          <p class="section-subtitle" data-i18n="cv.subtitle">Disponible en tres idiomas. Previsualízalo o descárgalo directamente.</p>
         </div>
         <div class="cv-grid">
-          <a href="assets/cv/cv-es.pdf" download="CV_Ruben_Garcia_ES.pdf" class="cv-card reveal reveal-delay-1"
-            id="cv-es" aria-label="Descargar CV en español">
+          <a href="assets/cv/CV_RubenGarciaBarco_ES.pdf" target="_blank" rel="noopener" class="cv-card reveal reveal-delay-1"
+            id="cv-es" data-cv-lang="es" aria-label="Previsualizar CV en español">
             <div class="cv-flag" aria-hidden="true">🇪🇸</div>
             <div class="cv-lang" data-i18n="cv.es.lang">Español</div>
             <div class="cv-sublabel" data-i18n="cv.es.sub">Versión en castellano</div>
             <div class="cv-dl-btn">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" />
+                <circle cx="12" cy="12" r="3" />
               </svg>
-              <span data-i18n="cv.es.btn">Descargar</span>
+              <span data-i18n="cv.es.btn">Ver CV</span>
             </div>
           </a>
-          <a href="assets/cv/cv-en.pdf" download="CV_Ruben_Garcia_EN.pdf" class="cv-card reveal reveal-delay-2"
-            id="cv-en" aria-label="Download CV in English">
+          <a href="assets/cv/CV_RubenGarciaBarco_EN.pdf" target="_blank" rel="noopener" class="cv-card reveal reveal-delay-2"
+            id="cv-en" data-cv-lang="en" aria-label="Preview CV in English">
             <div class="cv-flag" aria-hidden="true">🇬🇧</div>
             <div class="cv-lang" data-i18n="cv.en.lang">English</div>
             <div class="cv-sublabel" data-i18n="cv.en.sub">English version</div>
             <div class="cv-dl-btn">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" />
+                <circle cx="12" cy="12" r="3" />
               </svg>
-              <span data-i18n="cv.en.btn">Download</span>
+              <span data-i18n="cv.en.btn">View CV</span>
             </div>
           </a>
-          <a href="assets/cv/cv-fr.pdf" download="CV_Ruben_Garcia_FR.pdf" class="cv-card reveal reveal-delay-3"
-            id="cv-fr" aria-label="Télécharger le CV en français">
+          <a href="assets/cv/CV_RubenGarciaBarco_FR.pdf" target="_blank" rel="noopener" class="cv-card reveal reveal-delay-3"
+            id="cv-fr" data-cv-lang="fr" aria-label="Prévisualiser le CV en français">
             <div class="cv-flag" aria-hidden="true">🇫🇷</div>
             <div class="cv-lang" data-i18n="cv.fr.lang">Français</div>
             <div class="cv-sublabel" data-i18n="cv.fr.sub">Version française</div>
             <div class="cv-dl-btn">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" />
+                <circle cx="12" cy="12" r="3" />
               </svg>
-              <span data-i18n="cv.fr.btn">Télécharger</span>
+              <span data-i18n="cv.fr.btn">Voir le CV</span>
             </div>
           </a>
         </div>
       </div>
     </section>
+
+    <!-- ============================================================
+         CV PREVIEW MODAL
+    ============================================================ -->
+    <div class="cv-modal-overlay" id="cv-modal" aria-hidden="true">
+      <div class="cv-modal" role="dialog" aria-modal="true" aria-labelledby="cv-modal-title">
+        <div class="cv-modal-header">
+          <span class="cv-modal-title" id="cv-modal-title">CV</span>
+          <div class="cv-modal-actions">
+            <a href="#" class="cv-modal-download" id="cv-modal-download" download>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
+              </svg>
+              <span data-i18n="cv.modal.download">Descargar</span>
+            </a>
+            <button type="button" class="cv-modal-close" id="cv-modal-close" aria-label="Cerrar" data-i18n-aria="cv.modal.close">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M6 6l12 12M18 6L6 18" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="cv-modal-body">
+          <iframe id="cv-modal-iframe" src="" title="Previsualización del CV" loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
 
     <!-- ============================================================
          BLOG SECTION — teaser / preview, separate page
@@ -318,17 +341,11 @@
             Especialista SAP Fiori &amp; ABAP apasionado por construir soluciones empresariales robustas.
           </p>
           <div class="footer-social" role="list" aria-label="Redes sociales">
-            <a href="https://github.com/rubgarcia" target="_blank" rel="noopener" class="social-icon" aria-label="GitHub" role="listitem">
-              <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
-            </a>
-            <a href="https://linkedin.com/in/rubgarcia" target="_blank" rel="noopener" class="social-icon" aria-label="LinkedIn" role="listitem">
+            <a href="https://www.linkedin.com/in/rgbarco/" target="_blank" rel="noopener" class="social-icon" aria-label="LinkedIn" role="listitem">
               <svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
             </a>
-            <a href="mailto:rubgarcia@email.com" class="social-icon" aria-label="Email" role="listitem">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                <polyline points="22,6 12,13 2,6"/>
-              </svg>
+            <a href="mailto:rgbarco99@gmail.com" class="social-icon" aria-label="Email" role="listitem">
+              <svg viewBox="0 0 24 24"><path d="M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z"/><path d="M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z"/></svg>
             </a>
           </div>
         </div>
@@ -346,9 +363,8 @@
         <div>
           <h3 class="footer-col-title" data-i18n="footer.contact.title">Contacto</h3>
           <ul class="footer-links">
-            <li><a href="mailto:rubgarcia@email.com" class="footer-link">rubgarcia@email.com</a></li>
-            <li><a href="https://linkedin.com/in/rubgarcia" target="_blank" rel="noopener" class="footer-link">LinkedIn</a></li>
-            <li><a href="https://github.com/rubgarcia" target="_blank" rel="noopener" class="footer-link">GitHub</a></li>
+            <li><a href="mailto:rgbarco99@gmail.com" class="footer-link">rgbarco99@gmail.com</a></li>
+            <li><a href="https://www.linkedin.com/in/rgbarco/" target="_blank" rel="noopener" class="footer-link">LinkedIn</a></li>
             <li><a href="assets/cv/cv-es.pdf" download class="footer-link" data-i18n="hero.btn.cv">Descargar CV</a></li>
           </ul>
         </div>

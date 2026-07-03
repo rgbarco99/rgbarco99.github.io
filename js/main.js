@@ -189,6 +189,33 @@ if (canvas) {
 }
 
 /* --------------------------------------------------
+   6b. EXPERIENCE YEARS — computed from start date, no yearly edits needed
+   -------------------------------------------------- */
+const EXPERIENCE_START = new Date(2022, 3, 1); // abril 2022
+
+function getExperienceYears() {
+  const now = new Date();
+  let years = now.getFullYear() - EXPERIENCE_START.getFullYear();
+  const beforeAnniversary = now.getMonth() < EXPERIENCE_START.getMonth() ||
+    (now.getMonth() === EXPERIENCE_START.getMonth() && now.getDate() < EXPERIENCE_START.getDate());
+  if (beforeAnniversary) years--;
+  return years;
+}
+
+const experienceYearsEl = document.getElementById('stat-experience-years');
+if (experienceYearsEl) experienceYearsEl.dataset.target = getExperienceYears();
+
+const clientsCountEl = document.getElementById('stat-clients-count');
+if (clientsCountEl && typeof CLIENTS !== 'undefined') clientsCountEl.dataset.target = CLIENTS.length;
+
+document.addEventListener('langchange', () => {
+  const years = getExperienceYears();
+  document.querySelectorAll('[data-i18n="about.subtitle"]').forEach(el => {
+    el.textContent = el.textContent.replace('{years}', years);
+  });
+});
+
+/* --------------------------------------------------
    7. ANIMATED STAT COUNTERS
    -------------------------------------------------- */
 const counterEls = document.querySelectorAll('.counter');
@@ -321,4 +348,48 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     const target = document.querySelector(a.getAttribute('href'));
     if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
   });
+});
+
+/* --------------------------------------------------
+   12. CV PREVIEW MODAL
+   -------------------------------------------------- */
+const CV_TITLES = { es: 'CV — Español', en: 'CV — English', fr: 'CV — Français' };
+const cvModal = document.getElementById('cv-modal');
+const cvModalIframe = document.getElementById('cv-modal-iframe');
+const cvModalDownload = document.getElementById('cv-modal-download');
+const cvModalTitle = document.getElementById('cv-modal-title');
+const cvModalClose = document.getElementById('cv-modal-close');
+const cvCards = document.querySelectorAll('.cv-card[data-cv-lang]');
+
+function openCvModal(card) {
+  if (!cvModal) return;
+  const lang = card.dataset.cvLang;
+  const href = card.getAttribute('href');
+  cvModalIframe.src = href;
+  cvModalDownload.href = href;
+  cvModalDownload.setAttribute('download', href.split('/').pop());
+  cvModalTitle.textContent = CV_TITLES[lang] || 'CV';
+  cvModal.classList.add('open');
+  cvModal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCvModal() {
+  if (!cvModal) return;
+  cvModal.classList.remove('open');
+  cvModal.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+  cvModalIframe.src = '';
+}
+
+cvCards.forEach(card => {
+  card.addEventListener('click', e => {
+    e.preventDefault();
+    openCvModal(card);
+  });
+});
+cvModalClose?.addEventListener('click', closeCvModal);
+cvModal?.addEventListener('click', e => { if (e.target === cvModal) closeCvModal(); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && cvModal?.classList.contains('open')) closeCvModal();
 });
