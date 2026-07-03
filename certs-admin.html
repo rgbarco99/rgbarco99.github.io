@@ -312,6 +312,51 @@
 
   <script src="js/i18n.js?v=c4fc9b4"></script>
   <script src="js/blog-crypto.js?v=c4fc9b4"></script>
+  <script type="module">
+    /* PDF thumbnail rendering (pdf.js, self-hosted — see js/vendor/pdfjs/) */
+    import * as pdfjsLib from './js/vendor/pdfjs/pdf.min.mjs';
+    pdfjsLib.GlobalWorkerOptions.workerSrc = './js/vendor/pdfjs/pdf.worker.min.mjs';
+
+    function dataUrlToBytes(dataUrl) {
+      const base64 = dataUrl.slice(dataUrl.indexOf(',') + 1);
+      const binary = atob(base64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      return bytes;
+    }
+
+    function withTimeout(promise, ms, message) {
+      return Promise.race([
+        promise,
+        new Promise((_, reject) => setTimeout(() => reject(new Error(message)), ms)),
+      ]);
+    }
+
+    window.renderPdfThumbnail = async function renderPdfThumbnail(dataUrl) {
+      /* disableWorker: renderizamos una sola página bajo demanda (acción puntual del admin,
+         no una vista pública), así evitamos problemas de Worker/CSP en navegadores restrictivos.
+         Se pasa como bytes (data:) en vez de url: — pdf.js resuelve las url data: internamente
+         vía red, lo cual es más lento e innecesario aquí.
+         withTimeout: red de seguridad — si el render se atasca (PDF raro, entorno restrictivo),
+         fallamos con claridad en vez de dejar el formulario colgado indefinidamente. */
+      const bytes = dataUrlToBytes(dataUrl);
+      const task = pdfjsLib.getDocument({ data: bytes, disableWorker: true, isEvalSupported: false });
+      const pdf = await withTimeout(task.promise, 10000, 'Tiempo de espera agotado al leer el PDF.');
+      const page = await pdf.getPage(1);
+      const MAX_PX = 500;
+      const baseViewport = page.getViewport({ scale: 1 });
+      const scale = MAX_PX / Math.max(baseViewport.width, baseViewport.height);
+      const viewport = page.getViewport({ scale });
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(viewport.width);
+      canvas.height = Math.round(viewport.height);
+      await withTimeout(
+        page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise,
+        10000, 'Tiempo de espera agotado al renderizar el PDF.'
+      );
+      return canvas.toDataURL('image/webp', 0.82);
+    };
+  </script>
   <script>
   /* ════════════════════════════════════════════════════════════════════
      certs-admin.html — Panel de administración de certificados
@@ -477,8 +522,9 @@
   });
 
   /* ── Media (single image or PDF) ─────────────────────────────────── */
-  let currentMedia = null;     // data URL
+  let currentMedia = null;     // data URL — asset shown in the detail pop-up
   let currentMediaType = null; // 'image' | 'pdf'
+  let currentThumbnail = null; // data URL — small preview shown on the grid card
 
   function renderMediaPreview() {
     const wrap = document.getElementById('media-preview-wrap');
@@ -487,10 +533,15 @@
     const name = document.getElementById('media-preview-name');
     if (!currentMedia) { wrap.style.display = 'none'; return; }
     wrap.style.display = 'block';
-    if (currentMediaType === 'pdf') {
+    if (currentThumbnail) {
+      icon.style.display = 'none';
+      img.style.display = 'block';
+      img.src = currentThumbnail;
+      name.textContent = currentMediaType === 'pdf' ? 'PDF — miniatura de la portada' : 'Imagen adjunta';
+    } else if (currentMediaType === 'pdf') {
       img.style.display = 'none';
       icon.style.display = 'inline-block';
-      name.textContent = 'Documento PDF adjunto';
+      name.textContent = 'Generando miniatura…';
     } else {
       icon.style.display = 'none';
       img.style.display = 'block';
@@ -500,7 +551,7 @@
   }
 
   document.getElementById('btn-remove-media').addEventListener('click', () => {
-    currentMedia = null; currentMediaType = null;
+    currentMedia = null; currentMediaType = null; currentThumbnail = null;
     document.getElementById('media-upload').value = '';
     renderMediaPreview();
   });
@@ -514,9 +565,17 @@
         showAlert('El PDF pesa más de 2MB — el borrador local tiene un límite de espacio (localStorage) y podría no guardarse. Si falla, prueba con un PDF más ligero o comprimido.', 'error', { persistent: true });
       }
       const reader = new FileReader();
-      reader.onload = ev => {
+      reader.onload = async ev => {
         currentMedia = ev.target.result;
         currentMediaType = 'pdf';
+        currentThumbnail = null;
+        renderMediaPreview();
+        try {
+          currentThumbnail = await window.renderPdfThumbnail(currentMedia);
+        } catch (err) {
+          console.error('No se pudo generar la miniatura del PDF:', err);
+          showAlert('No se pudo generar una miniatura del PDF (puede estar protegido o dañado). Se guardará solo con el icono genérico.', 'error');
+        }
         renderMediaPreview();
       };
       reader.readAsDataURL(file);
@@ -533,6 +592,7 @@
           canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
           currentMedia = canvas.toDataURL('image/webp', 0.85);
           currentMediaType = 'image';
+          currentThumbnail = currentMedia;
           renderMediaPreview();
         };
         img.src = ev.target.result;
@@ -551,7 +611,7 @@
   function resetForm() {
     document.getElementById('new-cert-form').reset();
     tags = []; renderTags();
-    currentMedia = null; currentMediaType = null; renderMediaPreview();
+    currentMedia = null; currentMediaType = null; currentThumbnail = null; renderMediaPreview();
     editingCertId = null;
     document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
     document.getElementById('form-card-title').textContent = 'Nuevo certificado';
@@ -617,6 +677,7 @@
     tags = [...(cert.tags || [])]; renderTags();
     currentMedia = cert.media || null;
     currentMediaType = cert.mediaType || null;
+    currentThumbnail = cert.thumbnail || null;
     renderMediaPreview();
 
     editingCertId = id;
@@ -686,6 +747,7 @@
         link: link || null,
         mediaType: currentMediaType,
         media: currentMedia,
+        thumbnail: currentThumbnail,
       };
 
       const local = getLocalCerts().filter(c => String(c.id) !== String(id));
@@ -700,6 +762,7 @@
           if (!retry) throw err;
           cert.media = null;
           cert.mediaType = null;
+          cert.thumbnail = null;
           saveLocalCerts(local);
           savedWithoutMedia = true;
         } else {

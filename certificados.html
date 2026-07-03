@@ -293,11 +293,13 @@
     resultsCount.innerHTML = `Mostrando <span>${filtered.length}</span> certificado${filtered.length !== 1 ? 's' : ''}`;
 
     grid.innerHTML = filtered.map((c, i) => {
-      const mediaThumb = c.media
-        ? (c.mediaType === 'pdf'
-            ? `<div class="cert-card-media cert-card-media-pdf" aria-hidden="true">📄</div>`
-            : `<img class="cert-card-media" src="${c.media}" alt="${c.title}" loading="lazy" />`)
-        : `<div class="cert-card-media cert-card-media-placeholder" aria-hidden="true">🏆</div>`;
+      const mediaThumb = c.thumbnail
+        ? `<img class="cert-card-media" src="${c.thumbnail}" alt="${c.title}" loading="lazy" />`
+        : c.media
+          ? (c.mediaType === 'pdf'
+              ? `<div class="cert-card-media cert-card-media-pdf" aria-hidden="true">📄</div>`
+              : `<img class="cert-card-media" src="${c.media}" alt="${c.title}" loading="lazy" />`)
+          : `<div class="cert-card-media cert-card-media-placeholder" aria-hidden="true">🏆</div>`;
       const tagsHtml = (c.tags || []).slice(0, 3).map(t => `<span class="project-tag">${t}</span>`).join('');
       return `
         <article class="cert-card reveal" data-cert-id="${c.id}" role="button" tabindex="0">
