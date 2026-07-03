@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Certificados y títulos académicos de Rubén García — Formación y certificaciones profesionales." />
   <title>Certificados — Rubén García</title>
-  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/styles.css?v=c4fc9b4" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%237c6fff'/><text y='22' x='7' font-size='18' font-family='sans-serif' fill='white'>R</text></svg>" />
 </head>
 <body>
@@ -150,7 +150,7 @@
     </div>
   </footer>
 
-  <script src="js/i18n.js?v=2"></script>
+  <script src="js/i18n.js?v=c4fc9b4"></script>
   <script>
   /* ════════════════════════════════════════════════════════════════════
      certificados.html — Listado de certificados (público)
@@ -188,6 +188,20 @@
   /* ── Theme ───────────────────────────────────────────────────────── */
   const savedTheme = localStorage.getItem('portfolio-theme') || 'dark';
   document.documentElement.setAttribute('data-theme', savedTheme);
+  document.getElementById('theme-toggle')?.addEventListener('click', () => {
+    const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('portfolio-theme', next);
+  });
+
+  /* ── Nav ─────────────────────────────────────────────────────────── */
+  const navEl = document.querySelector('.nav');
+  window.addEventListener('scroll', () => navEl.classList.toggle('scrolled', window.scrollY > 20), { passive: true });
+  const hamburger = document.getElementById('nav-hamburger');
+  const mobileMenu = document.getElementById('nav-mobile');
+  if (hamburger && mobileMenu) hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('active'); mobileMenu.classList.toggle('open');
+  });
 
   /* ── Reveal on scroll ────────────────────────────────────────────── */
   const revealObs = new IntersectionObserver(entries =>
@@ -336,6 +350,6 @@
     loadStaticCerts().then(() => { renderCerts(); observeReveal(); });
   });
   </script>
-  <script src="js/main.js"></script>
+  <script src="js/main.js?v=c4fc9b4"></script>
 </body>
 </html>

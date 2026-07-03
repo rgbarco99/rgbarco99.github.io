@@ -19,7 +19,8 @@ try {
 let changed = 0;
 FILES.forEach(file => {
   const original = readFileSync(file, 'utf8');
-  const updated  = original.replace(/(<script src="js\/[^"?]+)(?:\?v=[^"]*)?(")/g, `$1?v=${version}$2`);
+  let updated = original.replace(/(<script src="js\/[^"?]+)(?:\?v=[^"]*)?(")/g, `$1?v=${version}$2`);
+  updated = updated.replace(/(<link rel="stylesheet" href="css\/[^"?]+)(?:\?v=[^"]*)?(")/g, `$1?v=${version}$2`);
   if (updated !== original) {
     writeFileSync(file, updated);
     console.log(`  ✓ ${file}`);
