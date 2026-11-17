@@ -1,5 +1,27 @@
 [
   {
+    "id": "cryptolab",
+    "title": "CryptoLab",
+    "date": "2026-11-17",
+    "category": "web",
+    "kind": "web",
+    "emoji": "🔐",
+    "summary": "Laboratorio visual de criptografía: cifra, descifra e intenta romper cifrados clásicos y modernos, viendo en directo cómo cae cada uno.",
+    "description": "Una web para entender la criptografía jugando con ella: escribe un mensaje, elige un cifrado y mira qué le pasa a cada letra.\n\n## Qué puedes hacer\n\n- **Cifrar y descifrar** con cifrados agrupados por familias: clásicos, modernos, asimétricos, huellas y codificaciones.\n- **Ver cómo funciona** cada uno con una visualización propia y una explicación breve, plegada para no estorbar.\n- **Intentar romperlo** desde una consola de ataque: fuerza bruta, análisis de frecuencias o diccionario, según el cifrado. El resultado cambia en directo mientras la consola prueba claves, y los ataques imposibles se paran a mano.\n- **Compartir** un mensaje cifrado con un enlace. La clave nunca va en el enlace.\n\n## Cifrados\n\n- **Clásicos:** César / ROT13, Atbash, Vigenère y Enigma.\n- **Modernos:** AES-256 y One-time pad.\n- **Asimétricos:** RSA.\n- **Huellas:** SHA-256.\n- **Codificaciones:** Base64, Morse y hexadecimal, que no son cifrados, y la web explica por qué.\n\nTodo ocurre en tu navegador: ningún texto ni clave sale de tu equipo.\n\n*En desarrollo: algunos cifrados y ataques se irán activando poco a poco.*",
+    "tech": [
+      "HTML / CSS / JS",
+      "Sin dependencias",
+      "GitHub Pages"
+    ],
+    "repo": "rgbarco99/cryptolab",
+    "asset": null,
+    "platform": null,
+    "url": "https://rgbarco99.github.io/cryptolab/",
+    "notice": null,
+    "images": [],
+    "visibility": "visible"
+  },
+  {
     "id": "fortnite-chest-counter",
     "title": "Fortnite Chest Counter",
     "date": "2026-11-13",
