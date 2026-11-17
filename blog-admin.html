@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Panel de administración del blog — Rubén García." />
+  <title>Admin Blog — Rubén García</title>
+  <link rel="stylesheet" href="css/styles.css?v=4bb4308" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%237c6fff'/><text y='22' x='7' font-size='18' font-family='sans-serif' fill='white'>R</text></svg>" />
+  <style>
+    .visibility-toggle { display:flex; gap:0.5rem; margin-top:0.4rem; }
+    .vis-btn { flex:1; padding:0.55rem; border:1.5px solid var(--border); border-radius:8px; background:transparent;
+      color:var(--text-secondary); cursor:pointer; font-size:0.84rem; font-weight:500; transition:all .2s; }
+    .vis-btn.active           { border-color:var(--accent-purple); background:rgba(124,111,255,.15); color:var(--accent-purple); }
+    .vis-btn.active-public    { border-color:var(--accent-cyan);   background:rgba(0,229,255,.12);   color:var(--accent-cyan); }
+    .vis-btn.active-protected { border-color:#ff9f43; background:rgba(255,159,67,.12); color:#ff9f43; }
+    .vis-btn.active-hidden    { border-color:var(--text-muted); background:rgba(90,90,122,.12); color:var(--text-muted); }
+    .post-pw-field { transition:max-height .3s ease, opacity .3s; max-height:0; opacity:0; overflow:hidden; }
+    .post-pw-field.visible { max-height:120px; opacity:1; }
+    .admin-badge-public  { background:rgba(0,229,255,.15); color:var(--accent-cyan);  border:1px solid rgba(0,229,255,.3); }
+    .admin-badge-private { background:rgba(255,107,107,.12); color:#ff6b6b; border:1px solid rgba(255,107,107,.3); }
+    .admin-badge-legacy  { background:rgba(255,200,100,.12); color:#ffc864; border:1px solid rgba(255,200,100,.3); }
+    .github-token-ok   { background:rgba(100,220,120,.12); color:#64dc78; border:1px solid rgba(100,220,120,.3); font-size:0.78rem; padding:0.2rem 0.7rem; border-radius:20px; }
+    .github-token-none { background:rgba(255,107,107,.10); color:#ff6b6b; border:1px solid rgba(255,107,107,.3); font-size:0.78rem; padding:0.2rem 0.7rem; border-radius:20px; }
+    .admin-card-collapsible .admin-card-header { cursor:pointer; user-select:none; }
+    .admin-card-collapsible .admin-card-chevron { transition:transform .25s; flex-shrink:0; color:var(--text-muted); }
+    .admin-card-collapsible.collapsed .admin-card-chevron { transform:rotate(-90deg); }
+    .admin-card-body { display:grid; grid-template-rows:1fr; transition:grid-template-rows .3s ease; }
+    .admin-card-collapsible.collapsed .admin-card-body { grid-template-rows:0fr; }
+    .admin-card-body > * { overflow:hidden; }
+
+    /* ── Markdown editor ─────────────────────────────────────── */
+    .md-editor { border:1px solid var(--border); border-radius:var(--radius); transition:border-color .2s, box-shadow .2s; }
+    .md-editor:focus-within { border-color:var(--accent-purple); box-shadow:0 0 0 3px rgba(124,111,255,0.15); }
+    .md-toolbar {
+      position:sticky; top:calc(var(--nav-height) + 4px); z-index:20;
+      display:flex; align-items:center; flex-wrap:wrap; gap:0.35rem;
+      padding:0.45rem 0.55rem;
+      background:var(--bg-secondary);
+      border-bottom:1px solid var(--border);
+      border-radius:var(--radius) var(--radius) 0 0;
+    }
+    .md-toolbar.stuck { box-shadow:0 6px 18px rgba(0,0,0,.35); border-radius:0 0 var(--radius) var(--radius); }
+    .md-group { display:flex; gap:0.15rem; }
+    .md-sep { width:1px; height:22px; background:var(--border); margin:0 0.2rem; }
+    .md-btn {
+      display:inline-flex; align-items:center; justify-content:center;
+      min-width:34px; height:32px; padding:0 0.5rem;
+      border:1px solid transparent; border-radius:8px; background:transparent;
+      color:var(--text-secondary); cursor:pointer; font-size:0.9rem; font-family:var(--font-body);
+      transition:background .15s, color .15s, border-color .15s;
+    }
+    .md-btn-text { font-size:0.8rem; font-weight:600; }
+    .md-btn:hover { background:rgba(124,111,255,.12); color:var(--text-primary); }
+    .md-btn:focus-visible { outline:none; border-color:var(--accent-purple); }
+    .md-btn.active { background:rgba(124,111,255,.2); color:var(--accent-purple); border-color:rgba(124,111,255,.4); }
+    .md-toolbar-hint { margin-left:auto; font-size:0.72rem; color:var(--text-muted); white-space:nowrap; padding-right:0.25rem; }
+    .md-textarea.admin-textarea {
+      border:none; border-radius:0 0 var(--radius) var(--radius); box-shadow:none !important;
+      resize:none; overflow:hidden; min-height:320px; display:block;
+    }
+    .md-tabs { display:flex; gap:0.15rem; background:rgba(124,111,255,.08); border-radius:9px; padding:2px; }
+    .md-tab {
+      height:28px; padding:0 0.7rem; border:none; border-radius:7px; background:transparent;
+      color:var(--text-secondary); font-size:0.78rem; font-weight:600; cursor:pointer; font-family:var(--font-body);
+      transition:background .15s, color .15s;
+    }
+    .md-tab:hover { color:var(--text-primary); }
+    .md-tab.active { background:var(--accent-purple); color:#fff; }
+    .md-format { display:flex; align-items:center; flex-wrap:wrap; gap:0.35rem; }
+    .md-editor.previewing .md-format { display:none; }
+    .md-editor.previewing .md-textarea { display:none; }
+    .md-preview { display:none; padding:1.25rem 1.5rem 2rem; min-height:320px; font-size:1rem; line-height:1.85; color:var(--text-secondary); }
+    .md-editor.previewing .md-preview { display:block; }
+    .md-preview-title { font-family:var(--font-heading); font-size:1.8rem; font-weight:700; color:var(--text-primary); margin-bottom:1rem; line-height:1.3; }
+    .md-preview-empty { color:var(--text-muted); font-style:italic; }
+
+    /* Estado de publicación */
+    .admin-badge-published   { background:rgba(100,220,120,.12); color:#64dc78; border:1px solid rgba(100,220,120,.3); }
+    .admin-badge-unpublished { background:rgba(255,200,100,.12); color:#ffc864; border:1px solid rgba(255,200,100,.35); }
+    .admin-badge-modified    { background:rgba(0,229,255,.10);   color:var(--accent-cyan); border:1px solid rgba(0,229,255,.3); }
+    .publish-summary { font-size:0.82rem; border-radius:10px; padding:0.6rem 0.9rem; margin-bottom:1rem; display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; }
+    .publish-summary.pending { background:rgba(255,200,100,.08); border:1px solid rgba(255,200,100,.3); color:#ffc864; }
+    .publish-summary.clean   { background:rgba(100,220,120,.07); border:1px solid rgba(100,220,120,.25); color:#64dc78; }
+    .publish-summary .btn { font-size:0.75rem; padding:0.3rem 0.8rem; margin-left:auto; }
+      background:rgba(255,107,107,.08); border:1px solid rgba(255,107,107,.3); color:#ff8f8f; }
+    [data-theme="light"] .admin-badge-published, [data-theme="light"] .publish-summary.clean { color:#1f8f3a; }
+    [data-theme="light"] .admin-badge-unpublished, [data-theme="light"] .publish-summary.pending { color:#a86a00; }
+    [data-theme="light"] .admin-badge-modified { color:#0090a8; }
+    [data-theme="light"] .md-toolbar.stuck { box-shadow:0 6px 18px rgba(20,20,60,.12); }
+    /* Que el cursor no quede tapado por la barra fija al navegar con el teclado */
+    html { scroll-padding-top:calc(var(--nav-height) + 64px); scroll-padding-bottom:24px; }
+    @media (max-width:640px) {
+      .md-toolbar-hint { display:none; }
+      .md-btn { min-width:30px; padding:0 0.35rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav" id="nav" role="navigation" aria-label="Menú principal">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo" aria-label="Inicio">RG</a>
+      <ul class="nav-links" role="list">
+        <li><a href="index.html"         class="nav-link">Inicio</a></li>
+        <li><a href="index.html#recommendations" class="nav-link">Recomendaciones</a></li>
+        <li><a href="index.html#skills"  class="nav-link">Skills</a></li>
+        <li><a href="projects.html"      class="nav-link">Proyectos</a></li>
+        <li><a href="certificados.html"  class="nav-link">Certificados</a></li>
+        <li><a href="index.html#cv"      class="nav-link">Currículum</a></li>
+        <li><a href="index.html#contact" class="nav-link nav-cta">Contacto</a></li>
+        <li><a href="blog.html"          class="nav-link active">Blog</a></li>
+      </ul>
+      <div class="nav-controls">
+        <div class="lang-switcher" role="group" aria-label="Idioma">
+          <button class="lang-btn" data-lang="es" aria-pressed="true"  title="Español">ES</button>
+          <button class="lang-btn" data-lang="en" aria-pressed="false" title="English">EN</button>
+          <button class="lang-btn" data-lang="fr" aria-pressed="false" title="Français">FR</button>
+        </div>
+        <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema">
+          <span class="theme-icon-sun">☀️</span>
+          <span class="theme-icon-moon">🌙</span>
+        </button>
+      </div>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Abrir menú" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile drawer -->
+  <nav class="nav-mobile" id="nav-mobile" aria-label="Menú móvil">
+    <a href="index.html"         class="nav-link">Inicio</a>
+    <a href="index.html#recommendations" class="nav-link">Recomendaciones</a>
+    <a href="index.html#skills"  class="nav-link">Skills</a>
+    <a href="projects.html"      class="nav-link">Proyectos</a>
+    <a href="certificados.html"  class="nav-link">Certificados</a>
+    <a href="index.html#cv"      class="nav-link">Currículum</a>
+    <a href="index.html#contact" class="nav-link">Contacto</a>
+    <a href="blog.html"          class="nav-link">Blog</a>
+  </nav>
+
+  <main class="admin-page">
+
+    <!-- LOCK SCREEN -->
+    <div id="admin-lock" style="min-height:100vh; display:flex; align-items:center; justify-content:center; padding:2rem;">
+      <div class="blog-lock-card reveal" style="max-width:440px; width:100%;">
+        <div class="blog-lock-icon">🛠️</div>
+        <span class="section-label" style="display:block; margin-bottom:0.5rem;">Admin</span>
+        <h1 class="blog-lock-title">Panel de Blog</h1>
+        <p class="blog-lock-desc">Introduce la contraseña de administrador para acceder al panel.</p>
+        <form id="admin-lock-form" class="blog-lock-form" autocomplete="off">
+          <div class="blog-password-wrap">
+            <input type="password" id="admin-password" class="blog-password-input"
+              placeholder="Contraseña…" aria-label="Contraseña" autocomplete="new-password" />
+            <button type="button" class="blog-eye-btn" id="admin-eye-btn" aria-label="Mostrar contraseña">
+              <svg id="eye-open"   width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg id="eye-closed" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
+          <p class="blog-error" id="admin-error" aria-live="polite"></p>
+          <button type="submit" id="admin-submit" class="btn btn-primary blog-submit">
+            <span>Acceder</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ADMIN CONTENT -->
+    <div id="admin-content" style="display:none;">
+
+      <!-- Hero -->
+      <div class="admin-hero">
+        <span class="section-label">Admin</span>
+        <h1 class="page-hero-title" style="margin-bottom:0.5rem;">
+          Panel de <span class="gradient-text">Blog</span>
+        </h1>
+        <p class="page-hero-subtitle">Crea, gestiona y exporta posts cifrados.</p>
+        <div style="display:flex; gap:0.75rem; justify-content:center; margin-top:1.5rem; flex-wrap:wrap;">
+          <a href="blog.html" class="btn btn-outline" style="font-size:0.85rem;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+            Volver al blog
+          </a>
+          <button id="admin-logout" class="btn btn-outline" style="font-size:0.85rem;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+            Cerrar sesión
+          </button>
+        </div>
+      </div>
+
+      <div class="admin-section">
+
+        <!-- ALERT -->
+        <div id="admin-alert" style="display:none;"></div>
+
+        <!-- ══════════════════════════════════════
+             NUEVO / EDITAR POST
+        ════════════════════════════════════════ -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h2 class="admin-card-title">✍️ <span id="form-card-title">Nuevo post</span></h2>
+            <button id="btn-toggle-form" class="btn btn-primary" style="font-size:0.82rem; padding:0.5rem 1.2rem;">
+              + Crear post
+            </button>
+          </div>
+
+          <div class="admin-form-wrap" id="new-post-form-wrap">
+            <form class="admin-form" id="new-post-form" autocomplete="off">
+
+              <div class="admin-row">
+                <div class="admin-field">
+                  <label class="admin-label" for="f-emoji">Emoji</label>
+                  <input type="text" id="f-emoji" class="admin-input" placeholder="📝" maxlength="4" />
+                </div>
+                <div class="admin-field">
+                  <label class="admin-label" for="f-date">Fecha</label>
+                  <input type="date" id="f-date" class="admin-input" />
+                </div>
+              </div>
+
+              <div class="admin-field">
+                <label class="admin-label" for="f-title">Título</label>
+                <input type="text" id="f-title" class="admin-input" placeholder="Título del post…" required />
+              </div>
+
+              <div class="admin-field">
+                <label class="admin-label">Etiquetas <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted)">(Enter o coma para añadir)</span></label>
+                <div class="admin-tag-box" id="tag-box" onclick="document.getElementById('tag-input').focus()">
+                  <input type="text" id="tag-input" class="admin-tag-input" placeholder="Añadir etiqueta…" autocomplete="off" />
+                </div>
+              </div>
+
+              <div class="admin-field">
+                <label class="admin-label" for="f-body">Contenido <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted)">(Markdown)</span></label>
+                <div class="md-editor">
+                  <div class="md-toolbar" id="md-toolbar" role="toolbar" aria-label="Formato del contenido">
+                    <div class="md-tabs" role="tablist">
+                      <button type="button" class="md-tab active" data-tab="write"   role="tab" aria-selected="true">✏️ Escribir</button>
+                      <button type="button" class="md-tab"        data-tab="preview" role="tab" aria-selected="false" title="Vista previa (Ctrl+Alt+P)">👁 Vista previa</button>
+                    </div>
+                    <div class="md-format" id="md-format">
+                    <span class="md-sep" aria-hidden="true"></span>
+                    <div class="md-group">
+                      <button type="button" class="md-btn md-btn-text" data-md="h2" title="Título (Ctrl+Alt+2)">Título</button>
+                      <button type="button" class="md-btn md-btn-text" data-md="h3" title="Subtítulo (Ctrl+Alt+3)">Subtítulo</button>
+                      <button type="button" class="md-btn md-btn-text" data-md="p"  title="Texto normal (Ctrl+Alt+0)">Normal</button>
+                    </div>
+                    <span class="md-sep" aria-hidden="true"></span>
+                    <div class="md-group">
+                      <button type="button" class="md-btn" data-md="bold"   title="Negrita (Ctrl+B)"><b>B</b></button>
+                      <button type="button" class="md-btn" data-md="italic" title="Cursiva (Ctrl+I)"><i style="font-family:Georgia,serif;">I</i></button>
+                      <button type="button" class="md-btn" data-md="code"   title="Código en línea (Ctrl+E)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+                      </button>
+                      <button type="button" class="md-btn" data-md="codeblock" title="Bloque de código (Ctrl+Shift+E)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M10 10l-2 2 2 2M14 10l2 2-2 2"/></svg>
+                      </button>
+                      <button type="button" class="md-btn" data-md="link" title="Enlace (Ctrl+K)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.07 0l3-3a5 5 0 00-7.07-7.07l-1.5 1.5"/><path d="M14 11a5 5 0 00-7.07 0l-3 3a5 5 0 007.07 7.07l1.5-1.5"/></svg>
+                      </button>
+                    </div>
+                    <span class="md-sep" aria-hidden="true"></span>
+                    <div class="md-group">
+                      <button type="button" class="md-btn" data-md="list" title="Lista con viñetas (Ctrl+Shift+8)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4" cy="6" r="1" fill="currentColor"/><circle cx="4" cy="12" r="1" fill="currentColor"/><circle cx="4" cy="18" r="1" fill="currentColor"/></svg>
+                      </button>
+                      <button type="button" class="md-btn" data-md="hr" title="Línea separadora">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12h18"/><path d="M8 6h8M8 18h8" opacity=".4"/></svg>
+                      </button>
+                    </div>
+                    </div><!-- /md-format -->
+                    <span class="md-toolbar-hint" id="md-hint"></span>
+                  </div>
+                  <textarea id="f-body" class="admin-textarea md-textarea" placeholder="Empieza a escribir…&#10;&#10;Usa la barra de arriba para añadir títulos, negritas, código o enlaces." required></textarea>
+                  <div class="md-preview blog-md" id="md-preview" aria-live="polite"></div>
+                </div>
+              </div>
+
+              <!-- IMÁGENES -->
+              <div class="admin-field">
+                <label class="admin-label">Imágenes <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted)">(URL o subir archivo)</span></label>
+                <div class="admin-image-list" id="image-list"></div>
+                <div style="display:flex; gap:0.6rem; margin-top:0.5rem; flex-wrap:wrap;">
+                  <button type="button" id="btn-add-url" class="btn btn-outline" style="font-size:0.8rem; padding:0.45rem 1rem;">+ Añadir URL</button>
+                  <label class="btn btn-outline" style="font-size:0.8rem; padding:0.45rem 1rem; cursor:pointer; margin:0;">
+                    📁 Subir imagen
+                    <input type="file" id="file-upload" accept="image/*" style="display:none;" multiple />
+                  </label>
+                </div>
+                <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.4rem;">
+                  Las imágenes subidas se codifican en Base64 (no se guardan en el servidor).
+                </p>
+              </div>
+
+              <!-- TIPO -->
+              <div class="admin-field">
+                <label class="admin-label">Tipo</label>
+                <div class="visibility-toggle">
+                  <button type="button" id="vis-public"  class="vis-btn active-public active" data-vis="public">🌐 Público</button>
+                  <button type="button" id="vis-private" class="vis-btn" data-vis="private">🔐 Privado</button>
+                </div>
+                <p style="font-size:0.78rem; color:var(--text-muted); margin-top:0.4rem;" id="vis-desc">
+                  Los posts públicos son visibles para todos sin contraseña.
+                </p>
+              </div>
+
+              <!-- CONTRASEÑA DEL POST -->
+              <div class="admin-field post-pw-field" id="post-pw-field">
+                <label class="admin-label" for="f-post-password">
+                  Contraseña del post
+                  <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted)">(mínimo 6 caracteres)</span>
+                </label>
+                <div class="blog-password-wrap" style="margin-top:0.4rem;">
+                  <input type="password" id="f-post-password" class="admin-input blog-password-input"
+                    placeholder="Contraseña exclusiva de este post…" autocomplete="new-password" minlength="6" />
+                  <button type="button" class="blog-eye-btn" id="post-pw-eye" aria-label="Mostrar contraseña">
+                    <svg id="ppw-eye-open"   width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <svg id="ppw-eye-closed" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- VISIBILIDAD EN LISTADO -->
+              <div class="admin-field">
+                <label class="admin-label">Visibilidad en listado</label>
+                <div class="visibility-toggle">
+                  <button type="button" id="vis-mode-visible"   class="vis-btn active-public active">👁 Visible</button>
+                  <button type="button" id="vis-mode-protected" class="vis-btn">🌫 Protegido</button>
+                  <button type="button" id="vis-mode-hidden"    class="vis-btn">🚫 Solo link</button>
+                </div>
+                <p style="font-size:0.78rem; color:var(--text-muted); margin-top:0.4rem;" id="listed-desc">
+                  El post aparecerá en el listado del blog normalmente.
+                </p>
+              </div>
+
+              <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-top:0.5rem;">
+                <button type="submit" id="btn-save-post" class="btn btn-primary">
+                  🔐 Cifrar y guardar
+                </button>
+                <button type="button" id="btn-cancel-form" class="btn btn-outline">Cancelar</button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════
+             LISTA DE POSTS
+        ════════════════════════════════════════ -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h2 class="admin-card-title">📋 Posts publicados</h2>
+            <span id="posts-count" style="font-size:0.82rem; color:var(--text-muted);"></span>
+          </div>
+          <div id="publish-summary" class="publish-summary" style="display:none;"></div>
+          <div class="admin-post-list" id="admin-post-list">
+            <!-- JS render -->
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════
+             EXPORTAR
+        ════════════════════════════════════════ -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h2 class="admin-card-title">📤 Exportar a data.json</h2>
+            <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+              <button id="btn-export" class="btn btn-outline" style="font-size:0.82rem; padding:0.5rem 1.1rem;">
+                Generar snippet
+              </button>
+              <button id="btn-publish" class="btn btn-primary" style="font-size:0.82rem; padding:0.5rem 1.1rem;">
+                🚀 Publicar en GitHub
+              </button>
+            </div>
+          </div>
+          <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:1rem; line-height:1.7;">
+            Genera el JSON listo para reemplazar
+            <code style="background:rgba(124,111,255,0.12);color:var(--accent-cyan);padding:0.1em 0.4em;border-radius:4px;font-size:0.85em;">js/data.json</code>,
+            o publícalo directamente en GitHub con un commit automático.
+          </p>
+          <textarea id="export-area" class="admin-export-area" readonly placeholder="Pulsa «Generar snippet» para ver el código…" style="display:none;"></textarea>
+          <button id="btn-copy-export" class="btn btn-outline" style="margin-top:0.75rem; font-size:0.82rem; padding:0.5rem 1.1rem; display:none;">
+            📋 Copiar al portapapeles
+          </button>
+        </div>
+
+        <!-- ══════════════════════════════════════
+             CONFIGURACIÓN GITHUB
+        ════════════════════════════════════════ -->
+        <div class="admin-card admin-card-collapsible" id="github-config-card">
+          <div class="admin-card-header">
+            <h2 class="admin-card-title">⚙️ Configuración GitHub</h2>
+            <div style="display:flex;align-items:center;gap:0.75rem;">
+              <span id="github-token-status-badge"></span>
+              <svg class="admin-card-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+          </div>
+          <div class="admin-card-body"><div>
+          <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:1rem; line-height:1.7; margin-top:0.25rem;">
+            Token con permiso <code style="background:rgba(124,111,255,0.12);color:var(--accent-cyan);padding:0.1em 0.4em;border-radius:4px;font-size:0.85em;">contents:write</code>
+            sobre <code style="background:rgba(124,111,255,0.12);color:var(--accent-cyan);padding:0.1em 0.4em;border-radius:4px;font-size:0.85em;">rgbarco99/rgbarco99.github.io</code>.
+            Se guarda <strong>cifrado con tu contraseña de admin</strong> en
+            <code style="background:rgba(124,111,255,0.12);color:var(--accent-cyan);padding:0.1em 0.4em;border-radius:4px;font-size:0.85em;">js/admin-config.json</code>
+            y lo comparten todos los paneles y dispositivos.
+          </p>
+          <form id="github-token-form" autocomplete="off">
+            <div class="admin-field">
+              <label class="admin-label" for="f-github-token">Sustituir token</label>
+              <div class="blog-password-wrap" style="margin-top:0.4rem;">
+                <input type="password" id="f-github-token" class="admin-input blog-password-input"
+                  placeholder="github_pat_…" autocomplete="off" />
+                <button type="button" class="blog-eye-btn" id="github-token-eye" aria-label="Mostrar token">
+                  <svg id="gt-eye-open"   width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg id="gt-eye-closed" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </button>
+              </div>
+            </div>
+            <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-top:0.5rem;">
+              <button type="submit" id="btn-save-token" class="btn btn-primary" style="font-size:0.85rem;">
+                🔄 Verificar y guardar token
+              </button>
+            </div>
+            <p style="font-size:0.78rem; color:var(--text-muted); margin-top:0.5rem; line-height:1.6;">
+              Se comprueba con GitHub que el token puede escribir en el repo y se publica cifrado.
+              Úsalo cuando el token caduque o lo revoques.
+            </p>
+          </form>
+          </div></div>
+        </div>
+
+        <!-- ══════════════════════════════════════
+             CAMBIAR CONTRASEÑA DE ADMIN
+        ════════════════════════════════════════ -->
+        <div class="admin-card admin-card-collapsible collapsed" id="change-pw-card">
+          <div class="admin-card-header">
+            <h2 class="admin-card-title">🔑 Cambiar contraseña de admin</h2>
+            <svg class="admin-card-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="admin-card-body"><div>
+          <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:1rem; line-height:1.7; margin-top:0.25rem;">
+            Re-cifra el token de GitHub y la clave de los posts privados con la nueva contraseña y publica
+            <code style="font-size:0.85em;">js/admin-config.json</code>. Se aplica a <strong>todos los paneles y dispositivos</strong>
+            (tras ~1 minuto de despliegue). Después se cerrará la sesión.
+          </p>
+          <form id="change-pw-form" autocomplete="off">
+            <div class="admin-field">
+              <label class="admin-label" for="f-old-pw">Contraseña actual</label>
+              <div class="blog-password-wrap" style="margin-top:0.4rem;">
+                <input type="password" id="f-old-pw" class="admin-input blog-password-input"
+                  placeholder="Contraseña actual…" autocomplete="current-password" required />
+                <button type="button" class="blog-eye-btn" data-eye-input="f-old-pw" aria-label="Mostrar contraseña">
+                  <svg class="eye-open-svg"   width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg class="eye-closed-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="admin-field">
+              <label class="admin-label" for="f-new-pw">Nueva contraseña <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted)">(mínimo 12 caracteres)</span></label>
+              <div class="blog-password-wrap" style="margin-top:0.4rem;">
+                <input type="password" id="f-new-pw" class="admin-input blog-password-input"
+                  placeholder="Nueva contraseña…" autocomplete="new-password" minlength="12" required />
+                <button type="button" class="blog-eye-btn" data-eye-input="f-new-pw" aria-label="Mostrar contraseña">
+                  <svg class="eye-open-svg"   width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg class="eye-closed-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="admin-field">
+              <label class="admin-label" for="f-confirm-pw">Confirmar nueva contraseña</label>
+              <div class="blog-password-wrap" style="margin-top:0.4rem;">
+                <input type="password" id="f-confirm-pw" class="admin-input blog-password-input"
+                  placeholder="Repite la nueva contraseña…" autocomplete="new-password" required />
+                <button type="button" class="blog-eye-btn" data-eye-input="f-confirm-pw" aria-label="Mostrar contraseña">
+                  <svg class="eye-open-svg"   width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg class="eye-closed-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </button>
+              </div>
+            </div>
+            <p id="change-pw-error" style="font-size:0.83rem; color:#ff6b6b; min-height:1.2em; margin-top:0.25rem;"></p>
+            <button type="submit" id="btn-change-pw" class="btn btn-primary" style="font-size:0.85rem; margin-top:0.25rem;">
+              🔑 Cambiar contraseña y cerrar sesión
+            </button>
+          </form>
+          </div></div>
+        </div>
+
+      </div><!-- /admin-section -->
+    </div><!-- /admin-content -->
+
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="footer-inner">
+      <div class="footer-bottom" style="border-top:none; padding-top:0;">
+        <p>© 2025 Rubén García. Todos los derechos reservados.</p>
+        <p class="footer-bottom-right">Hecho con mucho café <span class="footer-heart">♥</span></p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/i18n.js?v=4bb4308"></script>
+  <script src="js/blog-crypto.js?v=4bb4308"></script>
+  <script src="js/admin-auth.js?v=4bb4308"></script>
+  <script src="js/markdown.js?v=4bb4308"></script>
+  <script>
+  /* ════════════════════════════════════════════════════════════════════
+     blog-admin.html — Panel de administración
+  ════════════════════════════════════════════════════════════════════ */
+
+  const ADMIN_AUTH    = '_admin_auth';
+  const ADMIN_PW      = '_admin_pw';
+  const LOCAL_KEY     = '_blog_local_posts';
+  const DELETED_KEY   = '_blog_deleted_posts';
+
+  const GITHUB_OWNER        = 'rgbarco99';
+  const GITHUB_REPO         = 'rgbarco99.github.io';
+  const GITHUB_BRANCH       = 'main';
+  const GITHUB_DATA_FILE    = 'js/data.json';
+  const GITHUB_VERSION_FILE = 'js/data-version.json';
+
+  /* ── Theme ───────────────────────────────────────────────────────── */
+  const savedTheme = localStorage.getItem('portfolio-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  document.getElementById('theme-toggle')?.addEventListener('click', () => {
+    const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('portfolio-theme', next);
+  });
+
+  /* ── Nav ─────────────────────────────────────────────────────────── */
+  const navEl = document.querySelector('.nav');
+  window.addEventListener('scroll', () => navEl.classList.toggle('scrolled', window.scrollY > 20), { passive: true });
+  const hamburger = document.getElementById('nav-hamburger');
+  const mobileMenu = document.getElementById('nav-mobile');
+  if (hamburger && mobileMenu) hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('active'); mobileMenu.classList.toggle('open');
+  });
+
+  /* ── Scroll reveal ───────────────────────────────────────────────── */
+  const revealObs = new IntersectionObserver(entries =>
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+    { threshold: 0.1 }
+  );
+  document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+  /* ── Eye toggle (lock screen) ────────────────────────────────────── */
+  const eyeBtn    = document.getElementById('admin-eye-btn');
+  const pwInput   = document.getElementById('admin-password');
+  const eyeOpen   = document.getElementById('eye-open');
+  const eyeClosed = document.getElementById('eye-closed');
+  if (eyeBtn) eyeBtn.addEventListener('click', () => {
+    const t = pwInput.type === 'text';
+    pwInput.type = t ? 'password' : 'text';
+    eyeOpen.style.display   = t ? 'block' : 'none';
+    eyeClosed.style.display = t ? 'none'  : 'block';
+  });
+
+  /* Eye toggle (post password) */
+  document.getElementById('post-pw-eye')?.addEventListener('click', () => {
+    const inp = document.getElementById('f-post-password');
+    const t = inp.type === 'text';
+    inp.type = t ? 'password' : 'text';
+    document.getElementById('ppw-eye-open').style.display   = t ? 'block' : 'none';
+    document.getElementById('ppw-eye-closed').style.display = t ? 'none'  : 'block';
+  });
+
+  /* ── Static posts (loaded via fetch) ────────────────────────────── */
+  let _staticPosts = [];
+  let _baseVersion = 0;   // versión de data.json sobre la que se está trabajando
+
+  async function loadStaticPosts() {
+    const pub = await adminAuth.loadPublished(GITHUB_VERSION_FILE, GITHUB_DATA_FILE);
+    _staticPosts = pub.data;
+    _baseVersion = pub.t;
+    /* Copias locales idénticas a lo publicado (p. ej. de la versión anterior del panel) sobran */
+    adminAuth.pruneLocalCopies(LOCAL_KEY, _staticPosts, stripPost);
+    dropOutdatedPrivateCopies();
+  }
+
+  /** Copias locales de posts privados en formato antiguo (con postPasswordHash)
+   *  cuando ya existe la versión publicada: están obsoletas y no se pueden descifrar. */
+  function dropOutdatedPrivateCopies() {
+    const published = new Set(_staticPosts.map(p => String(p.id)));
+    const local = getLocalPosts();
+    const kept  = local.filter(p => !(p.postPasswordHash && published.has(String(p.id))));
+    if (kept.length !== local.length) saveLocalPosts(kept);
+  }
+
+  /* ── localStorage helpers ────────────────────────────────────────── */
+  function getLocalPosts() {
+    try { return JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]'); } catch { return []; }
+  }
+  function saveLocalPosts(posts) { localStorage.setItem(LOCAL_KEY, JSON.stringify(posts)); }
+
+  function getDeletedIds() {
+    try { return JSON.parse(localStorage.getItem(DELETED_KEY) || '[]'); } catch { return []; }
+  }
+  function addDeletedId(id) {
+    const ids = getDeletedIds();
+    if (!ids.includes(String(id))) { ids.push(String(id)); localStorage.setItem(DELETED_KEY, JSON.stringify(ids)); }
+  }
+
+  function getAllPosts() {
+    const deletedIds  = new Set(getDeletedIds());
+    const staticPosts = _staticPosts
+      .filter(p => !deletedIds.has(String(p.id)))
+      .map(p => ({ ...p, _source: 'static' }));
+    const localPosts  = getLocalPosts().map(p => ({ ...p, _source: 'local' }));
+    const ids = new Set();
+    const merged = [];
+    for (const p of [...localPosts, ...staticPosts]) {
+      const key = String(p.id);
+      if (!ids.has(key)) { ids.add(key); merged.push(p); }
+    }
+    return merged.sort((a, b) => new Date(b.date) - new Date(a.date));
+  }
+
+  function isPublicPost(p)  { return p.public === true; }
+  function isNewPrivate(p)  { return p.public === false && !!p.encryptedTitle; }
+  function isLegacyPost(p)  { return p.public === undefined && p.encryptedBody; }
+  function getVisibility(p) {
+    if (p.visibility) return p.visibility;
+    if (p.visible === false) return 'hidden';
+    if (p.protected === true) return 'protected';
+    return 'visible';
+  }
+
+  /* ── Estado de publicación (local vs. data.json) ─────────────────── */
+  function stripPost({ _source, _plainTitle, ...rest }) { return rest; }
+  const canon = adminAuth.canon;
+
+  /** 'published' | 'new' | 'modified' */
+  function publishStatus(p) {
+    if (p._source !== 'local') return 'published';
+    const st = _staticPosts.find(s => String(s.id) === String(p.id));
+    if (!st) return 'new';
+    return canon(stripPost(p)) === canon(stripPost(st)) ? 'published' : 'modified';
+  }
+
+  function pendingDeletions() {
+    const staticIds = new Set(_staticPosts.map(p => String(p.id)));
+    return getDeletedIds().filter(id => staticIds.has(String(id)));
+  }
+
+  function renderPublishSummary(posts) {
+    const el  = document.getElementById('publish-summary');
+    const nNew = posts.filter(p => publishStatus(p) === 'new').length;
+    const nMod = posts.filter(p => publishStatus(p) === 'modified').length;
+    const nDel = pendingDeletions().length;
+    const total = nNew + nMod + nDel;
+    el.style.display = 'flex';
+    if (!total) {
+      el.className = 'publish-summary clean';
+      el.innerHTML = '✅ Todo está publicado. No hay cambios pendientes.';
+      return;
+    }
+    const parts = [];
+    if (nNew) parts.push(`${nNew} nuevo${nNew > 1 ? 's' : ''}`);
+    if (nMod) parts.push(`${nMod} modificado${nMod > 1 ? 's' : ''}`);
+    if (nDel) parts.push(`${nDel} borrado${nDel > 1 ? 's' : ''}`);
+    el.className = 'publish-summary pending';
+    el.innerHTML = `<span>⏳ <strong>${total} cambio${total > 1 ? 's' : ''} sin publicar</strong> (${parts.join(', ')}). Solo existen en este navegador.</span>
+      <button type="button" class="btn btn-primary" onclick="document.getElementById('btn-publish').click()">🚀 Publicar ahora</button>`;
+  }
+
+  /* ── Alert ───────────────────────────────────────────────────────── */
+  function showAlert(msg, type = 'success', opts = {}) {
+    const el = document.getElementById('admin-alert');
+    const closeBtn = opts.persistent
+      ? `<button onclick="document.getElementById('admin-alert').style.display='none'"
+           style="margin-left:auto;background:none;border:none;cursor:pointer;font-size:1.3rem;color:inherit;line-height:1;padding:0 0.2rem;flex-shrink:0;" aria-label="Cerrar">×</button>`
+      : '';
+    el.innerHTML = `<div class="admin-alert admin-alert-${type}" style="display:flex;align-items:center;gap:0.5rem;">
+      ${type === 'success' ? '✅' : '❌'} <span style="flex:1">${msg}</span>${closeBtn}</div>`;
+    el.style.display = 'block';
+    if (opts.persistent) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else {
+      setTimeout(() => { el.style.display = 'none'; }, 4000);
+    }
+  }
+
+  /* ── Format date ─────────────────────────────────────────────────── */
+  function fmtDate(d) {
+    return new Date(d + 'T12:00:00').toLocaleDateString('es', { year: 'numeric', month: 'short', day: 'numeric' });
+  }
+
+  /* ── Type toggle (public / private) ─────────────────────────────── */
+  let currentVisibility = 'public';
+
+  function setVisibility(vis) {
+    currentVisibility = vis;
+    const pubBtn  = document.getElementById('vis-public');
+    const privBtn = document.getElementById('vis-private');
+    const pwField = document.getElementById('post-pw-field');
+    const desc    = document.getElementById('vis-desc');
+
+    [pubBtn, privBtn].forEach(b => b.classList.remove('active', 'active-public'));
+
+    if (vis === 'public') {
+      pubBtn.classList.add('active', 'active-public');
+      pwField.classList.remove('visible');
+      document.getElementById('f-post-password').required = false;
+      desc.textContent = 'Los posts públicos son visibles para todos sin contraseña.';
+      document.getElementById('btn-save-post').innerHTML = '💾 Guardar post';
+    } else {
+      privBtn.classList.add('active');
+      pwField.classList.add('visible');
+      document.getElementById('f-post-password').required = true;
+      desc.textContent = 'El título y el contenido se cifrarán con la contraseña del post.';
+      document.getElementById('btn-save-post').innerHTML = '🔐 Cifrar y guardar';
+    }
+  }
+
+  document.getElementById('vis-public').addEventListener('click',  () => setVisibility('public'));
+  document.getElementById('vis-private').addEventListener('click', () => setVisibility('private'));
+
+  /* ── Visibility mode (visible / protected / hidden) ─────────────── */
+  let currentVisMode = 'visible';
+
+  function setVisMode(val) {
+    currentVisMode = val;
+    const visBtn  = document.getElementById('vis-mode-visible');
+    const protBtn = document.getElementById('vis-mode-protected');
+    const hideBtn = document.getElementById('vis-mode-hidden');
+    [visBtn, protBtn, hideBtn].forEach(b => b.classList.remove('active', 'active-public', 'active-protected', 'active-hidden'));
+    const desc = document.getElementById('listed-desc');
+    if (val === 'visible') {
+      visBtn.classList.add('active', 'active-public');
+      desc.textContent = 'El post aparecerá en el listado del blog normalmente.';
+    } else if (val === 'protected') {
+      protBtn.classList.add('active', 'active-protected');
+      desc.textContent = 'El post aparece en el listado pero con el contenido difuminado para los visitantes.';
+    } else {
+      hideBtn.classList.add('active', 'active-hidden');
+      desc.textContent = 'El post no aparece en el listado. Solo accesible con link directo o como administrador.';
+    }
+  }
+
+  document.getElementById('vis-mode-visible').addEventListener('click',   () => setVisMode('visible'));
+  document.getElementById('vis-mode-protected').addEventListener('click', () => setVisMode('protected'));
+  document.getElementById('vis-mode-hidden').addEventListener('click',    () => setVisMode('hidden'));
+
+  /* ── Tag input ───────────────────────────────────────────────────── */
+  let tags = [];
+
+  function renderTags() {
+    const box   = document.getElementById('tag-box');
+    const input = document.getElementById('tag-input');
+    box.querySelectorAll('.admin-tag-pill').forEach(el => el.remove());
+    tags.forEach(tag => {
+      const pill = document.createElement('span');
+      pill.className = 'admin-tag-pill';
+      pill.innerHTML = `${tag}<button type="button" onclick="removeTag('${tag}')" aria-label="Eliminar ${tag}">×</button>`;
+      box.insertBefore(pill, input);
+    });
+  }
+
+  function addTag(val) {
+    const t = val.trim().replace(/,+$/, '');
+    if (t && !tags.includes(t)) { tags.push(t); renderTags(); }
+  }
+  function removeTag(t) { tags = tags.filter(x => x !== t); renderTags(); }
+  window.removeTag = removeTag;
+
+  document.getElementById('tag-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addTag(e.target.value); e.target.value = ''; }
+    else if (e.key === 'Backspace' && !e.target.value && tags.length) { tags.pop(); renderTags(); }
+  });
+  document.getElementById('tag-input').addEventListener('blur', e => {
+    if (e.target.value) { addTag(e.target.value); e.target.value = ''; }
+  });
+
+  /* ── Image list ──────────────────────────────────────────────────── */
+  let images = [];
+
+  function renderImageList() {
+    const list = document.getElementById('image-list');
+    list.innerHTML = images.map((src, i) => `
+      <div class="admin-image-row">
+        <input type="text" class="admin-input" value="${src.length > 80 ? src.substring(0, 40) + '…' + src.slice(-20) : src}"
+          readonly title="${src}" style="font-size:0.82rem; color:var(--text-secondary);" />
+        <button type="button" class="admin-image-remove" onclick="removeImage(${i})" title="Eliminar">×</button>
+      </div>`).join('');
+  }
+
+  function removeImage(i) { images.splice(i, 1); renderImageList(); }
+  window.removeImage = removeImage;
+
+  document.getElementById('btn-add-url').addEventListener('click', () => {
+    const url = prompt('Introduce la URL de la imagen:');
+    if (url && url.trim()) { images.push(url.trim()); renderImageList(); }
+  });
+
+  document.getElementById('file-upload').addEventListener('change', e => {
+    Array.from(e.target.files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const img = new Image();
+        img.onload = () => {
+          const MAX_PX = 1280;
+          const scale = Math.min(1, MAX_PX / Math.max(img.width, img.height));
+          const canvas = document.createElement('canvas');
+          canvas.width  = Math.round(img.width  * scale);
+          canvas.height = Math.round(img.height * scale);
+          canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+          const compressed = canvas.toDataURL('image/webp', 0.80);
+          images.push(compressed);
+          renderImageList();
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+    e.target.value = '';
+  });
+
+  /* ── Markdown editor: auto-grow + toolbar ────────────────────────── */
+  const bodyEl    = document.getElementById('f-body');
+  const mdToolbar = document.getElementById('md-toolbar');
+  const EXTRA_LINES = 5;   // espacio libre siempre visible bajo el texto
+
+  function autoGrow() {
+    if (!bodyEl.offsetParent) return;            // formulario oculto
+    const lh = parseFloat(getComputedStyle(bodyEl).lineHeight) || 24;
+    const y  = window.scrollY;
+    bodyEl.style.height = 'auto';
+    bodyEl.style.height = Math.ceil(bodyEl.scrollHeight + lh * EXTRA_LINES) + 'px';
+    if (window.scrollY !== y) window.scrollTo({ top: y, behavior: 'instant' });
+  }
+
+  function updateHint() {
+    const words = (bodyEl.value.match(/[\p{L}\p{N}]+/gu) || []).length;
+    const mins  = Math.max(1, Math.round(words / 200));
+    document.getElementById('md-hint').textContent =
+      words ? `${words.toLocaleString('es')} palabras · ~${mins} min de lectura` : '';
+  }
+
+  function currentLine() {
+    const v = bodyEl.value, s = bodyEl.selectionStart;
+    const ls = v.lastIndexOf('\n', s - 1) + 1;
+    let le = v.indexOf('\n', s); if (le === -1) le = v.length;
+    return v.slice(ls, le);
+  }
+
+  function updateActive() {
+    const line = currentLine();
+    const type = /^### /.test(line) ? 'h3' : /^## /.test(line) ? 'h2' : /^- /.test(line) ? 'list' : 'p';
+    mdToolbar.querySelectorAll('[data-md]').forEach(b => {
+      const k = b.dataset.md;
+      b.classList.toggle('active', k === type && k !== 'p');
+    });
+  }
+
+  function refreshEditor() { autoGrow(); updateHint(); updateActive(); }
+
+  /* Replace a range keeping native undo (Ctrl+Z) when possible */
+  function replaceRange(start, end, text, selStart, selEnd) {
+    bodyEl.focus();
+    bodyEl.setSelectionRange(start, end);
+    let ok = false;
+    try { ok = document.execCommand('insertText', false, text); } catch { ok = false; }
+    if (!ok || bodyEl.value.slice(start, start + text.length) !== text) {
+      bodyEl.setRangeText(text, start, end, 'end');
+    }
+    bodyEl.setSelectionRange(selStart, selEnd ?? selStart);
+    refreshEditor();
+  }
+
+  function selectedLines() {
+    const v = bodyEl.value, s = bodyEl.selectionStart;
+    let e = bodyEl.selectionEnd;
+    if (e > s && v[e - 1] === '\n') e--;          // selección que termina en salto de línea
+    const ls = v.lastIndexOf('\n', s - 1) + 1;
+    let le = v.indexOf('\n', e); if (le === -1) le = v.length;
+    return { v, s, e: bodyEl.selectionEnd, ls, le, lines: v.slice(ls, le).split('\n') };
+  }
+
+  /* Título / Subtítulo / Normal — aplica a la(s) línea(s) actual(es) */
+  function setHeading(level) {
+    const { v, s, e, ls, le, lines } = selectedLines();
+    const prefix = level ? '#'.repeat(level) + ' ' : '';
+    const already = level && lines.every(l => l.startsWith(prefix));
+    const newPrefix = already ? '' : prefix;
+    const oldPrefixLen = (lines[0].match(/^#{1,6}\s+/) || [''])[0].length;
+    let out = lines.map(l => newPrefix + l.replace(/^#{1,6}\s+/, '')).join('\n');
+
+    /* El renderizador necesita líneas en blanco alrededor de los títulos */
+    let before = '', after = '';
+    if (newPrefix && lines.length === 1) {
+      if (ls >= 2 && v[ls - 2] !== '\n') before = '\n';
+      if (le + 1 < v.length && v[le + 1] !== '\n') after = '\n';
+    }
+    out = before + out + after;
+
+    if (lines.length === 1) {
+      const delta = newPrefix.length - oldPrefixLen;
+      const pos   = Math.max(ls + before.length + newPrefix.length, s + before.length + delta);
+      replaceRange(ls, le, out, pos, pos + (e - s));
+    } else {
+      replaceRange(ls, le, out, ls, ls + out.length);
+    }
+  }
+
+  /* Lista con viñetas */
+  function toggleList() {
+    const { s, e, ls, le, lines } = selectedLines();
+    const all = lines.every(l => /^- /.test(l) || !l.trim());
+    const out = lines.map(l => {
+      if (!l.trim() && lines.length > 1) return l;
+      return all ? l.replace(/^- /, '') : '- ' + l.replace(/^#{1,6}\s+/, '');
+    }).join('\n');
+    if (lines.length === 1) {
+      const pos = Math.max(ls + (all ? 0 : 2), s + (out.length - (le - ls)));
+      replaceRange(ls, le, out, pos, pos + (e - s));
+    } else {
+      replaceRange(ls, le, out, ls, ls + out.length);
+    }
+  }
+
+  function runLen(str, ch, fromEnd) {
+    let n = 0;
+    if (fromEnd) { for (let i = str.length - 1; i >= 0 && str[i] === ch; i--) n++; }
+    else         { for (let i = 0; i < str.length && str[i] === ch; i++) n++; }
+    return n;
+  }
+  function hasMark(mark, before, after) {
+    if (mark === '**') return before >= 2 && after >= 2;
+    return before % 2 === 1 && after % 2 === 1;   // '*' (1 o 3) y '`'
+  }
+
+  /* Negrita / cursiva / código en línea (alternan) */
+  function wrapInline(mark, placeholder) {
+    const v = bodyEl.value;
+    let s = bodyEl.selectionStart, e = bodyEl.selectionEnd;
+    const ch = mark[0], m = mark.length;
+
+    /* Sin selección: usar la palabra bajo el cursor */
+    if (s === e) {
+      const isW = c => c && /[\p{L}\p{N}_\-]/u.test(c);
+      let a = s, b = e;
+      while (isW(v[a - 1])) a--;
+      while (isW(v[b])) b++;
+      if (a !== b) { s = a; e = b; }
+    }
+    /* Ignorar espacios en los extremos de la selección */
+    while (s < e && /\s/.test(v[s])) s++;
+    while (e > s && /\s/.test(v[e - 1])) e--;
+
+    const sel = v.slice(s, e);
+
+    /* ¿Las marcas están fuera de la selección? → quitar */
+    const outB = runLen(v.slice(0, s), ch, true), outA = runLen(v.slice(e), ch, false);
+    if (sel && hasMark(mark, outB, outA)) {
+      replaceRange(s - m, e + m, sel, s - m, e - m);
+      return;
+    }
+    /* ¿La selección incluye las marcas? → quitar */
+    const inB = runLen(sel, ch, false), inA = runLen(sel, ch, true);
+    if (sel.length > 2 * m && hasMark(mark, inB, inA)) {
+      const inner = sel.slice(m, sel.length - m);
+      replaceRange(s, e, inner, s, s + inner.length);
+      return;
+    }
+    const text = sel || placeholder;
+    replaceRange(s, e, mark + text + mark, s + m, s + m + text.length);
+  }
+
+  /* Asegura líneas en blanco alrededor de un bloque (código, separador) */
+  function padBlock(v, start, end, text) {
+    const before = v.slice(0, start), after = v.slice(end);
+    let pre = '', post = '';
+    if (before.length) pre = before.endsWith('\n\n') ? '' : before.endsWith('\n') ? '\n' : '\n\n';
+    if (after.length)  post = after.startsWith('\n\n') ? '' : after.startsWith('\n') ? '\n' : '\n\n';
+    else               post = '\n\n';
+    return { text: pre + text + post, pre: pre.length, post: post.length };
+  }
+
+  function insertCodeBlock() {
+    const v = bodyEl.value, s = bodyEl.selectionStart, e = bodyEl.selectionEnd;
+    if (s !== e) {
+      const { ls, le } = selectedLines();
+      const inner = v.slice(ls, le);
+      const blk = padBlock(v, ls, le, '```\n' + inner + '\n```');
+      const st  = ls + blk.pre + 4;
+      replaceRange(ls, le, blk.text, st, st + inner.length);
+    } else {
+      const ph  = 'código';
+      const blk = padBlock(v, s, e, '```\n' + ph + '\n```');
+      const st  = s + blk.pre + 4;
+      replaceRange(s, e, blk.text, st, st + ph.length);
+    }
+  }
+
+  function insertHr() {
+    const v = bodyEl.value, s = bodyEl.selectionStart, e = bodyEl.selectionEnd;
+    const blk = padBlock(v, s, e, '---');
+    const pos = s + blk.text.length;
+    replaceRange(s, e, blk.text, pos);
+  }
+
+  function insertLink() {
+    const v = bodyEl.value, s = bodyEl.selectionStart, e = bodyEl.selectionEnd;
+    const sel   = v.slice(s, e).trim();
+    const isUrl = /^https?:\/\/\S+$/i.test(sel);
+    let url = isUrl ? sel : prompt('URL del enlace:', 'https://');
+    if (!url || !url.trim() || url.trim() === 'https://') { bodyEl.focus(); bodyEl.setSelectionRange(s, e); return; }
+    url = url.trim();
+    if (!/^[a-z]+:\/\//i.test(url) && !url.startsWith('mailto:') && !url.startsWith('#') && !url.startsWith('/')) url = 'https://' + url;
+    const text = (!isUrl && sel) ? sel : 'texto del enlace';
+    replaceRange(s, e, `[${text}](${url})`, s + 1, s + 1 + text.length);
+  }
+
+  const MD_ACTIONS = {
+    h2:        () => setHeading(2),
+    h3:        () => setHeading(3),
+    p:         () => setHeading(0),
+    bold:      () => wrapInline('**', 'negrita'),
+    italic:    () => wrapInline('*', 'cursiva'),
+    code:      () => wrapInline('`', 'código'),
+    codeblock: insertCodeBlock,
+    link:      insertLink,
+    list:      toggleList,
+    hr:        insertHr,
+  };
+
+  mdToolbar.addEventListener('mousedown', e => { if (e.target.closest('.md-btn')) e.preventDefault(); });
+  mdToolbar.addEventListener('click', e => {
+    const btn = e.target.closest('[data-md]');
+    if (!btn) return;
+    if (document.activeElement !== bodyEl) bodyEl.focus();
+    MD_ACTIONS[btn.dataset.md]?.();
+  });
+
+  bodyEl.addEventListener('keydown', e => {
+    const mod = e.ctrlKey || e.metaKey;
+
+    /* Atajos de teclado */
+    if (mod) {
+      let act = null;
+      if (e.altKey && e.code === 'Digit2')      act = 'h2';
+      else if (e.altKey && e.code === 'Digit3') act = 'h3';
+      else if (e.altKey && e.code === 'Digit0') act = 'p';
+      else if (!e.altKey && e.shiftKey && e.code === 'Digit8') act = 'list';
+      else if (!e.altKey && e.shiftKey && e.code === 'KeyE')    act = 'codeblock';
+      else if (!e.altKey && !e.shiftKey) {
+        act = { KeyB: 'bold', KeyI: 'italic', KeyE: 'code', KeyK: 'link' }[e.code] || null;
+      }
+      if (act) { e.preventDefault(); MD_ACTIONS[act](); }
+      return;
+    }
+
+    /* Continuar listas al pulsar Enter (o salir si el elemento está vacío) */
+    if (e.key === 'Enter' && !e.shiftKey && !e.altKey && bodyEl.selectionStart === bodyEl.selectionEnd) {
+      const v = bodyEl.value, s = bodyEl.selectionStart;
+      const ls = v.lastIndexOf('\n', s - 1) + 1;
+      const line = v.slice(ls, s);
+      if (/^- /.test(line)) {
+        e.preventDefault();
+        if (line.trim() === '-') replaceRange(ls, s, '', ls);
+        else replaceRange(s, s, '\n- ', s + 3);
+      }
+    }
+  });
+
+  bodyEl.addEventListener('input', refreshEditor);
+  bodyEl.addEventListener('keyup', updateActive);
+  bodyEl.addEventListener('click', updateActive);
+  bodyEl.addEventListener('focus', updateActive);
+  window.addEventListener('resize', autoGrow, { passive: true });
+
+  /* Sombra en la barra cuando queda fijada arriba */
+  let _stuckRaf = 0;
+  window.addEventListener('scroll', () => {
+    if (_stuckRaf) return;
+    _stuckRaf = requestAnimationFrame(() => {
+      _stuckRaf = 0;
+      if (!mdToolbar.offsetParent) return;
+      const editorTop = mdToolbar.parentElement.getBoundingClientRect().top;
+      const stickTop  = parseFloat(getComputedStyle(mdToolbar).top) || 0;
+      mdToolbar.classList.toggle('stuck', editorTop < stickTop - 1);
+    });
+  }, { passive: true });
+
+  /* ── Vista previa (mismo renderizador que blog-post.html) ────────── */
+  const mdEditor  = bodyEl.closest('.md-editor');
+  const mdPreview = document.getElementById('md-preview');
+
+  function escapeHtml(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function setEditorTab(tab) {
+    const preview    = tab === 'preview';
+    const wasPreview = mdEditor.classList.contains('previewing');
+    if (preview) {
+      const title = document.getElementById('f-title').value.trim();
+      const body  = bodyEl.value.trim();
+      mdPreview.style.minHeight = bodyEl.offsetHeight + 'px';   // evita saltos de altura
+      mdPreview.innerHTML =
+        (title ? `<h1 class="md-preview-title">${escapeHtml(title)}</h1>` : '') +
+        (body  ? renderMarkdown(body) : '<p class="md-preview-empty">Nada que previsualizar todavía.</p>');
+    }
+    mdEditor.classList.toggle('previewing', preview);
+    mdToolbar.querySelectorAll('.md-tab').forEach(t => {
+      const on = t.dataset.tab === tab;
+      t.classList.toggle('active', on);
+      t.setAttribute('aria-selected', on);
+    });
+    if (!preview) { autoGrow(); if (wasPreview) bodyEl.focus({ preventScroll: true }); }
+  }
+
+  mdToolbar.querySelectorAll('.md-tab').forEach(t =>
+    t.addEventListener('click', () => setEditorTab(t.dataset.tab)));
+
+  /* Ctrl+Alt+P alterna la vista previa desde cualquier parte del formulario */
+  document.getElementById('new-post-form').addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.altKey && e.code === 'KeyP') {
+      e.preventDefault();
+      setEditorTab(mdEditor.classList.contains('previewing') ? 'write' : 'preview');
+    }
+  });
+
+  /* Antes de validar el formulario, volver a "Escribir" (un textarea oculto no puede mostrar el aviso de campo obligatorio) */
+  document.getElementById('btn-save-post').addEventListener('click', () => setEditorTab('write'));
+
+  /* ── Form toggle / reset ─────────────────────────────────────────── */
+  const formWrap = document.getElementById('new-post-form-wrap');
+  let editingPostId = null;
+
+  function resetForm() {
+    document.getElementById('new-post-form').reset();
+    tags = []; renderTags();
+    images = []; renderImageList();
+    setVisibility('public');
+    editingPostId = null;
+    document.getElementById('f-date').value  = new Date().toISOString().split('T')[0];
+    document.getElementById('f-emoji').value = '📝';
+    document.getElementById('f-post-password').value = '';
+    document.getElementById('form-card-title').textContent = 'Nuevo post';
+    document.getElementById('btn-toggle-form').textContent = '+ Crear post';
+    document.getElementById('btn-save-post').innerHTML = '💾 Guardar post';
+    document.getElementById('static-edit-note')?.remove();
+    setVisMode('visible');
+    setEditorTab('write');
+    refreshEditor();
+  }
+
+  document.getElementById('btn-toggle-form').addEventListener('click', () => {
+    const isOpen = formWrap.classList.contains('open');
+    if (isOpen) { formWrap.classList.remove('open'); resetForm(); }
+    else { formWrap.classList.add('open'); resetForm(); }
+  });
+
+  document.getElementById('btn-cancel-form').addEventListener('click', () => {
+    formWrap.classList.remove('open');
+    resetForm();
+  });
+
+  /* ── Render post list ────────────────────────────────────────────── */
+  async function renderPostList() {
+    const posts   = getAllPosts();
+    const list    = document.getElementById('admin-post-list');
+    const count   = document.getElementById('posts-count');
+    const adminPw = sessionStorage.getItem(ADMIN_PW);
+    count.textContent = `${posts.length} post${posts.length !== 1 ? 's' : ''}`;
+    renderPublishSummary(posts);
+
+    if (!posts.length) {
+      list.innerHTML = '<p style="color:var(--text-muted);font-size:0.9rem;text-align:center;padding:1.5rem 0;">No hay posts todavía.</p>';
+      return;
+    }
+
+    /* Decrypt titles for new private posts */
+    const decryptedTitles = {};
+    for (const p of posts) {
+      if (!isNewPrivate(p)) continue;
+      const candidates = [() => sessionStorage.getItem('_post_pw_' + p.id)];
+      if (p.adminEncryptedPw) candidates.push(() => decryptAdminEncryptedPw(p));
+      for (const getPw of candidates) {
+        try {
+          const postPw = await getPw();
+          if (!postPw) continue;
+          decryptedTitles[p.id] = await blogCrypto.decrypt(p.encryptedTitle, p.titleIv, p.titleSalt, postPw);
+          break;
+        } catch (err) { console.warn('No se pudo descifrar el título de', p.id, err); }
+      }
+      if (!decryptedTitles[p.id]) decryptedTitles[p.id] = '🔐 (no se pudo descifrar el título)';
+    }
+
+    function getTitle(p) {
+      if (isPublicPost(p))              return p.title;
+      if (p._plainTitle)                return p._plainTitle;
+      if (decryptedTitles[p.id])        return decryptedTitles[p.id];
+      if (isLegacyPost(p) && p.title)  return p.title;
+      return '(sin título)';
+    }
+
+    function getBadge(p) {
+      let badge = '';
+      if      (isPublicPost(p))   badge = `<span class="admin-badge admin-badge-public">🌐 Público</span>`;
+      else if (isNewPrivate(p))   badge = `<span class="admin-badge admin-badge-private">🔐 Privado</span>`;
+      else if (isLegacyPost(p))   badge = `<span class="admin-badge admin-badge-legacy">⚠️ Legado</span>`;
+      const vis = getVisibility(p);
+      if (vis === 'protected') badge += `<span class="admin-badge admin-badge-protected">🌫 Protegido</span>`;
+      if (vis === 'hidden')    badge += `<span class="admin-badge admin-badge-hidden">🚫 Oculto</span>`;
+      return badge;
+    }
+
+    list.innerHTML = posts.map(p => `
+      <div class="admin-post-item">
+        <div class="admin-post-item-info">
+          <span class="admin-post-item-emoji">${p.emoji || '📝'}</span>
+          <div style="min-width:0;">
+            <a class="admin-post-item-title" href="blog-post.html?id=${p.id}" target="_blank" rel="noopener" title="${getTitle(p)}">${getTitle(p)}</a>
+            <div class="admin-post-item-meta">${fmtDate(p.date)} · ${(p.tags || []).join(', ') || '—'}</div>
+          </div>
+        </div>
+        <div class="admin-post-item-actions">
+          ${getBadge(p)}
+          ${{
+            published: '<span class="admin-badge admin-badge-published" title="Igual que lo publicado en GitHub">✅ En línea</span>',
+            new:       '<span class="admin-badge admin-badge-unpublished" title="Solo existe en este navegador">💾 Solo local</span>',
+            modified:  '<span class="admin-badge admin-badge-modified" title="Tiene cambios locales que aún no están en data.json">✏️ Sin publicar</span>',
+          }[publishStatus(p)]}
+          <button class="btn btn-outline" onclick="copyPostLink('${p.id}')"
+            style="font-size:0.75rem;padding:0.3rem 0.65rem;"
+            title="Copiar enlace">🔗</button>
+          <button class="btn btn-outline" onclick="editPost('${p.id}')"
+            style="font-size:0.75rem;padding:0.3rem 0.65rem;"
+            title="Editar">✏️</button>
+          <button class="btn btn-outline" onclick="deletePost('${p.id}')"
+            style="font-size:0.75rem;padding:0.3rem 0.65rem;border-color:#ff6b6b50;color:#ff6b6b;"
+            title="Eliminar">🗑</button>
+        </div>
+      </div>`).join('');
+  }
+
+  /* ── Edit post ───────────────────────────────────────────────────── */
+  async function editPost(id) {
+    const post    = getAllPosts().find(p => String(p.id) === String(id));
+    const adminPw = sessionStorage.getItem(ADMIN_PW);
+    if (!post) return;
+
+    document.getElementById('f-emoji').value = post.emoji || '📝';
+    document.getElementById('f-date').value  = post.date;
+    tags = [...(post.tags || [])]; renderTags();
+    images = [...(post.images || [])]; renderImageList();
+
+    setVisMode(getVisibility(post));
+
+    if (isPublicPost(post)) {
+      document.getElementById('f-title').value = post.title;
+      document.getElementById('f-body').value  = post.body || '';
+      setVisibility('public');
+
+    } else if (isNewPrivate(post)) {
+      let postPw = null;
+      try { postPw = await decryptAdminEncryptedPw(post); }
+      catch {
+        postPw = prompt('No se pudo descifrar este post con la clave de admin.\nIntroduce la contraseña del post para editarlo:');
+        if (!postPw) return;
+      }
+      try {
+        const title  = await blogCrypto.decrypt(post.encryptedTitle,   post.titleIv,  post.titleSalt,  postPw);
+        const body   = await blogCrypto.decrypt(post.encryptedBody,    post.iv,       post.salt,       postPw);
+        document.getElementById('f-title').value           = title;
+        document.getElementById('f-body').value            = body;
+        document.getElementById('f-post-password').value   = postPw;
+        setVisibility('private');
+      } catch { showAlert('Contraseña incorrecta o post dañado: no se pudo descifrar.', 'error'); return; }
+
+    } else if (isLegacyPost(post) && adminPw) {
+      try {
+        const body = await blogCrypto.decrypt(post.encryptedBody, post.iv, post.salt, adminPw);
+        document.getElementById('f-title').value           = post.title;
+        document.getElementById('f-body').value            = body;
+        document.getElementById('f-post-password').value   = adminPw;
+        setVisibility('private');
+      } catch { showAlert('Error al descifrar el post legado para editar.', 'error'); return; }
+    } else {
+      showAlert('No se puede editar este post (sin contraseña disponible).', 'error');
+      return;
+    }
+
+    editingPostId = id;
+    document.getElementById('form-card-title').textContent = 'Editar post';
+    document.getElementById('btn-toggle-form').textContent = '− Cancelar edición';
+
+    /* If editing a static post, show an info note */
+    let staticNote = document.getElementById('static-edit-note');
+    if (post._source === 'static') {
+      if (!staticNote) {
+        staticNote = document.createElement('p');
+        staticNote.id = 'static-edit-note';
+        staticNote.style.cssText = 'font-size:0.82rem;color:var(--accent-cyan);background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.2);border-radius:8px;padding:0.6rem 0.9rem;margin-bottom:0.75rem;';
+        document.getElementById('new-post-form').prepend(staticNote);
+      }
+      staticNote.textContent = 'ℹ️ Este post viene de data.json. Los cambios se guardarán como versión local — usa «Publicar en GitHub» para hacerlos permanentes.';
+    } else if (staticNote) {
+      staticNote.remove();
+    }
+
+    formWrap.classList.add('open');
+    refreshEditor();
+    formWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  window.editPost = editPost;
+
+  /* ── Delete post ─────────────────────────────────────────────────── */
+  function deletePost(id) {
+    const post = getAllPosts().find(p => String(p.id) === String(id));
+    if (!post) return;
+    const isStatic = post._source === 'static';
+    const confirmMsg = isStatic
+      ? '¿Ocultar este post de data.json? El post quedará eliminado del panel pero deberás publicar en GitHub para borrarlo definitivamente.'
+      : '¿Eliminar este post? Esta acción no se puede deshacer.';
+    if (!confirm(confirmMsg)) return;
+
+    if (isStatic) {
+      addDeletedId(id);
+    }
+    /* Always remove from local too (handles static with local override) */
+    saveLocalPosts(getLocalPosts().filter(p => String(p.id) !== String(id)));
+    renderPostList();
+    showAlert(isStatic ? 'Post ocultado. Publica en GitHub para eliminarlo definitivamente.' : 'Post eliminado.');
+  }
+  window.deletePost = deletePost;
+
+  let _toastTimer = null;
+  function showToast(msg) {
+    const el = document.getElementById('admin-toast');
+    el.textContent = msg;
+    el.classList.add('admin-toast-show');
+    clearTimeout(_toastTimer);
+    _toastTimer = setTimeout(() => el.classList.remove('admin-toast-show'), 2000);
+  }
+
+  function copyPostLink(id) {
+    const url = new URL(`blog-post.html?id=${id}`, window.location.href).href;
+    navigator.clipboard.writeText(url).then(() => showToast('¡Enlace copiado!'));
+  }
+  window.copyPostLink = copyPostLink;
+
+  /* ── Save post ───────────────────────────────────────────────────── */
+  document.getElementById('new-post-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = document.getElementById('btn-save-post');
+    btn.disabled = true;
+    const origLabel = btn.innerHTML;
+    btn.innerHTML = 'Guardando…';
+
+    try {
+      const adminPw = sessionStorage.getItem(ADMIN_PW);
+      const title   = document.getElementById('f-title').value.trim();
+      const date    = document.getElementById('f-date').value;
+      const emoji   = document.getElementById('f-emoji').value.trim() || '📝';
+      const body    = document.getElementById('f-body').value.trim();
+
+      if (!title || !date || !body) { showAlert('Completa título, fecha y contenido.', 'error', { persistent: true }); return; }
+      if (!tags.length) { showAlert('Añade al menos una etiqueta.', 'error', { persistent: true }); return; }
+
+      const id = editingPostId || ('post-' + Date.now());
+      let post;
+
+      const visField = currentVisMode !== 'visible' ? { visibility: currentVisMode } : {};
+
+      if (currentVisibility === 'public') {
+        post = { id, public: true, ...visField, title, date, tags: [...tags], emoji, images: [...images], body };
+      } else {
+        const postPw = document.getElementById('f-post-password').value;
+        if (!postPw || postPw.length < 6) { showAlert('La contraseña del post debe tener al menos 6 caracteres.', 'error', { persistent: true }); return; }
+
+        btn.innerHTML = 'Cifrando…';
+        const [bodyEnc, titleEnc, wrapped] = await Promise.all([
+          blogCrypto.encrypt(body,   postPw),
+          blogCrypto.encrypt(title,  postPw),
+          adminAuth.wrapPostPw(postPw),     // la contraseña del post, cifrada con la clave maestra de admin
+        ]);
+
+        post = {
+          id,
+          public: false,
+          ...visField,
+          date,
+          tags: [...tags],
+          emoji,
+          images: [...images],
+          encryptedTitle: titleEnc.encryptedBody,
+          titleIv:        titleEnc.iv,
+          titleSalt:      titleEnc.salt,
+          encryptedBody:  bodyEnc.encryptedBody,
+          iv:             bodyEnc.iv,
+          salt:           bodyEnc.salt,
+          ...wrapped,
+          _plainTitle: title,
+        };
+      }
+
+      /* Save / replace in localStorage */
+      const local = getLocalPosts().filter(p => String(p.id) !== String(id));
+      local.push(post);
+      saveLocalPosts(local);
+
+      const verb = editingPostId ? 'actualizado' : 'guardado';
+      formWrap.classList.remove('open');
+      resetForm();
+      renderPostList();
+      showAlert(`Post "${title}" ${verb} correctamente.`);
+      setTimeout(() => document.getElementById('admin-alert').scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 150);
+    } catch (err) {
+      console.error(err);
+      showAlert('Error al guardar el post.', 'error', { persistent: true });
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = origLabel;
+    }
+  });
+
+  /* ── Generate data.json content (shared) ────────────────────────── */
+  function generateDataJson() {
+    const all = getAllPosts().map(({ _source, _plainTitle, ...p }) => p);
+    return JSON.stringify(all, null, 2);
+  }
+
+  /* ── Export (snippet) ────────────────────────────────────────────── */
+  document.getElementById('btn-export').addEventListener('click', () => {
+    const snippet = generateDataJson();
+    const area = document.getElementById('export-area');
+    area.style.display = 'block';
+    area.value = snippet;
+    document.getElementById('btn-copy-export').style.display = 'inline-flex';
+    showAlert('JSON generado. Cópialo y reemplaza el contenido de js/data.json');
+  });
+
+  document.getElementById('btn-copy-export').addEventListener('click', () => {
+    navigator.clipboard.writeText(document.getElementById('export-area').value)
+      .then(() => showAlert('Copiado al portapapeles.'))
+      .catch(() => { document.getElementById('export-area').select(); document.execCommand('copy'); showAlert('Copiado.'); });
+  });
+
+  /* ── GitHub token (compartido: js/admin-config.json vía admin-auth.js) ── */
+  function updateGitHubBadge() {
+    const badge = document.getElementById('github-token-status-badge');
+    const ok    = adminAuth.hasToken();
+    badge.innerHTML = ok
+      ? '<span class="github-token-ok">● Token configurado</span>'
+      : '<span class="github-token-none">● Sin token</span>';
+    document.getElementById('github-config-card')?.classList.toggle('collapsed', ok);
+  }
+
+  const getGitHubToken = () => adminAuth.getToken();
+  const decryptAdminEncryptedPw = p => adminAuth.decryptPostPw(p);
+
+  /* Eye toggle for token field */
+  document.getElementById('github-token-eye')?.addEventListener('click', () => {
+    const inp = document.getElementById('f-github-token');
+    const isText = inp.type === 'text';
+    inp.type = isText ? 'password' : 'text';
+    document.getElementById('gt-eye-open').style.display   = isText ? 'block' : 'none';
+    document.getElementById('gt-eye-closed').style.display = isText ? 'none'  : 'block';
+  });
+
+  /* Replace token (verifica permisos y publica js/admin-config.json) */
+  document.getElementById('github-token-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const inp   = document.getElementById('f-github-token');
+    const btn   = document.getElementById('btn-save-token');
+    const token = inp.value.trim();
+    if (!/^(ghp_|github_pat_)/.test(token)) {
+      showAlert('El token no parece válido (debe empezar por ghp_ o github_pat_).', 'error');
+      return;
+    }
+    btn.disabled = true;
+    const orig = btn.innerHTML;
+    btn.innerHTML = '🔄 Verificando…';
+    try {
+      await adminAuth.replaceToken(token);
+      inp.value = '';
+      updateGitHubBadge();
+      showAlert('Token verificado y publicado cifrado. Disponible en todos los dispositivos en ~1 minuto.');
+    } catch (err) {
+      showAlert(`Error: ${err.message}`, 'error', { persistent: true });
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = orig;
+    }
+  });
+
+  /* ── Publish to GitHub ───────────────────────────────────────────── */
+  function toBase64Unicode(str) {
+    const bytes = new TextEncoder().encode(str);
+    let binary = '';
+    for (const b of bytes) binary += String.fromCharCode(b);
+    return btoa(binary);
+  }
+
+  document.getElementById('btn-publish').addEventListener('click', async () => {
+    const btn = document.getElementById('btn-publish');
+    btn.disabled = true;
+    const origLabel = btn.innerHTML;
+    try {
+      btn.innerHTML = '🔄 Descifrando token…';
+      const token = await getGitHubToken();
+      if (!token) {
+        showAlert('Configura primero el token de GitHub en la sección de abajo.', 'error');
+        document.querySelector('#github-token-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      btn.innerHTML = '🔄 Comprobando versión…';
+      const fresh = await adminAuth.fetchIfNewer(GITHUB_VERSION_FILE, GITHUB_DATA_FILE, _baseVersion, token);
+      if (fresh) {
+        /* Alguien publicó después de abrir este panel: no sobrescribir.
+           Se carga lo publicado; los borradores locales se conservan encima. */
+        _staticPosts = fresh.data;
+        _baseVersion = fresh.t;
+        adminAuth.pruneLocalCopies(LOCAL_KEY, _staticPosts, stripPost);
+        renderPostList();
+        showAlert('Se ha publicado desde otro dispositivo o pestaña después de abrir este panel. ' +
+          'No se ha subido nada. Ya se ha cargado lo publicado y tus cambios locales se mantienen encima: ' +
+          'revisa la lista y vuelve a pulsar «Publicar».', 'error', { persistent: true });
+        return;
+      }
+
+      btn.innerHTML = '🔄 Generando data.json…';
+      const content = generateDataJson();
+      const today   = new Date().toISOString().split('T')[0];
+      const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' };
+
+      async function putFile(path, fileContent, message) {
+        const apiUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`;
+        const getRes = await fetch(`${apiUrl}?ref=${GITHUB_BRANCH}`, { headers });
+        const sha    = getRes.ok ? (await getRes.json()).sha : undefined;
+        const putRes = await fetch(apiUrl, {
+          method: 'PUT',
+          headers,
+          body: JSON.stringify({ message, content: toBase64Unicode(fileContent), ...(sha ? { sha } : {}), branch: GITHUB_BRANCH }),
+        });
+        if (!putRes.ok) {
+          const err = await putRes.json().catch(() => ({}));
+          throw new Error(err.message || `GitHub PUT ${putRes.status}`);
+        }
+      }
+
+      btn.innerHTML = '🔄 Publicando data.json…';
+      await putFile(GITHUB_DATA_FILE, content, `blog: update data.json (${today})`);
+
+      btn.innerHTML = '🔄 Actualizando versión…';
+      const versionT = Date.now();
+      await putFile(GITHUB_VERSION_FILE, JSON.stringify({ t: versionT }), `blog: bump data-version (${today})`);
+
+      /* Lo publicado pasa a ser la referencia: se limpian los cambios locales */
+      const published = JSON.parse(content);
+      _staticPosts = published;
+      _baseVersion = versionT;
+      localStorage.removeItem(LOCAL_KEY);
+      localStorage.removeItem(DELETED_KEY);
+      adminAuth.rememberPublished(GITHUB_DATA_FILE, versionT, published);
+      renderPostList();
+
+      showAlert('Publicado en GitHub. El sitio se redesplegará en ~1 minuto.');
+    } catch (err) {
+      console.error(err);
+      showAlert(`Error al publicar: ${err.message}`, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = origLabel;
+    }
+  });
+
+  /* ── Collapsible cards ───────────────────────────────────────────── */
+  document.querySelectorAll('.admin-card-collapsible .admin-card-header').forEach(header => {
+    header.addEventListener('click', () => header.closest('.admin-card-collapsible').classList.toggle('collapsed'));
+  });
+
+  /* ── Generic eye toggles (data-eye-input) ───────────────────────── */
+  document.querySelectorAll('.blog-eye-btn[data-eye-input]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const inp    = document.getElementById(btn.dataset.eyeInput);
+      const isText = inp.type === 'text';
+      inp.type = isText ? 'password' : 'text';
+      btn.querySelector('.eye-open-svg').style.display   = isText ? 'block' : 'none';
+      btn.querySelector('.eye-closed-svg').style.display = isText ? 'none'  : 'block';
+    });
+  });
+
+  /* ── Change admin password ───────────────────────────────────────── */
+  document.getElementById('change-pw-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const errEl   = document.getElementById('change-pw-error');
+    const btn     = document.getElementById('btn-change-pw');
+    const oldPw   = document.getElementById('f-old-pw').value;
+    const newPw   = document.getElementById('f-new-pw').value;
+    const confirm = document.getElementById('f-confirm-pw').value;
+    errEl.textContent = '';
+
+    if (newPw !== confirm) {
+      errEl.textContent = '❌ Las contraseñas nuevas no coinciden.';
+      return;
+    }
+    if (newPw.length < 12) {
+      errEl.textContent = '❌ La nueva contraseña debe tener al menos 12 caracteres.';
+      return;
+    }
+    if (newPw === oldPw) {
+      errEl.textContent = '❌ La nueva contraseña debe ser diferente a la actual.';
+      return;
+    }
+
+    btn.disabled = true;
+    const origLabel = btn.innerHTML;
+    try {
+      btn.innerHTML = '🔄 Re-cifrando y publicando…';
+      await adminAuth.changePassword(oldPw, newPw);
+      lockAdmin();
+    } catch (err) {
+      console.error(err);
+      errEl.textContent = `❌ Error: ${err.message}`;
+      btn.disabled  = false;
+      btn.innerHTML = origLabel;
+    }
+  });
+
+  /* ── Auth ────────────────────────────────────────────────────────── */
+  async function unlockAdmin() {
+    document.getElementById('admin-lock').style.display    = 'none';
+    document.getElementById('admin-content').style.display = 'block';
+    resetForm();
+    await loadStaticPosts();
+    renderPostList();
+    updateGitHubBadge();
+  }
+
+  function lockAdmin() {
+    adminAuth.logout();
+    location.reload();
+  }
+
+  document.getElementById('admin-logout').addEventListener('click', lockAdmin);
+
+  document.addEventListener('DOMContentLoaded', () => adminAuth.initLockScreen(unlockAdmin));
+  </script>
+  <script src="js/main.js?v=4bb4308"></script>
+  <div id="admin-toast" aria-live="polite"></div>
+</body>
+</html>
