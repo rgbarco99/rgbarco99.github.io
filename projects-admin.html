@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Panel de administración de proyectos — Rubén García." />
+  <meta name="robots" content="noindex" />
+  <title>Admin Proyectos — Rubén García</title>
+  <link rel="stylesheet" href="css/styles.css?v=4bb4308" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%237c6fff'/><text y='22' x='7' font-size='18' font-family='sans-serif' fill='white'>R</text></svg>" />
+  <style>
+    .admin-card-collapsible .admin-card-header { cursor:pointer; user-select:none; }
+    .admin-card-collapsible .admin-card-chevron { transition:transform .25s; flex-shrink:0; color:var(--text-muted); }
+    .admin-card-collapsible.collapsed .admin-card-chevron { transform:rotate(-90deg); }
+    .admin-card-body { display:grid; grid-template-rows:1fr; transition:grid-template-rows .3s ease; }
+    .admin-card-collapsible.collapsed .admin-card-body { grid-template-rows:0fr; }
+    .admin-card-body > * { overflow:hidden; }
+    .github-token-ok   { background:rgba(100,220,120,.12); color:#64dc78; border:1px solid rgba(100,220,120,.3); font-size:0.78rem; padding:0.2rem 0.7rem; border-radius:20px; }
+    .github-token-none { background:rgba(255,107,107,.10); color:#ff6b6b; border:1px solid rgba(255,107,107,.3); font-size:0.78rem; padding:0.2rem 0.7rem; border-radius:20px; }
+    .admin-hint { font-weight:400; text-transform:none; letter-spacing:0; color:var(--text-muted); }
+    .admin-help { font-size:0.75rem; color:var(--text-muted); margin-top:0.35rem; line-height:1.55; }
+    .kind-fields { display:none; }
+    .kind-fields.active { display:block; }
+    .release-status { font-size:0.8rem; margin-top:0.45rem; line-height:1.55; }
+    .release-status.ok  { color:#64dc78; }
+    .release-status.err { color:#ff6b6b; }
+    [data-theme="light"] .release-status.ok { color:#1f8f3a; }
+    .img-list { display:flex; gap:0.65rem; flex-wrap:wrap; margin-top:0.5rem; }
+    .img-item {
+      position:relative; width:150px; border:1px solid var(--border); border-radius:10px; overflow:hidden;
+      background:var(--bg-glass);
+    }
+    .img-item img { width:100%; height:92px; object-fit:cover; display:block; }
+    .img-item-bar { display:flex; align-items:center; justify-content:space-between; padding:0.25rem 0.35rem; gap:0.25rem; }
+    .img-item-bar button {
+      background:none; border:1px solid var(--border); border-radius:6px; color:var(--text-secondary);
+      cursor:pointer; font-size:0.8rem; line-height:1; padding:0.25rem 0.45rem;
+    }
+    .img-item-bar button:hover:not(:disabled) { border-color:var(--accent-purple); color:var(--accent-purple); }
+    .img-item-bar button:disabled { opacity:.3; cursor:default; }
+    .img-item-cover {
+      position:absolute; top:0.35rem; left:0.35rem; font-size:0.65rem; font-weight:700; letter-spacing:.5px;
+      background:var(--gradient-main); color:#fff; padding:0.1rem 0.45rem; border-radius:20px;
+    }
+    .admin-thumb { width:44px; height:30px; object-fit:cover; border-radius:6px; flex-shrink:0; }
+    .desc-tabs { display:flex; gap:0.4rem; margin-bottom:0.4rem; }
+    .desc-tabs button {
+      background:none; border:1px solid var(--border); border-radius:20px; color:var(--text-secondary);
+      font-size:0.75rem; padding:0.25rem 0.8rem; cursor:pointer;
+    }
+    .desc-tabs button.active { border-color:var(--accent-purple); color:var(--accent-purple); }
+    #desc-preview { display:none; min-height:160px; padding:0.9rem 1.1rem; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-glass); }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav" id="nav" role="navigation" aria-label="Menú principal">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo" aria-label="Inicio">RG</a>
+      <ul class="nav-links" role="list">
+        <li><a href="index.html"         class="nav-link">Inicio</a></li>
+        <li><a href="index.html#recommendations" class="nav-link">Recomendaciones</a></li>
+        <li><a href="index.html#skills"  class="nav-link">Skills</a></li>
+        <li><a href="projects.html"      class="nav-link active">Proyectos</a></li>
+        <li><a href="certificados.html"  class="nav-link">Certificados</a></li>
+        <li><a href="index.html#cv"      class="nav-link">Currículum</a></li>
+        <li><a href="index.html#contact" class="nav-link nav-cta">Contacto</a></li>
+        <li><a href="blog.html"          class="nav-link">Blog</a></li>
+      </ul>
+      <div class="nav-controls">
+        <div class="lang-switcher" role="group" aria-label="Idioma">
+          <button class="lang-btn" data-lang="es" aria-pressed="true"  title="Español">ES</button>
+          <button class="lang-btn" data-lang="en" aria-pressed="false" title="English">EN</button>
+          <button class="lang-btn" data-lang="fr" aria-pressed="false" title="Français">FR</button>
+        </div>
+        <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema">
+          <span class="theme-icon-sun">☀️</span>
+          <span class="theme-icon-moon">🌙</span>
+        </button>
+      </div>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Abrir menú" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile drawer -->
+  <nav class="nav-mobile" id="nav-mobile" aria-label="Menú móvil">
+    <a href="index.html"         class="nav-link">Inicio</a>
+    <a href="index.html#recommendations" class="nav-link">Recomendaciones</a>
+    <a href="index.html#skills"  class="nav-link">Skills</a>
+    <a href="projects.html"      class="nav-link">Proyectos</a>
+    <a href="certificados.html"  class="nav-link">Certificados</a>
+    <a href="index.html#cv"      class="nav-link">Currículum</a>
+    <a href="index.html#contact" class="nav-link">Contacto</a>
+    <a href="blog.html"          class="nav-link">Blog</a>
+  </nav>
+
+  <main class="admin-page">
+
+    <!-- LOCK SCREEN -->
+    <div id="admin-lock" style="min-height:100vh; display:flex; align-items:center; justify-content:center; padding:2rem;">
+      <div class="blog-lock-card reveal" style="max-width:440px; width:100%;">
+        <div class="blog-lock-icon">🧩</div>
+        <span class="section-label" style="display:block; margin-bottom:0.5rem;">Admin</span>
+        <h1 class="blog-lock-title">Panel de Proyectos</h1>
+        <p class="blog-lock-desc">Introduce la contraseña de administrador para acceder al panel. Es la misma que la del blog.</p>
+        <form id="admin-lock-form" class="blog-lock-form" autocomplete="off">
+          <div class="blog-password-wrap">
+            <input type="password" id="admin-password" class="blog-password-input"
+              placeholder="Contraseña…" aria-label="Contraseña" autocomplete="new-password" />
+            <button type="button" class="blog-eye-btn" id="admin-eye-btn" aria-label="Mostrar contraseña">
+              <svg id="eye-open"   width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg id="eye-closed" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
+          <p class="blog-error" id="admin-error" aria-live="polite"></p>
+          <button type="submit" id="admin-submit" class="btn btn-primary blog-submit">
+            <span>Acceder</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ADMIN CONTENT -->
+    <div id="admin-content" style="display:none;">
+
+      <div class="admin-hero">
+        <span class="section-label">Admin</span>
+        <h1 class="page-hero-title" style="margin-bottom:0.5rem;">
+          Panel de <span class="gradient-text">Proyectos</span>
+        </h1>
+        <p class="page-hero-subtitle">Crea y gestiona los proyectos del portfolio: descargas y aplicaciones web.</p>
+        <div style="display:flex; gap:0.75rem; justify-content:center; margin-top:1.5rem; flex-wrap:wrap;">
+          <a href="projects.html" class="btn btn-outline" style="font-size:0.85rem;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+            Volver a proyectos
+          </a>
+          <button id="admin-logout" class="btn btn-outline" style="font-size:0.85rem;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+            Cerrar sesión
+          </button>
+        </div>
+      </div>
+
+      <div class="admin-section">
+
+        <div id="admin-alert" style="display:none;"></div>
+
+        <!-- ══════════════ NUEVO / EDITAR PROYECTO ══════════════ -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h2 class="admin-card-title">🧩 <span id="form-card-title">Nuevo proyecto</span></h2>
+            <button id="btn-toggle-form" class="btn btn-primary" style="font-size:0.82rem; padding:0.5rem 1.2rem;">
+              + Añadir proyecto
+            </button>
+          </div>
+
+          <div class="admin-form-wrap" id="project-form-wrap">
+            <form class="admin-form" id="project-form" autocomplete="off">
+
+              <div class="admin-field">
+                <label class="admin-label" for="f-title">Título</label>
+                <input type="text" id="f-title" class="admin-input" placeholder="Ej: Fortnite Chest Counter" required />
+              </div>
+
+              <div class="admin-row">
+                <div class="admin-field">
+                  <label class="admin-label" for="f-kind">Tipo</label>
+                  <select id="f-kind" class="admin-select">
+                    <option value="download">⬇️ Descarga (programa en una release de GitHub)</option>
+                    <option value="web">🌐 Web (se abre en el navegador)</option>
+                  </select>
+                </div>
+                <div class="admin-field">
+                  <label class="admin-label" for="f-category">Categoría</label>
+                  <select id="f-category" class="admin-select">
+                    <option value="herramienta">🔧 Herramienta</option>
+                    <option value="web">🌐 Web</option>
+                    <option value="data">📊 Data</option>
+                    <option value="mobile">📱 Mobile</option>
+                    <option value="ia">🤖 IA / ML</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="admin-row">
+                <div class="admin-field">
+                  <label class="admin-label" for="f-date">Fecha <span class="admin-hint">(ordena la lista)</span></label>
+                  <input type="date" id="f-date" class="admin-input" required />
+                </div>
+                <div class="admin-field">
+                  <label class="admin-label" for="f-emoji">Emoji <span class="admin-hint">(si no hay imágenes)</span></label>
+                  <input type="text" id="f-emoji" class="admin-input" placeholder="🧰" maxlength="8" />
+                </div>
+              </div>
+
+              <div class="admin-field">
+                <label class="admin-label" for="f-repo">Repositorio de GitHub <span class="admin-hint">(usuario/repo)</span></label>
+                <div style="display:flex; gap:0.5rem;">
+                  <input type="text" id="f-repo" class="admin-input" placeholder="rgbarco99/FortniteChestCounter" style="flex:1;" />
+                  <button type="button" id="btn-check-repo" class="btn btn-outline" style="font-size:0.8rem; padding:0.45rem 1rem; white-space:nowrap;">🔍 Comprobar</button>
+                </div>
+                <p class="admin-help">Se usa para el enlace «Código fuente» y, en las descargas, para la release.</p>
+                <p class="release-status" id="release-status"></p>
+              </div>
+
+              <!-- Descarga -->
+              <div class="kind-fields" data-kind="download">
+                <div class="admin-row">
+                  <div class="admin-field">
+                    <label class="admin-label" for="f-asset">Fichero de la release</label>
+                    <input type="text" id="f-asset" class="admin-input" placeholder="FortniteChestCounter.exe" list="asset-options" />
+                    <datalist id="asset-options"></datalist>
+                  </div>
+                  <div class="admin-field">
+                    <label class="admin-label" for="f-platform">Plataforma <span class="admin-hint">(opcional)</span></label>
+                    <input type="text" id="f-platform" class="admin-input" placeholder="Windows 10/11 · 64 bits" />
+                  </div>
+                </div>
+                <p class="admin-help" id="download-link-help"></p>
+              </div>
+
+              <!-- Web -->
+              <div class="kind-fields" data-kind="web">
+                <div class="admin-field">
+                  <label class="admin-label" for="f-url">Dirección de la aplicación</label>
+                  <input type="text" id="f-url" class="admin-input" placeholder="https://rgbarco99.github.io/cifrador/" />
+                </div>
+              </div>
+
+              <div class="admin-field">
+                <label class="admin-label" for="f-summary">Resumen <span class="admin-hint">(tarjeta; <span id="summary-count">0</span>/180)</span></label>
+                <textarea id="f-summary" class="admin-textarea" style="min-height:70px;" maxlength="180" placeholder="Una o dos frases que expliquen qué es." required></textarea>
+              </div>
+
+              <div class="admin-field">
+                <label class="admin-label" for="f-desc">Descripción <span class="admin-hint">(Markdown: ## título, **negrita**, *cursiva*, `código`, - listas, [enlace](url))</span></label>
+                <div class="desc-tabs">
+                  <button type="button" class="active" data-tab="write">✏️ Escribir</button>
+                  <button type="button" data-tab="preview">👁 Vista previa</button>
+                </div>
+                <textarea id="f-desc" class="admin-textarea" style="min-height:220px;" placeholder="Qué hace, cómo funciona, cómo empezar…"></textarea>
+                <div id="desc-preview" class="blog-md project-modal-desc"></div>
+              </div>
+
+              <div class="admin-field">
+                <label class="admin-label">Tecnologías <span class="admin-hint">(Enter o coma para añadir)</span></label>
+                <div class="admin-tag-box" id="tag-box" onclick="document.getElementById('tag-input').focus()">
+                  <input type="text" id="tag-input" class="admin-tag-input" placeholder="C#, .NET, React…" autocomplete="off" />
+                </div>
+              </div>
+
+              <div class="admin-field">
+                <label class="admin-label" for="f-notice">Aviso <span class="admin-hint">(opcional; se muestra destacado en la ficha)</span></label>
+                <textarea id="f-notice" class="admin-textarea" style="min-height:60px;" placeholder="Ej: Windows puede avisar porque el programa no está firmado…"></textarea>
+              </div>
+
+              <div class="admin-field">
+                <label class="admin-label">Imágenes <span class="admin-hint">(la primera es la portada)</span></label>
+                <div class="img-list" id="img-list"></div>
+                <label class="btn btn-outline" style="font-size:0.8rem; padding:0.45rem 1rem; cursor:pointer; margin-top:0.6rem; width:fit-content;">
+                  🖼️ Añadir imágenes
+                  <input type="file" id="img-upload" accept="image/*" multiple style="display:none;" />
+                </label>
+                <p class="admin-help">Se reducen a 1600 px en WebP y se suben a <code>assets/img/projects/</code> al publicar, todo en el mismo commit.</p>
+              </div>
+
+              <div class="admin-field">
+                <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.88rem; color:var(--text-secondary); cursor:pointer;">
+                  <input type="checkbox" id="f-hidden" /> Oculto (solo lo ves tú con la sesión de admin)
+                </label>
+              </div>
+
+              <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-top:0.5rem;">
+                <button type="submit" id="btn-save" class="btn btn-primary">💾 Guardar proyecto</button>
+                <button type="button" id="btn-preview" class="btn btn-outline">👁 Vista previa de la ficha</button>
+                <button type="button" id="btn-cancel-form" class="btn btn-outline">Cancelar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- ══════════════ LISTA ══════════════ -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h2 class="admin-card-title">📋 Proyectos</h2>
+            <span id="projects-count" style="font-size:0.82rem; color:var(--text-muted);"></span>
+          </div>
+          <div class="admin-post-list" id="admin-project-list"></div>
+        </div>
+
+        <!-- ══════════════ PUBLICAR ══════════════ -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h2 class="admin-card-title">🚀 Publicar</h2>
+            <button id="btn-publish" class="btn btn-primary" style="font-size:0.82rem; padding:0.5rem 1.1rem;">
+              🚀 Publicar en GitHub
+            </button>
+          </div>
+          <p style="font-size:0.88rem; color:var(--text-secondary); line-height:1.7;">
+            Sube en un único commit <code style="background:rgba(124,111,255,0.12);color:var(--accent-cyan);padding:0.1em 0.4em;border-radius:4px;font-size:0.85em;">js/projects.json</code>,
+            las imágenes nuevas y borra las que ya no usa ningún proyecto. Hasta entonces, los cambios solo existen en este navegador.
+          </p>
+        </div>
+
+        <!-- ══════════════ CONFIGURACIÓN GITHUB ══════════════ -->
+        <div class="admin-card admin-card-collapsible" id="github-config-card">
+          <div class="admin-card-header">
+            <h2 class="admin-card-title">⚙️ Configuración GitHub</h2>
+            <div style="display:flex;align-items:center;gap:0.75rem;">
+              <span id="github-token-status-badge"></span>
+              <svg class="admin-card-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+          </div>
+          <div class="admin-card-body"><div>
+          <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:1rem; line-height:1.7; margin-top:0.25rem;">
+            El token es el mismo para todos los paneles y se guarda cifrado con tu contraseña de admin.
+          </p>
+          <form id="github-token-form" autocomplete="off">
+            <div class="admin-field">
+              <label class="admin-label" for="f-github-token">Sustituir token</label>
+              <input type="password" id="f-github-token" class="admin-input" placeholder="github_pat_…" autocomplete="off" />
+            </div>
+            <button type="submit" id="btn-save-token" class="btn btn-primary" style="font-size:0.85rem; margin-top:0.5rem;">
+              🔄 Verificar y guardar token
+            </button>
+          </form>
+          </div></div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="footer-inner">
+      <div class="footer-bottom" style="border-top:none; padding-top:0;">
+        <p>© 2025 Rubén García. Todos los derechos reservados.</p>
+        <p class="footer-bottom-right">Hecho con mucho café <span class="footer-heart">♥</span></p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/i18n.js?v=4bb4308"></script>
+  <script src="js/blog-crypto.js?v=4bb4308"></script>
+  <script src="js/admin-auth.js?v=4bb4308"></script>
+  <script src="js/markdown.js?v=4bb4308"></script>
+  <script src="js/projects-view.js?v=4bb4308"></script>
+  <script>
+  /* ════════════════════════════════════════════════════════════════════
+     projects-admin.html — Panel de proyectos
+     Datos en js/projects.json. Borradores en localStorage hasta publicar.
+     Autenticación compartida: js/admin-auth.js.
+  ════════════════════════════════════════════════════════════════════ */
+
+  const LOCAL_KEY   = '_projects_local_items';
+  const DELETED_KEY = '_projects_deleted_items';
+  const GITHUB_DATA_FILE    = 'js/projects.json';
+  const GITHUB_VERSION_FILE = 'js/projects-version.json';
+  const IMG_DIR     = 'assets/img/projects';
+  const pv  = window.projectsView;
+  const esc = pv.esc;
+
+  /* Tema, menú y animaciones de entrada: js/main.js */
+  document.getElementById('admin-eye-btn')?.addEventListener('click', () => {
+    const inp = document.getElementById('admin-password');
+    const show = inp.type === 'password';
+    inp.type = show ? 'text' : 'password';
+    document.getElementById('eye-open').style.display   = show ? 'none' : 'block';
+    document.getElementById('eye-closed').style.display = show ? 'block' : 'none';
+  });
+
+  /* ── Datos: publicado + borradores locales ───────────────────────── */
+  let _staticProjects = [];
+  let _baseVersion = 0;
+
+  async function loadStaticProjects() {
+    const pub = await adminAuth.loadPublished(GITHUB_VERSION_FILE, GITHUB_DATA_FILE);
+    _staticProjects = pub.data;
+    _baseVersion = pub.t;
+    adminAuth.pruneLocalCopies(LOCAL_KEY, _staticProjects);
+  }
+
+  const getLocal   = () => { try { return JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]'); } catch { return []; } };
+  const saveLocal  = list => localStorage.setItem(LOCAL_KEY, JSON.stringify(list));
+  const getDeleted = () => { try { return JSON.parse(localStorage.getItem(DELETED_KEY) || '[]'); } catch { return []; } };
+  const isQuotaError = err => !!err && (err.name === 'QuotaExceededError' || err.code === 22 || err.code === 1014);
+
+  function getAllProjects() {
+    const deleted = new Set(getDeleted());
+    const ids = new Set(), merged = [];
+    const list = [
+      ...getLocal().map(p => ({ ...p, _source: 'local' })),
+      ..._staticProjects.filter(p => !deleted.has(String(p.id))).map(p => ({ ...p, _source: 'static' })),
+    ];
+    for (const p of list) {
+      const k = String(p.id);
+      if (!ids.has(k)) { ids.add(k); merged.push(p); }
+    }
+    return merged.sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+  }
+  const strip = ({ _source, ...p }) => p;
+
+  function publishBadge(p) {
+    const online = '<span class="admin-badge admin-badge-static" title="Igual que lo publicado en GitHub">✅ En línea</span>';
+    if (p._source !== 'local') return online;
+    const st = _staticProjects.find(s => String(s.id) === String(p.id));
+    if (!st) return '<span class="admin-badge admin-badge-local" title="Solo existe en este navegador">💾 Solo local</span>';
+    return adminAuth.canon(strip(p)) === adminAuth.canon(st) ? online
+      : '<span class="admin-badge admin-badge-local" title="Tiene cambios que aún no están publicados">✏️ Sin publicar</span>';
+  }
+
+  /* ── Alertas ─────────────────────────────────────────────────────── */
+  function showAlert(msg, type = 'success', opts = {}) {
+    const el = document.getElementById('admin-alert');
+    el.innerHTML = `<div class="admin-alert admin-alert-${type}" style="display:flex;align-items:center;gap:0.5rem;">
+      ${type === 'success' ? '✅' : '❌'} <span style="flex:1">${msg}</span>
+      ${opts.persistent ? `<button onclick="this.closest('#admin-alert').style.display='none'" style="background:none;border:none;cursor:pointer;font-size:1.3rem;color:inherit;" aria-label="Cerrar">×</button>` : ''}</div>`;
+    el.style.display = 'block';
+    if (opts.persistent) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    else setTimeout(() => { el.style.display = 'none'; }, 4500);
+  }
+
+  /* ── Formulario ──────────────────────────────────────────────────── */
+  const $ = id => document.getElementById(id);
+  const formWrap = $('project-form-wrap');
+  let editingId = null;
+  let tech = [];
+  let images = [];   // [{ src, thumb }] — data: URL (nuevas) o ruta assets/… (publicadas)
+
+  function setKind(kind) {
+    document.querySelectorAll('.kind-fields').forEach(el => el.classList.toggle('active', el.dataset.kind === kind));
+    updateDownloadHelp();
+  }
+  $('f-kind').addEventListener('change', e => setKind(e.target.value));
+
+  function updateDownloadHelp() {
+    const url = pv.downloadUrl({ kind: 'download', repo: $('f-repo').value.trim(), asset: $('f-asset').value.trim() });
+    $('download-link-help').innerHTML = url
+      ? `Enlace de descarga (siempre la última versión): <a href="${esc(url)}" style="color:var(--accent-cyan); word-break:break-all;">${esc(url)}</a>`
+      : 'Indica el repositorio y el nombre del fichero para generar el enlace de descarga.';
+  }
+  ['f-repo', 'f-asset'].forEach(id => $(id).addEventListener('input', updateDownloadHelp));
+
+  $('f-summary').addEventListener('input', e => { $('summary-count').textContent = e.target.value.length; });
+
+  /* Comprobar el repositorio y la última release */
+  $('btn-check-repo').addEventListener('click', async () => {
+    const repo = $('f-repo').value.trim();
+    const status = $('release-status');
+    status.className = 'release-status';
+    if (!pv.validRepo(repo)) { status.classList.add('err'); status.textContent = 'Formato esperado: usuario/repo'; return; }
+    status.textContent = 'Consultando GitHub…';
+    try { sessionStorage.removeItem('_releases_' + repo); } catch {}
+    try {
+      const list = await pv.fetchReleases(repo);
+      if (!list.length) {
+        status.classList.add($('f-kind').value === 'download' ? 'err' : 'ok');
+        status.textContent = 'El repositorio existe pero no tiene releases publicadas.';
+        return;
+      }
+      const rel = list[0];
+      $('asset-options').innerHTML = rel.assets.map(a => `<option value="${esc(a.name)}">`).join('');
+      if (!$('f-asset').value && rel.assets.length === 1) $('f-asset').value = rel.assets[0].name;
+      updateDownloadHelp();
+      const asset = rel.assets.find(a => a.name === $('f-asset').value.trim());
+      status.classList.add(asset || $('f-kind').value !== 'download' ? 'ok' : 'err');
+      status.innerHTML = `Última versión <strong>${esc(rel.tag)}</strong> (${esc(pv.fmtDate(rel.date))}) · ${list.length} releases. ` +
+        (asset ? `Fichero encontrado: ${esc(asset.name)}, ${esc(pv.fmtSize(asset.size))}.`
+               : `Ficheros: ${rel.assets.map(a => esc(a.name)).join(', ') || 'ninguno'}.`);
+    } catch (err) {
+      status.classList.add('err');
+      status.textContent = `No se pudo consultar: ${err.message}`;
+    }
+  });
+
+  /* Descripción: escribir / vista previa */
+  document.querySelectorAll('.desc-tabs button').forEach(b => b.addEventListener('click', () => {
+    const preview = b.dataset.tab === 'preview';
+    document.querySelectorAll('.desc-tabs button').forEach(x => x.classList.toggle('active', x === b));
+    $('f-desc').style.display = preview ? 'none' : '';
+    $('desc-preview').style.display = preview ? 'block' : 'none';
+    if (preview) $('desc-preview').innerHTML = renderMarkdown($('f-desc').value) || '<p style="opacity:.6">(vacío)</p>';
+  }));
+
+  /* Tecnologías */
+  function renderTech() {
+    const box = $('tag-box'), input = $('tag-input');
+    box.querySelectorAll('.admin-tag-pill').forEach(el => el.remove());
+    tech.forEach((x, i) => {
+      const pill = document.createElement('span');
+      pill.className = 'admin-tag-pill';
+      pill.textContent = x;
+      const del = document.createElement('button');
+      del.type = 'button'; del.textContent = '×'; del.setAttribute('aria-label', `Eliminar ${x}`);
+      del.addEventListener('click', ev => { ev.stopPropagation(); tech.splice(i, 1); renderTech(); });
+      pill.appendChild(del);
+      box.insertBefore(pill, input);
+    });
+  }
+  function addTech(v) {
+    const x = v.trim().replace(/,+$/, '');
+    if (x && !tech.includes(x)) { tech.push(x); renderTech(); }
+  }
+  $('tag-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addTech(e.target.value); e.target.value = ''; }
+    else if (e.key === 'Backspace' && !e.target.value && tech.length) { tech.pop(); renderTech(); }
+  });
+  $('tag-input').addEventListener('blur', e => { if (e.target.value) { addTech(e.target.value); e.target.value = ''; } });
+
+  /* Imágenes */
+  function renderImages() {
+    const list = $('img-list');
+    list.innerHTML = images.map((img, i) => `
+      <div class="img-item">
+        ${i === 0 ? '<span class="img-item-cover">PORTADA</span>' : ''}
+        <img src="${esc(img.thumb || img.src)}" alt="Imagen ${i + 1}" />
+        <div class="img-item-bar">
+          <button type="button" data-act="left"  data-i="${i}" ${i === 0 ? 'disabled' : ''} title="Mover a la izquierda">←</button>
+          <button type="button" data-act="del"   data-i="${i}" title="Quitar" style="color:#ff6b6b;">✕</button>
+          <button type="button" data-act="right" data-i="${i}" ${i === images.length - 1 ? 'disabled' : ''} title="Mover a la derecha">→</button>
+        </div>
+      </div>`).join('');
+  }
+  $('img-list').addEventListener('click', e => {
+    const b = e.target.closest('button[data-act]');
+    if (!b) return;
+    const i = +b.dataset.i;
+    if (b.dataset.act === 'del') images.splice(i, 1);
+    if (b.dataset.act === 'left'  && i > 0)                 [images[i - 1], images[i]] = [images[i], images[i - 1]];
+    if (b.dataset.act === 'right' && i < images.length - 1) [images[i + 1], images[i]] = [images[i], images[i + 1]];
+    renderImages();
+  });
+
+  function toWebp(file, maxPx, quality) {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        const scale = Math.min(1, maxPx / Math.max(img.width, img.height));
+        const c = document.createElement('canvas');
+        c.width = Math.round(img.width * scale); c.height = Math.round(img.height * scale);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        resolve(c.toDataURL('image/webp', quality));
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('No se pudo leer la imagen')); };
+      img.src = url;
+    });
+  }
+  $('img-upload').addEventListener('change', async e => {
+    const files = [...e.target.files].filter(f => f.type.startsWith('image/'));
+    e.target.value = '';
+    for (const f of files) {
+      try { images.push({ src: await toWebp(f, 1600, 0.85), thumb: await toWebp(f, 640, 0.8) }); }
+      catch (err) { showAlert(`${esc(f.name)}: ${esc(err.message)}`, 'error'); }
+    }
+    renderImages();
+  });
+
+  function readForm() {
+    const kind = $('f-kind').value;
+    return {
+      id: editingId || slug($('f-title').value) || ('project-' + Date.now()),
+      title: $('f-title').value.trim(),
+      date: $('f-date').value,
+      category: $('f-category').value,
+      kind,
+      emoji: $('f-emoji').value.trim() || null,
+      summary: $('f-summary').value.trim(),
+      description: $('f-desc').value.trim(),
+      tech: [...tech],
+      repo: $('f-repo').value.trim() || null,
+      asset: kind === 'download' ? ($('f-asset').value.trim() || null) : null,
+      platform: kind === 'download' ? ($('f-platform').value.trim() || null) : null,
+      url: kind === 'web' ? ($('f-url').value.trim() || null) : null,
+      notice: $('f-notice').value.trim() || null,
+      images: images.map(x => ({ ...x })),
+      visibility: $('f-hidden').checked ? 'hidden' : 'visible',
+    };
+  }
+
+  /** id legible a partir del título; evita colisiones con proyectos existentes */
+  function slug(title) {
+    const base = title.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 50);
+    if (!base) return '';
+    const taken = new Set(getAllProjects().map(p => String(p.id)));
+    let id = base, n = 2;
+    while (taken.has(id)) id = `${base}-${n++}`;
+    return id;
+  }
+
+  function fillForm(p) {
+    $('f-title').value = p.title || '';
+    $('f-kind').value = p.kind || 'download';
+    $('f-category').value = p.category || 'herramienta';
+    $('f-date').value = p.date || new Date().toISOString().slice(0, 10);
+    $('f-emoji').value = p.emoji || '';
+    $('f-repo').value = p.repo || '';
+    $('f-asset').value = p.asset || '';
+    $('f-platform').value = p.platform || '';
+    $('f-url').value = p.url || '';
+    $('f-summary').value = p.summary || '';
+    $('summary-count').textContent = $('f-summary').value.length;
+    $('f-desc').value = p.description || '';
+    $('f-notice').value = p.notice || '';
+    $('f-hidden').checked = p.visibility === 'hidden';
+    tech = [...(p.tech || [])]; renderTech();
+    images = (p.images || []).map(x => ({ ...x })); renderImages();
+    $('release-status').textContent = '';
+    $('asset-options').innerHTML = '';
+    document.querySelector('.desc-tabs button[data-tab="write"]').click();
+    setKind($('f-kind').value);
+  }
+
+  function resetForm() {
+    editingId = null;
+    fillForm({});
+    $('form-card-title').textContent = 'Nuevo proyecto';
+    $('btn-toggle-form').textContent = '+ Añadir proyecto';
+  }
+
+  $('btn-toggle-form').addEventListener('click', () => {
+    const open = formWrap.classList.toggle('open');
+    resetForm();
+    if (open) $('f-title').focus();
+  });
+  $('btn-cancel-form').addEventListener('click', () => { formWrap.classList.remove('open'); resetForm(); });
+
+  $('btn-preview').addEventListener('click', () => {
+    const p = readForm();
+    if (!p.title) { showAlert('Pon al menos un título para ver la ficha.', 'error'); return; }
+    pv.openModal(p, { updateHash: false });
+  });
+
+  function validate(p) {
+    if (!p.title || !p.date || !p.summary) return 'Completa título, fecha y resumen.';
+    if (p.repo && !pv.validRepo(p.repo)) return 'El repositorio debe tener el formato usuario/repo.';
+    if (p.kind === 'download' && (!p.repo || !p.asset)) return 'Una descarga necesita el repositorio y el nombre del fichero de la release.';
+    if (p.kind === 'web' && !pv.webUrl(p)) return 'Indica la dirección de la aplicación web (https://… o una ruta relativa).';
+    return null;
+  }
+
+  $('project-form').addEventListener('submit', e => {
+    e.preventDefault();
+    const p = readForm();
+    const error = validate(p);
+    if (error) { showAlert(error, 'error', { persistent: true }); return; }
+    const local = getLocal().filter(x => String(x.id) !== String(p.id));
+    local.push(p);
+    try {
+      saveLocal(local);
+    } catch (err) {
+      showAlert(isQuotaError(err)
+        ? 'No cabe en el almacenamiento del navegador: quita alguna imagen o publica lo pendiente y vuelve a intentarlo.'
+        : `Error al guardar: ${esc(err.message)}`, 'error', { persistent: true });
+      return;
+    }
+    const verb = editingId ? 'actualizado' : 'guardado';
+    formWrap.classList.remove('open');
+    resetForm();
+    renderList();
+    showAlert(`Proyecto «${esc(p.title)}» ${verb}. Pulsa «Publicar en GitHub» para subirlo.`);
+  });
+
+  /* ── Lista ───────────────────────────────────────────────────────── */
+  function renderList() {
+    const all = getAllProjects();
+    $('projects-count').textContent = `${all.length} proyecto${all.length !== 1 ? 's' : ''}`;
+    const deletedPending = getDeleted().filter(id => _staticProjects.some(p => String(p.id) === id)).length;
+    const list = $('admin-project-list');
+    if (!all.length) {
+      list.innerHTML = '<p style="color:var(--text-muted);font-size:0.9rem;text-align:center;padding:1.5rem 0;">No hay proyectos todavía.</p>';
+    } else {
+      list.innerHTML = all.map(p => {
+        const c = pv.cover(p);
+        return `
+        <div class="admin-post-item">
+          <div class="admin-post-item-info">
+            ${c ? `<img class="admin-thumb" src="${esc(c)}" alt="" />` : `<span class="admin-post-item-emoji">${esc(pv.emojiOf(p))}</span>`}
+            <div style="min-width:0;">
+              <span class="admin-post-item-title" title="${esc(p.title)}">${esc(p.title)}</span>
+              <div class="admin-post-item-meta">${esc(pv.fmtDate(p.date))} · ${esc(pv.categoryLabel(p.category))} · ${p.kind === 'web' ? '🌐 Web' : '⬇️ Descarga'}${p.visibility === 'hidden' ? ' · 🚫 Oculto' : ''}</div>
+            </div>
+          </div>
+          <div class="admin-post-item-actions">
+            ${publishBadge(p)}
+            <button class="btn btn-outline" data-act="view" data-id="${esc(p.id)}" style="font-size:0.75rem;padding:0.3rem 0.65rem;" title="Ver ficha">👁</button>
+            <button class="btn btn-outline" data-act="edit" data-id="${esc(p.id)}" style="font-size:0.75rem;padding:0.3rem 0.65rem;" title="Editar">✏️</button>
+            <button class="btn btn-outline" data-act="delete" data-id="${esc(p.id)}" style="font-size:0.75rem;padding:0.3rem 0.65rem;border-color:#ff6b6b50;color:#ff6b6b;" title="Eliminar">🗑</button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+    if (deletedPending) {
+      list.insertAdjacentHTML('beforeend', `<p class="admin-help" style="margin-top:0.75rem;">🗑 ${deletedPending} proyecto${deletedPending > 1 ? 's' : ''} borrado${deletedPending > 1 ? 's' : ''} pendiente${deletedPending > 1 ? 's' : ''} de publicar.</p>`);
+    }
+  }
+
+  $('admin-project-list').addEventListener('click', e => {
+    const b = e.target.closest('button[data-act]');
+    if (!b) return;
+    const p = getAllProjects().find(x => String(x.id) === b.dataset.id);
+    if (!p) return;
+    if (b.dataset.act === 'view') pv.openModal(strip(p), { updateHash: false });
+    if (b.dataset.act === 'edit') {
+      fillForm(p);
+      editingId = p.id;
+      $('form-card-title').textContent = 'Editar proyecto';
+      $('btn-toggle-form').textContent = '− Cancelar edición';
+      formWrap.classList.add('open');
+      formWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    if (b.dataset.act === 'delete') {
+      const published = _staticProjects.some(x => String(x.id) === String(p.id));
+      if (!confirm(published
+        ? `¿Eliminar «${p.title}»? Desaparecerá de la web al publicar.`
+        : `¿Eliminar «${p.title}»? Solo existe en este navegador; no se puede deshacer.`)) return;
+      saveLocal(getLocal().filter(x => String(x.id) !== String(p.id)));
+      if (published) {
+        const ids = getDeleted();
+        if (!ids.includes(String(p.id))) { ids.push(String(p.id)); localStorage.setItem(DELETED_KEY, JSON.stringify(ids)); }
+      }
+      renderList();
+    }
+  });
+
+  /* ── Publicar: un solo commit con JSON, versión e imágenes ───────── */
+  async function sha256Hex(text) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+    return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  /** Sustituye las imágenes data: por rutas y devuelve los ficheros a subir */
+  async function materializeImages(projects) {
+    const uploads = new Map();
+    for (const p of projects) {
+      for (const img of p.images || []) {
+        for (const field of ['src', 'thumb']) {
+          const v = img[field];
+          const m = /^data:image\/(webp|png|jpeg);base64,/.exec(v || '');
+          if (!m) continue;   /* ya es una ruta publicada */
+          const ext  = m[1] === 'jpeg' ? 'jpg' : m[1];   /* Safari no exporta WebP: llega PNG */
+          const b64  = v.slice(m[0].length);
+          const path = `${IMG_DIR}/${p.id}/${(await sha256Hex(b64)).slice(0, 16)}${field === 'thumb' ? '-thumb' : ''}.${ext}`;
+          uploads.set(path, b64);
+          img[field] = path;
+        }
+      }
+    }
+    return [...uploads].map(([path, content]) => ({ path, content, base64: true }));
+  }
+
+  const imagePaths = projects => new Set(projects.flatMap(p => (p.images || [])
+    .flatMap(i => [i.src, i.thumb]).filter(x => x && x.startsWith(IMG_DIR + '/'))));
+
+  $('btn-publish').addEventListener('click', async () => {
+    const btn = $('btn-publish');
+    const orig = btn.innerHTML;
+    btn.disabled = true;
+    try {
+      btn.innerHTML = '🔄 Descifrando token…';
+      const token = await adminAuth.getToken();
+      if (!token) { showAlert('No hay token de GitHub configurado.', 'error', { persistent: true }); return; }
+
+      btn.innerHTML = '🔄 Comprobando versión…';
+      const fresh = await adminAuth.fetchIfNewer(GITHUB_VERSION_FILE, GITHUB_DATA_FILE, _baseVersion, token);
+      if (fresh) {
+        _staticProjects = fresh.data;
+        _baseVersion = fresh.t;
+        adminAuth.pruneLocalCopies(LOCAL_KEY, _staticProjects);
+        renderList();
+        showAlert('Se ha publicado desde otro dispositivo o pestaña después de abrir este panel. No se ha subido nada: ' +
+          'ya se ha cargado lo publicado y tus cambios locales se mantienen encima. Revisa la lista y vuelve a publicar.', 'error', { persistent: true });
+        return;
+      }
+
+      btn.innerHTML = '🔄 Preparando imágenes…';
+      const projects = getAllProjects().map(strip).map(p => ({ ...p, images: (p.images || []).map(x => ({ ...x })) }));
+      const uploads  = await materializeImages(projects);
+      const keep     = imagePaths(projects);
+      const removed  = [...imagePaths(_staticProjects)].filter(x => !keep.has(x));
+      const versionT = Date.now();
+      const content  = JSON.stringify(projects, null, 2) + '\n';
+
+      btn.innerHTML = `🔄 Publicando${uploads.length ? ` (${uploads.length} imagen${uploads.length > 1 ? 'es' : ''})` : ''}…`;
+      await adminAuth.commitFiles([
+        ...uploads,
+        ...removed.map(path => ({ path, delete: true })),
+        { path: GITHUB_DATA_FILE, content },
+        { path: GITHUB_VERSION_FILE, content: JSON.stringify({ t: versionT }) },
+      ], `projects: update (${new Date().toISOString().slice(0, 10)})`, token);
+
+      _staticProjects = projects;
+      _baseVersion = versionT;
+      localStorage.removeItem(LOCAL_KEY);
+      localStorage.removeItem(DELETED_KEY);
+      adminAuth.rememberPublished(GITHUB_DATA_FILE, versionT, projects);
+      renderList();
+      showAlert('Publicado en GitHub. La web se actualizará en ~1 minuto (las imágenes nuevas tardan lo mismo en verse).');
+    } catch (err) {
+      console.error(err);
+      const msg = err.status === 422 && /fast.forward/i.test(err.message)
+        ? 'La rama ha cambiado mientras se publicaba. Recarga el panel y vuelve a publicar; tus cambios locales se conservan.'
+        : `Error al publicar: ${esc(err.message)}`;
+      showAlert(msg, 'error', { persistent: true });
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = orig;
+    }
+  });
+
+  /* ── Token ───────────────────────────────────────────────────────── */
+  function updateGitHubBadge() {
+    const ok = adminAuth.hasToken();
+    $('github-token-status-badge').innerHTML = ok
+      ? '<span class="github-token-ok">● Token configurado</span>'
+      : '<span class="github-token-none">● Sin token</span>';
+    $('github-config-card').classList.toggle('collapsed', ok);
+  }
+  $('github-token-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const token = $('f-github-token').value.trim();
+    if (!/^(ghp_|github_pat_)/.test(token)) { showAlert('El token debe empezar por ghp_ o github_pat_.', 'error'); return; }
+    const btn = $('btn-save-token'), orig = btn.innerHTML;
+    btn.disabled = true; btn.innerHTML = '🔄 Verificando…';
+    try {
+      await adminAuth.replaceToken(token);
+      $('f-github-token').value = '';
+      updateGitHubBadge();
+      showAlert('Token verificado y guardado cifrado.');
+    } catch (err) {
+      showAlert(`Error: ${esc(err.message)}`, 'error', { persistent: true });
+    } finally { btn.disabled = false; btn.innerHTML = orig; }
+  });
+  document.querySelectorAll('.admin-card-collapsible .admin-card-header').forEach(h =>
+    h.addEventListener('click', () => h.closest('.admin-card-collapsible').classList.toggle('collapsed')));
+
+  /* ── Auth ────────────────────────────────────────────────────────── */
+  async function unlockAdmin() {
+    $('admin-lock').style.display = 'none';
+    $('admin-content').style.display = 'block';
+    resetForm();
+    await loadStaticProjects();
+    renderList();
+    updateGitHubBadge();
+  }
+  $('admin-logout').addEventListener('click', () => { adminAuth.logout(); location.reload(); });
+  document.addEventListener('DOMContentLoaded', () => adminAuth.initLockScreen(unlockAdmin));
+  </script>
+  <script src="js/main.js?v=4bb4308"></script>
+</body>
+</html>

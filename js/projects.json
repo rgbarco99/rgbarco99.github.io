@@ -1,0 +1,28 @@
+[
+  {
+    "id": "fortnite-chest-counter",
+    "title": "Fortnite Chest Counter",
+    "date": "2026-11-13",
+    "category": "herramienta",
+    "kind": "download",
+    "emoji": "🧰",
+    "summary": "Contador de cofres para Fortnite en PC: lee las repeticiones de cada partida y muestra cofres, kills y puesto en un panel en el navegador.",
+    "description": "Cuenta los cofres que abres en Fortnite (PC), partida a partida, y los muestra en un panel en el navegador: cofres por partida y por minuto, cofres especiales y espirituales, kills, puesto, tu escuadra, los amigos con los que más juegas y las probabilidades de cada tesoro semanal.\n\n## Cómo funciona\n\nSolo lee los archivos `.replay` que Fortnite guarda en el PC al terminar cada partida. No toca el juego, no lee su memoria y no usa IA.\n\n- Se queda en un icono junto al reloj mientras juegas, y cada partida aparece sola en el panel al terminar.\n- Mapa de calor de dónde abres los cofres, sobre el mapa de la temporada.\n- Copia de seguridad diaria de tus partidas y exportación a CSV.\n- Se actualiza solo: comprueba si hay versión nueva en GitHub y se reemplaza con un clic.\n- En español, inglés y francés.\n\n## Cómo empezar\n\n- Activa la grabación de repeticiones en los ajustes de Fortnite.\n- Descarga el `.exe` y ponlo en una carpeta tuya (Escritorio, Documentos…), no en Archivos de programa.\n- Ábrelo: el panel se abre en el navegador. No hay nada que instalar; lleva .NET dentro, por eso ocupa unos 60 MB.\n\n*No está afiliado ni respaldado por Epic Games. Fortnite es una marca registrada de Epic Games, Inc.*",
+    "tech": [
+      "C#",
+      ".NET 10",
+      "ASP.NET Core",
+      "Windows Forms",
+      "HTML / CSS / JS",
+      "xUnit",
+      "GitHub Actions"
+    ],
+    "repo": "rgbarco99/FortniteChestCounter",
+    "asset": "FortniteChestCounter.exe",
+    "platform": "Windows 10/11 · 64 bits",
+    "url": null,
+    "notice": "La primera vez Windows puede mostrar «Windows protegió tu PC», porque el programa no está firmado: pulsa «Más información» y después «Ejecutar de todas formas».",
+    "images": [],
+    "visibility": "visible"
+  }
+]

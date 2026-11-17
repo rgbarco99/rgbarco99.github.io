@@ -290,58 +290,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* --------------------------------------------------
-   10. PROJECTS — search + filter
-   -------------------------------------------------- */
-const searchInput = document.getElementById('project-search');
-const filterPills = document.querySelectorAll('.filter-pill');
-const projectCards = document.querySelectorAll('.project-card');
-const noResults = document.getElementById('no-results');
-const resultsCount = document.getElementById('results-count');
-
-if (searchInput && projectCards.length) {
-  let activeFilter = 'all';
-
-  function filterProjects() {
-    const query = searchInput.value.toLowerCase().trim();
-    let visible = 0;
-    projectCards.forEach(card => {
-      const title = card.dataset.title.toLowerCase();
-      const desc = card.dataset.desc.toLowerCase();
-      const tags = card.dataset.tags.toLowerCase();
-      const category = card.dataset.category;
-      const matchesSearch = !query || title.includes(query) || desc.includes(query) || tags.includes(query);
-      const matchesFilter = activeFilter === 'all' || category === activeFilter;
-      if (matchesSearch && matchesFilter) {
-        card.style.display = '';
-        card.style.animation = 'none';
-        card.offsetHeight;
-        card.style.animation = 'fadeIn 0.35s ease forwards';
-        visible++;
-      } else {
-        card.style.display = 'none';
-      }
-    });
-    if (noResults) noResults.style.display = visible === 0 ? 'block' : 'none';
-    if (resultsCount) resultsCount.innerHTML = `Mostrando <span>${visible}</span> proyecto${visible !== 1 ? 's' : ''}`;
-  }
-
-  searchInput.addEventListener('input', filterProjects);
-  filterPills.forEach(pill => {
-    pill.addEventListener('click', () => {
-      filterPills.forEach(p => p.classList.remove('active'));
-      pill.classList.add('active');
-      activeFilter = pill.dataset.filter;
-      filterProjects();
-    });
-  });
-
-  const styleEl = document.createElement('style');
-  styleEl.textContent = '@keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }';
-  document.head.appendChild(styleEl);
-  filterProjects();
-}
-
-/* --------------------------------------------------
    11. SMOOTH SCROLL
    -------------------------------------------------- */
 document.querySelectorAll('a[href^="#"]').forEach(a => {

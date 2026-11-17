@@ -154,6 +154,48 @@ const adminAuth = (() => {
     return true;
   }
 
+  /** Publica varios ficheros en un único commit (API Git Data).
+   *  files: [{ path, content, base64? }] o [{ path, delete: true }].
+   *  El PATCH final no es forzado: si la rama ha avanzado entretanto, falla sin pisar nada. */
+  async function commitFiles(files, message, token) {
+    token = token || await getToken();
+    if (!token) throw new Error('No hay token de GitHub disponible.');
+    const api  = `https://api.github.com/repos/${OWNER}/${REPO}/git`;
+    const call = async (method, path, body) => {
+      const r = await fetch(api + path, {
+        method, headers: headers(token), cache: 'no-store',
+        ...(body ? { body: JSON.stringify(body) } : {}),
+      });
+      if (!r.ok) {
+        const e = await r.json().catch(() => ({}));
+        const err = new Error(e.message || `GitHub ${r.status}`);
+        err.status = r.status;
+        throw err;
+      }
+      return r.json();
+    };
+
+    const parent = (await call('GET', `/ref/heads/${BRANCH}`)).object.sha;
+    const base   = (await call('GET', `/commits/${parent}`)).tree.sha;
+    const writes = [], deletes = [];
+    for (const f of files) {
+      if (f.delete) { deletes.push({ path: f.path, mode: '100644', type: 'blob', sha: null }); continue; }
+      const blob = await call('POST', '/blobs', { content: f.content, encoding: f.base64 ? 'base64' : 'utf-8' });
+      writes.push({ path: f.path, mode: '100644', type: 'blob', sha: blob.sha });
+    }
+    let tree;
+    try {
+      tree = await call('POST', '/trees', { base_tree: base, tree: [...writes, ...deletes] });
+    } catch (err) {
+      /* Un fichero a borrar que ya no existe hace fallar el árbol: se reintenta sin borrados */
+      if (!deletes.length || err.status !== 422) throw err;
+      tree = await call('POST', '/trees', { base_tree: base, tree: writes });
+    }
+    const commit = await call('POST', '/commits', { message, tree: tree.sha, parents: [parent] });
+    await call('PATCH', `/refs/heads/${BRANCH}`, { sha: commit.sha, force: false });
+    return commit.sha;
+  }
+
   async function putFile(path, content, message, token) {
     token = token || await getToken();
     if (!token) throw new Error('No hay token de GitHub disponible.');
@@ -378,7 +420,7 @@ const adminAuth = (() => {
 
   return {
     loadConfig, hasToken, login, logout, restore, isLoggedIn, sessionPw, getToken, getMasterKey,
-    verifyTokenAccess, putFile, setup, replaceToken, changePassword,
+    verifyTokenAccess, putFile, commitFiles, setup, replaceToken, changePassword,
     loadPublished, rememberPublished, fetchIfNewer, readRemoteFile, pruneLocalCopies, canon,
     wrapPostPw, decryptPostPw, isWrappedWithMasterKey, initLockScreen, toBase64Unicode,
     OWNER, REPO, BRANCH,
